@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://edgar13f-eval/contracts/tools.schema.json",
+  "title": "edgar13f MCP tool contracts v1.0",
+  "description": "Input and output schemas for list_13f_filings, get_holdings_as_of and diff_holdings. Normative text: contracts/CONTRACTS.md.",
+  "$defs": {
+    "cik": {
+      "type": "string",
+      "pattern": "^[0-9]{1,10}$",
+      "description": "SEC Central Index Key; leading zeros optional."
+    },
+    "isoDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "ISO-8601 calendar date YYYY-MM-DD."
+    },
+    "quarterEnd": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(03-31|06-30|09-30|12-31)$",
+      "description": "Form 13F report period: a calendar quarter-end date."
+    },
+    "cusip": {
+      "type": "string",
+      "pattern": "^[0-9A-Za-z]{9}$"
+    },
+    "cusipFilter": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/cusip" },
+      "minItems": 1,
+      "maxItems": 50,
+      "uniqueItems": true
+    },
+    "accession": {
+      "type": "string",
+      "pattern": "^[0-9]{10}-[0-9]{2}-[0-9]{6}$"
+    },
+    "disclaimer": {
+      "type": "string",
+      "const": "13F reports long positions only; data may lag the period end by up to 45 days."
+    },
+    "declineReason": {
+      "type": "string",
+      "enum": ["unknown_cik", "not_yet_filed", "notice_only", "invalid_period", "invalid_argument", "unsupported_request"]
+    },
+    "decline": {
+      "type": "object",
+      "required": ["status", "disclaimer", "reason", "message"],
+      "properties": {
+        "status": { "const": "declined" },
+        "disclaimer": { "$ref": "#/$defs/disclaimer" },
+        "reason": { "$ref": "#/$defs/declineReason" },
+        "message": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "filingRecord": {
+      "type": "object",
+      "required": ["accession_number", "form_type", "filing_date", "period_of_report", "is_amendment", "amendment_no", "amendment_type", "edgar_url"],
+      "properties": {
+        "accession_number": { "$ref": "#/$defs/accession" },
+        "form_type": { "type": "string", "enum": ["13F-HR", "13F-HR/A", "13F-NT", "13F-NT/A"] },
+        "filing_date": { "$ref": "#/$defs/isoDate" },
+        "period_of_report": { "$ref": "#/$defs/isoDate" },
+        "is_amendment": { "type": "boolean" },
+        "amendment_no": { "type": ["integer", "null"] },
+        "amendment_type": { "type": ["string", "null"], "enum": ["RESTATEMENT", "NEW HOLDINGS", null] },
+        "report_type": { "type": ["string", "null"] },
+        "filing_manager_name": { "type": ["string", "null"] },
+        "edgar_url": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": true
+    },
+    "holdingRow": {
+      "type": "object",
+      "required": ["accession_number", "name_of_issuer", "title_of_class", "cusip", "value", "shares_or_principal_amount", "sh_prn", "put_call"],
+      "properties": {
+        "accession_number": { "$ref": "#/$defs/accession" },
+        "name_of_issuer": { "type": "string" },
+        "title_of_class": { "type": "string" },
+        "cusip": { "$ref": "#/$defs/cusip" },
+        "figi": { "type": ["string", "null"] },
+        "value": { "type": "integer", "description": "US dollars as filed (whole dollars since 2023-01-03). Never rescaled." },
+        "shares_or_principal_amount": { "type": "integer" },
+        "sh_prn": { "type": "string", "enum": ["SH", "PRN"] },
+        "put_call": { "type": ["string", "null"], "enum": ["PUT", "CALL", null] },
+        "investment_discretion": { "type": ["string", "null"] },
+        "other_manager": { "type": ["string", "null"] },
+        "voting_authority_sole": { "type": ["integer", "null"] },
+        "voting_authority_shared": { "type": ["integer", "null"] },
+        "voting_authority_none": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "changeRow": {
+      "type": "object",
+      "required": ["cusip", "put_call", "sh_prn", "shares_a", "shares_b", "shares_delta", "value_a", "value_b", "value_delta", "change_type"],
+      "properties": {
+        "cusip": { "$ref": "#/$defs/cusip" },
+        "name_of_issuer": { "type": ["string", "null"] },
+        "put_call": { "type": ["string", "null"], "enum": ["PUT", "CALL", null] },
+        "sh_prn": { "type": "string", "enum": ["SH", "PRN"] },
+        "shares_a": { "type": "integer" },
+        "shares_b": { "type": "integer" },
+        "shares_delta": { "type": "integer" },
+        "value_a": { "type": "integer" },
+        "value_b": { "type": "integer" },
+        "value_delta": { "type": "integer" },
+        "change_type": { "type": "string", "enum": ["added", "removed", "increased", "decreased", "unchanged"] }
+      },
+      "additionalProperties": true
+    }
+  },
+  "tools": {
+    "list_13f_filings": {
+      "description": "Every Form 13F submission (13F-HR, 13F-HR/A, 13F-NT, 13F-NT/A) by the manager whose EDGAR filing date is on or before as_of.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["cik", "as_of"],
+        "properties": {
+          "cik": { "$ref": "#/$defs/cik" },
+          "as_of": { "$ref": "#/$defs/isoDate" }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": ["status", "disclaimer", "cik", "as_of", "filings"],
+            "properties": {
+              "status": { "const": "ok" },
+              "disclaimer": { "$ref": "#/$defs/disclaimer" },
+              "cik": { "$ref": "#/$defs/cik" },
+              "as_of": { "$ref": "#/$defs/isoDate" },
+              "filings": { "type": "array", "items": { "$ref": "#/$defs/filingRecord" } }
+            },
+            "additionalProperties": true
+          },
+          { "$ref": "#/$defs/decline" }
+        ]
+      }
+    },
+    "get_holdings_as_of": {
+      "description": "Effective 13F holdings of the manager for one report period as knowable on as_of (point-in-time and amendment rules in CONTRACTS.md sections 3-4), with the accession number(s) they come from.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["cik", "period", "as_of"],
+        "properties": {
+          "cik": { "$ref": "#/$defs/cik" },
+          "period": { "$ref": "#/$defs/quarterEnd" },
+          "as_of": { "$ref": "#/$defs/isoDate" },
+          "cusip": { "$ref": "#/$defs/cusipFilter" },
+          "position_type": { "type": "string", "enum": ["long"], "default": "long", "description": "Form 13F contains long positions only; any other value is declined with unsupported_request." }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": ["status", "disclaimer", "cik", "period", "as_of", "accession_number", "source_accessions", "filing_date", "holdings"],
+            "properties": {
+              "status": { "const": "ok" },
+              "disclaimer": { "$ref": "#/$defs/disclaimer" },
+              "cik": { "$ref": "#/$defs/cik" },
+              "period": { "$ref": "#/$defs/quarterEnd" },
+              "as_of": { "$ref": "#/$defs/isoDate" },
+              "accession_number": { "$ref": "#/$defs/accession" },
+              "source_accessions": { "type": "array", "items": { "$ref": "#/$defs/accession" }, "minItems": 1 },
+              "filing_date": { "$ref": "#/$defs/isoDate" },
+              "holdings": { "type": "array", "items": { "$ref": "#/$defs/holdingRow" } }
+            },
+            "additionalProperties": true
+          },
+          { "$ref": "#/$defs/decline" }
+        ]
+      }
+    },
+    "diff_holdings": {
+      "description": "Position-level changes between period_a and period_b, each computed with get_holdings_as_of rules on the same as_of and consolidated by (cusip, put_call, sh_prn).",
+      "inputSchema": {
+        "type": "object",
+        "required": ["cik", "period_a", "period_b", "as_of"],
+        "properties": {
+          "cik": { "$ref": "#/$defs/cik" },
+          "period_a": { "$ref": "#/$defs/quarterEnd" },
+          "period_b": { "$ref": "#/$defs/quarterEnd" },
+          "as_of": { "$ref": "#/$defs/isoDate" },
+          "cusip": { "$ref": "#/$defs/cusipFilter" }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": ["status", "disclaimer", "cik", "period_a", "period_b", "as_of", "accession_a", "accession_b", "source_accessions_a", "source_accessions_b", "changes"],
+            "properties": {
+              "status": { "const": "ok" },
+              "disclaimer": { "$ref": "#/$defs/disclaimer" },
+              "cik": { "$ref": "#/$defs/cik" },
+              "period_a": { "$ref": "#/$defs/quarterEnd" },
+              "period_b": { "$ref": "#/$defs/quarterEnd" },
+              "as_of": { "$ref": "#/$defs/isoDate" },
+              "accession_a": { "$ref": "#/$defs/accession" },
+              "accession_b": { "$ref": "#/$defs/accession" },
+              "source_accessions_a": { "type": "array", "items": { "$ref": "#/$defs/accession" }, "minItems": 1 },
+              "source_accessions_b": { "type": "array", "items": { "$ref": "#/$defs/accession" }, "minItems": 1 },
+              "changes": { "type": "array", "items": { "$ref": "#/$defs/changeRow" } }
+            },
+            "additionalProperties": true
+          },
+          { "$ref": "#/$defs/decline" }
+        ]
+      }
+    }
+  }
+}
