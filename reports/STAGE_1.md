@@ -53,7 +53,7 @@ except where a line says otherwise.
 
 - MEASURED: 919 logged requests to sec.gov (21 to data.sec.gov, 898 to www.sec.gov), all HTTP 200, with at most 4 in any 1-second window. From `python tests/tools/request_stats.py <logs>`; see `reports/artifacts/sec_requests.json`.
 - REASONED: these requests are not in the logs above: 2 manual `curl` reachability probes made before the client existed, and 9 requests from a first unprivileged-user probe whose cache was wiped. The total is therefore 930.
-- MEASURED: the server runs as a separate unprivileged user that can only read its checkout. It writes only to `$EDGAR13F_CACHE_DIR`, then `~/.cache/edgar13f`, then `/tmp/edgar13f-<uid>`, and a write into the checkout is denied. From `bash tests/tools/unprivileged_probe.sh`; see `reports/artifacts/unprivileged_run.txt`.
+- MEASURED: the server runs as a separate unprivileged user that can only read its checkout. It writes only to $EDGAR13F_CACHE_DIR, then ~/.cache/edgar13f, then /tmp/edgar13f-UID, and a write into the checkout is denied. From `bash tests/tools/unprivileged_probe.sh`; see `reports/artifacts/unprivileged_run.txt`.
 - MEASURED: the cover-page period equals EDGAR `reportDate` for 598 of 598 fixture XML filings. From `python tests/tools/period_consistency.py` (cached documents); see `reports/artifacts/period_consistency.json`.
 - MEASURED: every runtime dependency is MIT, Apache-2.0 or BSD-3-Clause except `typing-extensions` (PSF-2.0). From `python tests/tools/license_audit.py`; see `reports/artifacts/license_audit.txt`.
 
