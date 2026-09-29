@@ -1,25 +1,15 @@
 
-[notice] A new release of pip is available: 24.0 -> 26.2.1
-[notice] To update, run: python3.11 -m pip install --upgrade pip
 == EDGAR13F_CACHE_DIR set
 isError False status ok filings 2
 files created by edgar13f-probe since start:
-      3 /home/edgar13f-probe/explicit-cache/http/<sha256>
-      1 /home/edgar13f-probe/explicit-cache/ratelimit.lock
-      1 /home/edgar13f-probe/explicit-cache/requests.log
 == unset, HOME writable
 isError False status ok filings 2
 files created by edgar13f-probe since start:
-      3 /home/edgar13f-probe/.cache/edgar13f/http/<sha256>
-      1 /home/edgar13f-probe/.cache/edgar13f/ratelimit.lock
-      1 /home/edgar13f-probe/.cache/edgar13f/requests.log
 == unset, HOME unwritable
 edgar13f: cache dir /nonexistent/.cache/edgar13f not writable, trying next
 isError False status ok filings 2
 files created by edgar13f-probe since start:
-      3 /tmp/edgar13f-1001/http/<sha256>
-      1 /tmp/edgar13f-1001/ratelimit.lock
-      1 /tmp/edgar13f-1001/requests.log
 == write attempt into checkout
 touch: cannot touch '/srv/edgar13f-checkout/should-fail': Permission denied
 denied as expected
+probe commit: d13017c

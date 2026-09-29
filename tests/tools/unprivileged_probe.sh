@@ -11,6 +11,8 @@ rm -rf "$CO" && mkdir -p "$CO"
 git -C "$SRC" archive HEAD | tar -x -C "$CO"
 python3.11 -m venv "$CO/.venv" && "$CO/.venv/bin/pip" install -q "$CO" >/dev/null
 chown -R root:root "$CO" && chmod -R a+rX,go-w "$CO"
+PUID=$(id -u "$PROBE_USER")
+rm -rf "/home/$PROBE_USER/explicit-cache" "/home/$PROBE_USER/.cache/edgar13f" "/tmp/edgar13f-$PUID"  # start cold
 QUERY='{"cik":"1993399","as_of":"2025-03-01"}'
 run() {  # $1 = label, rest = env assignments
   local label=$1; shift
