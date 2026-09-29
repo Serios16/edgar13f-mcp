@@ -19,7 +19,7 @@ except where a line says otherwise.
   disclaimer. Every success carries the accession number(s). `list_13f_filings` returns an
   `edgar_url` for each filing.
 - SEC client: the User-Agent comes from `$SEC_USER_AGENT`. Request starts are spaced
-  >= 0.21 s apart across processes (fcntl lock). There is exponential backoff on
+  >= 0.25 s apart across processes, and the fcntl lock is held until the request is sent. There is exponential backoff on
   403/429/5xx/network errors and on HTML pages served instead of data. Responses go to an
   on-disk cache, and every request is logged in `requests.log`.
 - Blocklist: the patterns and CUSIPs are applied to each info-table row before any other
@@ -38,20 +38,20 @@ except where a line says otherwise.
 | Leakage suite | 603 cases, 0 violations | mutant: `rules.visible` always true | 4,387 violations (>= 1 required) |
 | Leakage no-op control | wrapper around `rules.visible` | n/a | 0 violations |
 | Blocklist (31 synthetic blocked rows, 7 benign) | all blocked rows dropped, benign rows kept, fixtures have 0 hits | `test_planted_failure_disabled_blocklist_is_detected` | all 31 survive and are detected |
-| Size budget | 968 lines in src/, max 137 per file | a 251-line file; 7 × 240 lines | both flagged |
+| Size budget | 970 lines in src/, max 139 per file | a 251-line file; 7 × 240 lines | both flagged |
 | MAP check | all 11 modules listed | module missing from MAP | flagged |
 | Claims check | every measured line names a committed path | a missing path and a line with no path | both flagged |
 | Offline guard | sockets refused | `test_offline_guard_blocks_network` | connection refused |
 
-- MEASURED: full offline suite, 110 passed and 1 skipped (a root-only skip), from `python -m pytest -q tests`; see `reports/artifacts/pytest_all.txt`.
+- MEASURED: full offline suite, 111 passed and 1 skipped (a root-only skip), from `python -m pytest -q tests`; see `reports/artifacts/pytest_all.txt`.
 - MEASURED: leakage cases, tool calls, and mutant/no-op violation counts, from `python -m tests.tools.leakage_summary`; see `reports/artifacts/leakage_summary.json`.
-- MEASURED: size budget of 968 lines total, from `python tests/checks/size_budget.py .`; see `reports/artifacts/size_budget.txt`.
+- MEASURED: size budget of 970 lines total, from `python tests/checks/size_budget.py .`; see `reports/artifacts/size_budget.txt`.
 - MEASURED: the static checks pass in the committed tree; the planted failures are in `tests/invariants/test_checks.py`.
 - REPORTED: the result of the CI run is linked in the PR description, not here, because this report is committed before the run exists.
 
 ## SEC access
 
-- MEASURED: 919 logged requests to sec.gov (21 to data.sec.gov, 898 to www.sec.gov), all HTTP 200, with at most 4 in any 1-second window. From `python tests/tools/request_stats.py <logs>`; see `reports/artifacts/sec_requests.json`.
+- MEASURED: 919 logged requests to sec.gov (21 to data.sec.gov, 898 to www.sec.gov), all HTTP 200, with at most 4 in any 1-second window. These were collected with the first limiter (0.21 s spacing, lock released before the send). CI then showed that design could allow 6 sends in a second under scheduling jitter, and it was fixed as described above. From `python tests/tools/request_stats.py <logs>`; see `reports/artifacts/sec_requests.json`.
 - REASONED: these requests are not in the logs above: 2 manual `curl` reachability probes made before the client existed, and 9 requests from a first unprivileged-user probe whose cache was wiped. The total is therefore 930.
 - MEASURED: the server runs as a separate unprivileged user that can only read its checkout. It writes only to $EDGAR13F_CACHE_DIR, then ~/.cache/edgar13f, then /tmp/edgar13f-UID, and a write into the checkout is denied. From `bash tests/tools/unprivileged_probe.sh`; see `reports/artifacts/unprivileged_run.txt`.
 - MEASURED: the cover-page period equals EDGAR `reportDate` for 598 of 598 fixture XML filings. From `python tests/tools/period_consistency.py` (cached documents); see `reports/artifacts/period_consistency.json`.

@@ -117,3 +117,18 @@ def test_html_detection():
     assert sec_client.looks_like_html(b"\n<!doctype HTML>")
     assert not sec_client.looks_like_html(b'<?xml version="1.0"?><informationTable/>')
     assert not sec_client.looks_like_html(b'{"a": 1}')
+
+
+def test_rate_limit_holds_under_concurrent_threads(tmp_path):
+    import threading
+
+    c, op, _ = client(tmp_path, [(200, b"{}")])
+    threads = [threading.Thread(target=lambda k=k: [c.get(f"https://data.sec.gov/{k}-{i}.json") for i in range(4)])
+               for k in range(4)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    ts = sorted(t for t, _, _ in op.calls)
+    assert len(ts) == 16
+    assert max(bisect.bisect_left(ts, t + 1.0) - i for i, t in enumerate(ts)) <= 5

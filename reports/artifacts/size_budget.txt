@@ -5,9 +5,9 @@ size budget: ok
   119 src/edgar13f/parse.py
    98 src/edgar13f/rules.py
    63 src/edgar13f/schemas.py
-  137 src/edgar13f/sec_client.py
+  139 src/edgar13f/sec_client.py
    78 src/edgar13f/server.py
   122 src/edgar13f/sources.py
   129 src/edgar13f/tools.py
    81 src/edgar13f/validate.py
-  968 total
+  970 total

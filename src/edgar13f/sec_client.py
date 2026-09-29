@@ -2,7 +2,9 @@
 
 * User-Agent comes from $SEC_USER_AGENT (no default; requests fail without it).
 * At most 5 requests/second across every process sharing the cache dir: request
-  starts are spaced >= MIN_INTERVAL apart under an fcntl lock on a shared file.
+  starts are spaced >= MIN_INTERVAL apart; the fcntl lock on a shared file is held
+  from the wait until the request has been sent, so scheduling jitter cannot
+  bunch sends together.
 * Exponential backoff on 403, 429, 5xx, network errors, and HTML error pages
   served in place of the JSON/XML that was asked for.
 * On-disk cache keyed by URL; every network request is appended to requests.log.
@@ -20,7 +22,7 @@ import urllib.request
 from pathlib import Path
 from typing import Callable
 
-MIN_INTERVAL = 0.21  # seconds between request starts => < 5 req/s in any 1 s window
+MIN_INTERVAL = 0.25  # seconds between request starts => at most 4 starts in any 1 s window
 RETRYABLE_STATUS = {403, 429, 500, 502, 503, 504}
 
 
@@ -83,13 +85,12 @@ class SecClient:
         for attempt in range(self.max_retries + 1):
             if attempt:
                 self.sleep(self.backoff_base * (2 ** (attempt - 1)))
-            self._throttle()
             req = urllib.request.Request(url, headers={
                 "User-Agent": self.user_agent,
                 "Accept-Encoding": "identity",
             })
             try:
-                status, body, _ = self.opener(req, 30.0)
+                status, body, _ = self._throttled(req)
             except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as exc:
                 self._log(url, f"neterr:{type(exc).__name__}")
                 last = repr(exc)
@@ -108,7 +109,7 @@ class SecClient:
             return body
         raise SecUnavailable(f"giving up on {url}: {last}")
 
-    def _throttle(self) -> None:
+    def _throttled(self, req: urllib.request.Request) -> tuple[int, bytes, dict]:
         with open(self.lock_path, "a+") as fh:
             fcntl.flock(fh, fcntl.LOCK_EX)
             fh.seek(0)
@@ -123,6 +124,7 @@ class SecClient:
             fh.truncate()
             fh.write(repr(time.time()))
             fh.flush()
+            return self.opener(req, 30.0)
 
     def _log(self, url: str, status: object) -> None:
         with open(self.log_path, "a") as fh:
