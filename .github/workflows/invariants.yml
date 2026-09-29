@@ -1,0 +1,37 @@
+name: invariants
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  invariants:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SEC_USER_AGENT: ""          # no SEC access in CI: recorded fixtures only
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install (package index only; tests below are offline)
+        run: python -m pip install -e ".[test]"
+      - name: Unit tests
+        run: python -m pytest -q tests/unit
+      - name: Leakage invariant suite (>=100 cases, mutant + no-op controls)
+        run: python -m pytest -q tests/invariants/test_leakage.py
+      - name: Blocklist tests
+        run: python -m pytest -q tests/invariants/test_blocklist.py
+      - name: Size budget (<=1500 lines in src/, <=250 per file)
+        run: python tests/checks/size_budget.py .
+      - name: MAP check (every src/ module in MAP.md)
+        run: python tests/checks/map_check.py .
+      - name: Claims check (every MEASURED line names a committed path)
+        run: python tests/checks/claims_check.py .
+      - name: Planted-failure tests (each check can fail)
+        run: python -m pytest -q tests/invariants/test_checks.py

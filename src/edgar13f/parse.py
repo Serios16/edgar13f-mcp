@@ -35,7 +35,7 @@ def _text(elem: ET.Element, *path: str) -> str | None:
 
 
 def mdy_to_iso(text: str | None) -> str | None:
-    """'03-31-2025' -> '2025-03-31' (13F XML dates are MM-DD-YYYY)."""
+    """'MM-DD-YYYY' (13F XML date format) -> 'YYYY-MM-DD'."""
     if not text:
         return None
     parts = text.strip().split("-")
