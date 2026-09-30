@@ -142,3 +142,33 @@ def test_fixtures_contain_no_blocked_cusip_anywhere():
     for path in FIXTURES.rglob("*.json"):
         text = path.read_text().upper()
         assert not any(c in text for c in blocklist.BLOCKED_CUSIPS), path.name
+
+
+def test_infotable_shadowed_by_edgar_index_xml_is_read_from_submission_text(tmp_path):
+    """A filer's table named index.xml is served by EDGAR as a directory listing; the rows
+    come from the full submission .txt instead, still redacted, and the .txt is never cached."""
+    index = {"directory": {"item": [{"name": "primary_doc.xml"}, {"name": "index.xml"}]}}
+    listing = b'<?xml version="1.0"?><directory><name>/Archives/edgar/data</name></directory>'
+    txt = (b"<SEC-DOCUMENT>\n<DOCUMENT>\n<TYPE>13F-HR\n<FILENAME>primary_doc.xml\n<TEXT>\n<XML>\n"
+           b'<?xml version="1.0"?><edgarSubmission/>\n</XML>\n</TEXT>\n</DOCUMENT>\n<DOCUMENT>\n'
+           b"<TYPE>INFORMATION TABLE\n<FILENAME>index.xml\n<TEXT>\n<XML>\n" + infotable_xml(BLOCKED + KEPT)
+           + b"\n</XML>\n</TEXT>\n</DOCUMENT>\n</SEC-DOCUMENT>\n")
+    acc = "0000000001-25-000002"
+    client = _FakeClient({"index.json": json.dumps(index).encode(), "index.xml": listing, f"{acc}.txt": txt})
+    f = Filing(cik="1", accession_number=acc, form_type="13F-HR", filing_date="2025-02-14",
+               period_of_report="2024-12-31", primary_doc="xslForm13F_X02/primary_doc.xml")
+    rows = EdgarSource(client, tmp_path).rows(f)
+    assert survivors(rows) == [] and sorted(r["cusip"] for r in rows) == sorted(c for _, _, c in KEPT)
+    assert not any(u.endswith((".txt", "index.xml")) for u in client.stored)
+
+
+def test_submission_text_not_fetched_when_infotable_found(tmp_path):
+    index = {"directory": {"item": [{"name": "primary_doc.xml"}, {"name": "infotable.xml"}]}}
+    client = _FakeClient({"index.json": json.dumps(index).encode(), "infotable.xml": infotable_xml(KEPT)})
+    fetched = []
+    get = client.get
+    client.get = lambda url, **kw: fetched.append(url) or get(url, **kw)
+    f = Filing(cik="1", accession_number="0000000001-25-000003", form_type="13F-HR",
+               filing_date="2025-02-14", period_of_report="2024-12-31", primary_doc="primary_doc.xml")
+    assert len(EdgarSource(client, tmp_path).rows(f)) == len(KEPT)
+    assert not any(u.endswith(".txt") for u in fetched)

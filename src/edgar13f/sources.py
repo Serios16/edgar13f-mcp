@@ -91,13 +91,23 @@ class EdgarSource:
         items = json.loads(index)["directory"]["item"] if index else []
         primary = (f.primary_doc or "").rsplit("/", 1)[-1]
         rows: list[dict] = []
+        found = False
         for item in items:
             name = item.get("name", "")
             if not name.lower().endswith(".xml") or name == primary:
                 continue
             body = self.client.get(f"{self._folder(f)}/{name}", store=False)
             if body is not None and parse.is_infotable(body):
+                found = True
                 rows.extend(parse.parse_infotable(body, f.accession_number))
+            del body
+        if not found:
+            # A document named e.g. index.xml is shadowed by EDGAR's own directory listing at
+            # that URL; the full submission text still carries every document.
+            body = self.client.get(f"{self._folder(f)}/{f.accession_number}.txt", store=False)
+            for xml in parse.submission_xml(body or b""):
+                if parse.is_infotable(xml):
+                    rows.extend(parse.parse_infotable(xml, f.accession_number))
             del body
         _write_json(path, rows)
         return rows
