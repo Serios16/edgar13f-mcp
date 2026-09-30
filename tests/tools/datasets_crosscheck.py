@@ -43,6 +43,8 @@ ZIPS = (
 )
 PERIODS = ("2024-03-31", "2024-06-30", "2024-09-30", "2024-12-31", "2025-03-31", "2025-06-30")
 LAST_AS_OF = "2025-08-27"
+# Earlier data sets, used only to tell whether a CIK had filed any 13F before 2024-03-01.
+HISTORY = ("2023q4", "01jan2024-29feb2024")
 ROW_KEYS = ("cusip", "value", "shares_or_principal_amount", "sh_prn", "put_call")
 csv.field_size_limit(10**8)
 
@@ -50,7 +52,7 @@ csv.field_size_limit(10**8)
 def download(data: Path) -> None:
     data.mkdir(parents=True, exist_ok=True)
     client = SecClient(config.cache_dir(), config.user_agent())  # UA, <=5 req/s, backoff
-    for name in ZIPS:
+    for name in ZIPS + HISTORY:
         path = data / f"{name}_form13f.zip"
         if path.exists():
             continue
@@ -96,6 +98,18 @@ def load_submissions(data: Path) -> dict[str, dict]:
                     s["amendment_type"] = (r.get("AMENDMENTTYPE") or "").strip().upper() or None
                     s["cover_period"] = _date(r.get("REPORTCALENDARORQUARTER", ""))
     return subs
+
+
+def history_first(data: Path) -> dict[str, str]:
+    """CIK -> earliest 13F filing date in the HISTORY data sets."""
+    first: dict[str, str] = {}
+    for name in HISTORY:
+        with zipfile.ZipFile(data / f"{name}_form13f.zip") as zf:
+            for r in _tsv(zf, "SUBMISSION"):
+                cik, d = str(int(r["CIK"])), _date(r["FILING_DATE"])
+                if d and r["SUBMISSIONTYPE"].strip() in rules.ALL_FORMS and d < first.get(cik, "9999"):
+                    first[cik] = d
+    return first
 
 
 def _filing(s: dict) -> rules.Filing:
@@ -205,10 +219,11 @@ def _int(text: str) -> int | None:
         return None
 
 
-def expected(fil: list[rules.Filing], t: dict) -> dict:
-    if not any(f.filing_date <= t["as_of"] for f in fil):
-        # Ruling D1: no 13F on or before as_of -> unknown_cik. The data sets start at
-        # 2024-03-01, so a CIK with only earlier 13Fs shows up here as cause "dataset_coverage".
+def expected(fil: list[rules.Filing], t: dict, earlier: str | None = None) -> dict:
+    if not any(f.filing_date <= t["as_of"] for f in fil) and not (earlier and earlier <= t["as_of"]):
+        # Ruling D1: no 13F on or before as_of -> unknown_cik. `earlier` = first 13F in the
+        # HISTORY data sets (from 2023-10-01); a CIK whose 13Fs all predate that shows up as
+        # cause "dataset_coverage".
         return {"status": "declined", "reason": "unknown_cik"}
     res = rules.resolve(fil, t["period"], t["as_of"])
     if isinstance(res, str):
@@ -262,7 +277,8 @@ def run(args) -> None:
         triples = restatement_strata(fil, args.n, args.seed)
     else:
         triples = sample(fil, args.n, args.seed)
-    exp = [expected(fil[t["cik"]], t) for t in triples]
+    first = history_first(args.data) if all((args.data / f"{h}_form13f.zip").exists() for h in HISTORY) else {}
+    exp = [expected(fil[t["cik"]], t, first.get(t["cik"])) for t in triples]
     need = {a for e in exp for a in e.get("source_accessions", [])}
     rows, redacted = load_rows(args.data, subs, need)
     args.cache.mkdir(parents=True, exist_ok=True)
@@ -279,7 +295,7 @@ def run(args) -> None:
     k = sum(r["agree"] for r in results)
     report = {
         "sample": {"n": len(results), "seed": args.seed, "periods": PERIODS, "last_as_of": LAST_AS_OF,
-                   "data_sets": [f"{z}_form13f.zip" for z in ZIPS], "strata": args.strata,
+                   "data_sets": [f"{z}_form13f.zip" for z in ZIPS + HISTORY], "strata": args.strata,
                    "design": " ".join((restatement_strata if args.strata == "restatement" else sample)
                                       .__doc__.split())},
         "by_stratum": {s: {"agree": sum(r["agree"] for r in results if r.get("stratum") == s),
