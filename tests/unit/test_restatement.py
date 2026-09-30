@@ -8,11 +8,14 @@
    NEW HOLDINGS, restatement with lowercase CUSIPs, notice restatement.
 3. Restatements whose rows the blocklist removes (ruling D2), from synthetic XML parsed in
    memory; no blocked row is stored anywhere.
+4. Recorded managers with real §4 edge cases, against citations derived from the SEC Form 13F
+   Data Sets metadata (`tests/fixtures/section4_expected.json`).
 """
 
 from __future__ import annotations
 
 import itertools
+import json
 from pathlib import Path
 
 import pytest
@@ -278,3 +281,16 @@ def test_planted_failure_disabled_blocklist_is_detected_in_restatement(monkeypat
     from edgar13f import blocklist
     monkeypatch.setattr(blocklist, "is_blocked", lambda *a: False)
     assert len(survivors(_bh("2025-03-03")["holdings"])) == 3  # the check can fail
+
+
+# ---------------------------------------------------------------- 4. real §4 edge cases
+
+REAL = json.loads((Path(__file__).resolve().parents[1] / "fixtures" / "section4_expected.json").read_text())
+
+
+@pytest.mark.parametrize("cik,period,as_of,expected", REAL["cases"], ids=lambda v: v if isinstance(v, str) else None)
+def test_recorded_section4_cases_match_data_set_expectation(fixture_source, cik, period, as_of, expected):
+    """Recorded managers with same-day amendments, restatements after NEW HOLDINGS, lowercase
+    CUSIPs; expected citations derived from the SEC Form 13F Data Sets metadata."""
+    out = tools.call(fixture_source, "get_holdings_as_of", {"cik": cik, "period": period, "as_of": as_of})
+    assert (out.get("reason") or out["source_accessions"]) == expected

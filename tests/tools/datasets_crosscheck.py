@@ -202,6 +202,10 @@ def _int(text: str) -> int | None:
 
 
 def expected(fil: list[rules.Filing], t: dict) -> dict:
+    if not any(f.filing_date <= t["as_of"] for f in fil):
+        # Ruling D1: no 13F on or before as_of -> unknown_cik. The data sets start at
+        # 2024-03-01, so a CIK with only earlier 13Fs shows up here as cause "dataset_coverage".
+        return {"status": "declined", "reason": "unknown_cik"}
     res = rules.resolve(fil, t["period"], t["as_of"])
     if isinstance(res, str):
         return {"status": "declined", "reason": res}
@@ -216,6 +220,8 @@ def _multiset(rows: list[dict]) -> Counter:
 
 def compare(got: dict, exp: dict, rows: dict, redacted: Counter) -> tuple[bool, str | None, dict]:
     info: dict = {}
+    if exp.get("reason") == "unknown_cik" and got.get("reason") in ("not_yet_filed", "notice_only"):
+        return False, "dataset_coverage", {"got": got["reason"], "expected": "unknown_cik"}
     if got["status"] != exp["status"] or got.get("reason") != exp.get("reason"):
         return False, "status_or_reason", {"got": got.get("reason", "ok"), "expected": exp.get("reason", "ok")}
     if exp["status"] == "declined":

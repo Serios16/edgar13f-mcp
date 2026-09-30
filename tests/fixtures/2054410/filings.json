@@ -1,0 +1,126 @@
+{
+"cik": "2054410",
+"filings": [
+{
+"accession_number": "0001636587-26-000067",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "2054410",
+"filing_date": "2026-08-14",
+"filing_manager_name": "ACORN CAPITAL ADVISORS, LLC",
+"form_type": "13F-HR",
+"period_of_report": "2026-06-30",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001636587-26-000029",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "2054410",
+"filing_date": "2026-05-15",
+"filing_manager_name": "ACORN CAPITAL ADVISORS, LLC",
+"form_type": "13F-HR",
+"period_of_report": "2026-03-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001636587-26-000005",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "2054410",
+"filing_date": "2026-02-17",
+"filing_manager_name": "ACORN CAPITAL ADVISORS, LLC",
+"form_type": "13F-HR",
+"period_of_report": "2025-12-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001636587-25-000060",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "2054410",
+"filing_date": "2025-11-17",
+"filing_manager_name": "ACORN CAPITAL ADVISORS, LLC",
+"form_type": "13F-HR",
+"period_of_report": "2025-09-30",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001636587-25-000043",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "2054410",
+"filing_date": "2025-08-14",
+"filing_manager_name": "ACORN CAPITAL ADVISORS, LLC",
+"form_type": "13F-HR",
+"period_of_report": "2025-06-30",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001636587-25-000021",
+"amendment_no": 1,
+"amendment_type": "RESTATEMENT",
+"cik": "2054410",
+"filing_date": "2025-05-19",
+"filing_manager_name": "ACORN CAPITAL ADVISORS, LLC",
+"form_type": "13F-HR/A",
+"period_of_report": "2025-03-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001636587-25-000020",
+"amendment_no": 2,
+"amendment_type": "RESTATEMENT",
+"cik": "2054410",
+"filing_date": "2025-05-19",
+"filing_manager_name": "ACORN CAPITAL ADVISORS, LLC",
+"form_type": "13F-HR/A",
+"period_of_report": "2024-12-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001636587-25-000017",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "2054410",
+"filing_date": "2025-05-15",
+"filing_manager_name": "ACORN CAPITAL ADVISORS, LLC",
+"form_type": "13F-HR",
+"period_of_report": "2025-03-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001636587-25-000016",
+"amendment_no": 1,
+"amendment_type": "NEW HOLDINGS",
+"cik": "2054410",
+"filing_date": "2025-05-07",
+"filing_manager_name": "ACORN CAPITAL ADVISORS, LLC",
+"form_type": "13F-HR/A",
+"period_of_report": "2024-12-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001636587-25-000009",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "2054410",
+"filing_date": "2025-02-14",
+"filing_manager_name": "ACORN CAPITAL ADVISORS, LLC",
+"form_type": "13F-HR",
+"period_of_report": "2024-12-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+}
+],
+"recorded_as_of": "2026-09-27"
+}
