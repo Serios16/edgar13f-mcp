@@ -10,6 +10,8 @@
 #   a malformed call with an invalid_argument decline (isError=false) and a live call
 #   with isError=true (REGISTER A8). Needs root and the package index only.
 # live: needs network (PyPI + sec.gov) and SEC_USER_AGENT; the live call must succeed.
+# PROBE_PLANT=1 (control): the client also writes /tmp/edgar13f-planted as the probe
+#   user; the probe must then report "write outside the cache dir" and exit 1.
 set -euo pipefail
 MODE=live
 [ "${1:-}" = "--offline" ] && MODE=offline
@@ -26,7 +28,7 @@ git -c safe.directory='*' -C "$SRC" archive HEAD | tar -x -C "$CO"
 chown -R root:root "$CO" && chmod -R a+rX,go-w "$CO"
 PUID=$(id -u "$PROBE_USER")
 PHOME=/home/$PROBE_USER
-rm -rf "$PHOME/explicit-cache" "$PHOME/.cache" "/tmp/edgar13f-$PUID"  # start cold
+rm -rf "$PHOME/explicit-cache" "$PHOME/.cache" "/tmp/edgar13f-$PUID" /tmp/edgar13f-planted  # start cold
 FAIL=0
 fail() { echo "PROBE FAIL: $*"; FAIL=1; }
 
@@ -36,12 +38,14 @@ run() {  # $1 = label, $2 = expected cache dir, rest = env assignments
   echo "== $label (expect cache dir $expect)"
   local out
   out=$(sudo -u "$PROBE_USER" env -i PATH=/usr/bin:/bin SEC_USER_AGENT="$UA" \
-    HTTPS_PROXY="${HTTPS_PROXY:-}" SSL_CERT_FILE="${SSL_CERT_FILE:-}" "$@" \
+    HTTPS_PROXY="${HTTPS_PROXY:-}" SSL_CERT_FILE="${SSL_CERT_FILE:-}" PROBE_PLANT="${PROBE_PLANT:-}" "$@" \
     "$CO/.venv/bin/python" - <<'PY'
 import json, os, sys, anyio
 from mcp.client.session import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 async def main():
+    if os.environ.get("PROBE_PLANT"):
+        open("/tmp/edgar13f-planted", "w").close()
     p = StdioServerParameters(command=sys.executable, args=["-m", "edgar13f.server"], env=dict(os.environ))
     async with stdio_client(p) as (r, w):
         async with ClientSession(r, w) as s:
@@ -79,6 +83,7 @@ PY
   [ -d "$expect" ] && [ $(( 0$(stat -c %a "$expect") & 022 )) -eq 0 ] || fail "$label: $expect group/world-writable"
 }
 run "EDGAR13F_CACHE_DIR set" "$PHOME/explicit-cache" HOME="$PHOME" EDGAR13F_CACHE_DIR="$PHOME/explicit-cache"
+if [ -n "${PROBE_PLANT:-}" ]; then [ "$FAIL" = 0 ] && echo "PROBE OK ($MODE)" || { echo "PROBE FAILED ($MODE)"; exit 1; }; fi
 run "unset, HOME writable" "$PHOME/.cache/edgar13f" HOME="$PHOME"
 run "unset, HOME unwritable" "/tmp/edgar13f-$PUID" HOME=/nonexistent
 echo "== write attempt into checkout"
