@@ -1,0 +1,30 @@
+{
+"cik": "1993399",
+"filings": [
+{
+"accession_number": "0001993399-25-000002",
+"amendment_no": 1,
+"amendment_type": "RESTATEMENT",
+"cik": "1993399",
+"filing_date": "2025-02-18",
+"filing_manager_name": "Meketa Capital, LLC",
+"form_type": "13F-HR/A",
+"period_of_report": "2024-12-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001993399-25-000001",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "1993399",
+"filing_date": "2025-02-14",
+"filing_manager_name": "Meketa Capital, LLC",
+"form_type": "13F-HR",
+"period_of_report": "2024-12-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+}
+],
+"recorded_as_of": "2026-09-27"
+}

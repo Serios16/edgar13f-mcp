@@ -1,0 +1,102 @@
+{
+"cik": "1813845",
+"filings": [
+{
+"accession_number": "0001813845-26-000004",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "1813845",
+"filing_date": "2026-08-14",
+"filing_manager_name": "BIOS Capital Management, LP",
+"form_type": "13F-HR",
+"period_of_report": "2026-06-30",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001813845-26-000003",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "1813845",
+"filing_date": "2026-05-13",
+"filing_manager_name": "BIOS Capital Management, LP",
+"form_type": "13F-HR",
+"period_of_report": "2026-03-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001813845-26-000002",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "1813845",
+"filing_date": "2026-02-13",
+"filing_manager_name": "BIOS Capital Management, LP",
+"form_type": "13F-HR",
+"period_of_report": "2025-12-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001104659-25-110482",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "1813845",
+"filing_date": "2025-11-12",
+"filing_manager_name": "BIOS Capital Management, LP",
+"form_type": "13F-HR",
+"period_of_report": "2025-09-30",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001104659-25-076893",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "1813845",
+"filing_date": "2025-08-12",
+"filing_manager_name": "BIOS Capital Management, LP",
+"form_type": "13F-HR",
+"period_of_report": "2025-06-30",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001104659-25-048606",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "1813845",
+"filing_date": "2025-05-14",
+"filing_manager_name": "BIOS Capital Management, LP",
+"form_type": "13F-HR",
+"period_of_report": "2025-03-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001104659-25-014450",
+"amendment_no": 1,
+"amendment_type": "RESTATEMENT",
+"cik": "1813845",
+"filing_date": "2025-02-18",
+"filing_manager_name": "BIOS Capital Management, LP",
+"form_type": "13F-HR/A",
+"period_of_report": "2024-12-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+},
+{
+"accession_number": "0001104659-25-010964",
+"amendment_no": null,
+"amendment_type": null,
+"cik": "1813845",
+"filing_date": "2025-02-10",
+"filing_manager_name": "BIOS Capital Management, LP",
+"form_type": "13F-HR",
+"period_of_report": "2024-12-31",
+"primary_doc": "xslForm13F_X02/primary_doc.xml",
+"report_type": "13F HOLDINGS REPORT"
+}
+],
+"recorded_as_of": "2026-09-27"
+}

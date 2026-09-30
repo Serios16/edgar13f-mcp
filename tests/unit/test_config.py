@@ -1,0 +1,38 @@
+import os
+
+import pytest
+
+from edgar13f import config
+
+
+def test_env_cache_dir_used(tmp_path, monkeypatch):
+    monkeypatch.setenv("EDGAR13F_CACHE_DIR", str(tmp_path / "c"))
+    assert config.cache_dir() == tmp_path / "c"
+
+
+@pytest.mark.skipif(os.geteuid() == 0, reason="root can write anywhere")
+def test_unwritable_env_falls_back(tmp_path, monkeypatch):
+    ro = tmp_path / "ro"
+    ro.mkdir(mode=0o500)
+    monkeypatch.setenv("EDGAR13F_CACHE_DIR", str(ro / "c"))
+    monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path / "xdg"))
+    assert config.cache_dir() == tmp_path / "xdg" / "edgar13f"
+
+
+def test_default_then_temp_fallback(tmp_path, monkeypatch):
+    monkeypatch.delenv("EDGAR13F_CACHE_DIR", raising=False)
+    monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path / "xdg"))
+    assert config.cache_dir() == tmp_path / "xdg" / "edgar13f"
+    real = config._usable
+    monkeypatch.setattr(config, "_usable", lambda p: "xdg" not in str(p) and real(p))
+    monkeypatch.setattr(config.tempfile, "gettempdir", lambda: str(tmp_path / "tmp"))
+    (tmp_path / "tmp").mkdir()
+    got = config.cache_dir()
+    assert str(got).startswith(str(tmp_path / "tmp"))
+
+
+def test_user_agent(monkeypatch):
+    monkeypatch.setenv("SEC_USER_AGENT", "  a b@c.d ")
+    assert config.user_agent() == "a b@c.d"
+    monkeypatch.setenv("SEC_USER_AGENT", "")
+    assert config.user_agent() is None
