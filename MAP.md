@@ -42,7 +42,7 @@ EdgarSource.rows:    sec_client.get(index.json) → info-table XML (store=False,
 | §2 `position_type` ≠ `"long"` → `unsupported_request` | `validate.validate` | `tests/unit/test_validate.py` |
 | §2 cusip filter case-insensitive, citations unchanged | `tools._holdings`, `validate.validate` | `tests/unit/test_tools.py` |
 | §3 visibility `filing_date <= as_of` | `rules.visible` (sole point), used by `rules.visible_filings`, `rules.resolve`, `EdgarSource.filings` | `tests/unit/test_rules.py`, `tests/invariants/test_leakage.py` (603 cases + mutant + no-op) |
-| §4 ordering, base, supplements, UNSPECIFIED as RESTATEMENT | `rules.resolve`, `rules.kind` | `tests/unit/test_rules.py`, `tests/unit/test_tools.py`, leakage oracle in `tests/invariants/leakage.py` |
+| §4 ordering, base, supplements, UNSPECIFIED as RESTATEMENT | `rules.resolve`, `rules.kind` | `tests/unit/test_restatement.py` (exhaustive oracle + 5 planted mutants; synthetic §4 manager; 82 recorded cases vs data-set expectations; blocklist-in-restatement), `tests/unit/test_rules.py`, `tests/unit/test_tools.py`, leakage oracle in `tests/invariants/leakage.py` |
 | §4 `notice_only` / `not_yet_filed` | `rules.resolve` | `tests/unit/test_rules.py`, `tests/unit/test_tools.py` |
 | §5.1 JSON first text block, `structuredContent` identical, `isError=false` on declines | `server.result_for` | `tests/unit/test_server_stdio.py` |
 | §5.1 disclaimer on every response | `tools._ok`, `tools._decline` | `tests/unit/test_validate.py`, `tests/unit/test_tools.py`, `tests/unit/test_server_stdio.py` |
@@ -50,15 +50,23 @@ EdgarSource.rows:    sec_client.get(index.json) → info-table XML (store=False,
 | §5.3 rows as filed, not merged, no rescaling | `parse._row`, `tools._holdings` | `tests/unit/test_tools.py` |
 | §5.4 consolidation, change types, earlier-period decline first | `tools._consolidate`, `tools.diff_holdings` | `tests/unit/test_tools.py` |
 | §6 `unknown_cik` (never filed a 13F on or before `as_of`, or no such CIK) | `tools._visible_13f` | `tests/unit/test_tools.py` |
-| Hard rule 2 blocklist | `parse._row` → `blocklist.is_blocked` | `tests/invariants/test_blocklist.py` |
+| Hard rule 2 blocklist | `parse._row` → `blocklist.is_blocked` | `tests/invariants/test_blocklist.py`, `tests/unit/test_restatement.py` (restatements, D2) |
 | Hard rule 3 fair access | `sec_client.SecClient` | `tests/unit/test_sec_client.py` |
-| Cache dir / unprivileged user | `config.cache_dir` | `tests/unit/test_config.py`, `tests/tools/unprivileged_probe.sh` |
+| Cache dir / unprivileged user | `config.cache_dir` | `tests/unit/test_config.py`, `tests/tools/unprivileged_probe.sh --offline` (CI step, with planted stray write) |
 
 ## Tests and checks
 
 * `tests/unit/` – unit and end-to-end (stdio) tests, all offline (`tests/conftest.py` refuses sockets).
+  `test_restatement.py` is the §4 hardening suite.
 * `tests/invariants/leakage.py`, `test_leakage.py` – leakage suite and controls.
-* `tests/invariants/test_blocklist.py` – synthetic-row blocklist proofs and fixture scan.
+* `tests/invariants/test_blocklist.py` – synthetic-row blocklist proofs and fixture scan (recorded and synthetic).
 * `tests/checks/` – size budget, MAP check, claims check; `tests/invariants/test_checks.py` plants a failure for each.
-* `tests/tools/` – not run in CI: fixture recorder, license audit, request stats, unprivileged-user probe.
-* `tests/fixtures/<cik>/` – recorded, redacted EDGAR data (17 managers).
+* `.github/workflows/invariants.yml` – the `invariants` job: the suites above, the checks, and the
+  offline unprivileged-user probe with its planted-failure control.
+* `tests/tools/` – not run in CI: fixture recorder, synthetic fixture writer, license audit, request
+  stats, period consistency, unprivileged-user probe (live mode), SEC Form 13F Data Sets cross-check
+  (`datasets_crosscheck.py`; data sets stay outside the repo), cold-cache latency (`cold_latency.py`).
+* `tests/fixtures/<cik>/` – recorded, redacted EDGAR data (24 managers).
+* `tests/fixtures/synthetic/9900000001/` – invented manager, one §4 case per period (benign rows only).
+* `tests/fixtures/section4_expected.json` – expected §4 citations for recorded edge cases, derived from
+  the SEC Form 13F Data Sets metadata.

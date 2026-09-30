@@ -82,20 +82,48 @@ def _build(kinds, days, numbering, acc_order, notice):
     return out
 
 
-def test_resolve_matches_section4_oracle_exhaustively():
+def _disagreements(stop_at: int | None = None) -> tuple[int, int]:
     as_ofs = ("2025-02-13", *DAYS, "2025-08-27")
-    n = 0
+    n = bad = 0
     for kinds, days, numbering, acc_order in _sequences():
         for notice in (False, True):
             filings = _build(kinds, days, numbering, acc_order, notice)
             for as_of in as_ofs:
                 got = rules.resolve(filings, P, as_of)
-                want = oracle(filings, P, as_of)
                 if isinstance(got, tuple):
                     got = (got[0].accession_number, [s.accession_number for s in got[1]])
-                assert got == want, (kinds, days, numbering, acc_order, notice, as_of)
                 n += 1
-    assert n > 100_000
+                bad += got != oracle(filings, P, as_of)
+                if stop_at and bad >= stop_at:
+                    return n, bad
+    return n, bad
+
+
+def test_resolve_matches_section4_oracle_exhaustively():
+    n, bad = _disagreements()
+    assert bad == 0 and n > 100_000
+
+
+_real_resolve = rules.resolve
+MUTANTS = {
+    "order_by_accession_only": ("_order", lambda f: (f.filing_date, f.accession_number)),
+    "amendment_no_nulls_last": ("_order", lambda f: (f.filing_date, f.amendment_no is None, f.amendment_no or 0,
+                                                      f.accession_number)),
+    "unspecified_as_new_holdings": ("kind", lambda f: "ORIGINAL" if f.form_type == "13F-HR"
+                                    else f.amendment_type or "NEW HOLDINGS"),
+    "visibility_ignored": ("visible", lambda f, as_of: True),
+    "supplements_before_base": ("resolve", lambda fs, p, a: (lambda r: r if isinstance(r, str) else (r[0], [
+        f for f in sorted(fs, key=lambda f: (f.filing_date, f.accession_number))
+        if f.filing_date <= a and f.period_of_report == p and f.amendment_type == "NEW HOLDINGS"]))(
+        _real_resolve(fs, p, a))),
+}
+
+
+@pytest.mark.parametrize("name", MUTANTS)
+def test_planted_rule_mutants_are_detected(monkeypatch, name):
+    attr, fn = MUTANTS[name]
+    monkeypatch.setattr(rules, attr, fn)
+    assert _disagreements(stop_at=1)[1] == 1  # the oracle comparison can fail
 
 
 def test_oracle_control_detects_accession_only_ordering():

@@ -136,29 +136,33 @@ def sample(fil: dict[str, list[rules.Filing]], n: int, seed: int) -> list[dict]:
 
 
 def restatement_strata(fil: dict[str, list[rules.Filing]], n_random: int, seed: int) -> list[dict]:
-    """§4 hardening strata: for each (cik, period) with an amendment in scope, as_of = the day
-    before and the day of each amendment's filing date. Every (cik, period) with a same-day
-    amendment pair, a RESTATEMENT after NEW HOLDINGS, or >= 3 amendments is included; plus
-    `n_random` random (cik, period) pairs with a RESTATEMENT. §4 exclusions applied."""
+    """§4 hardening strata: for chosen (cik, period), as_of = the day before and the day of
+    each amendment's filing date. Chosen: every (cik, period) with a RESTATEMENT after NEW
+    HOLDINGS or two amendments on one day; plus `n_random` random pairs with an amendment on
+    the ORIGINAL's filing day, and `n_random` random pairs with any RESTATEMENT. §4
+    exclusions applied."""
     groups: dict[tuple, list[rules.Filing]] = defaultdict(list)
     for fs in fil.values():
         for f in fs:
             if f.form_type in rules.HOLDINGS_FORMS and f.period_of_report in PERIODS:
                 groups[(f.cik, f.period_of_report)].append(f)
-    special, restated = [], []
+    must, same_day, restated = [], [], []
     for key, v in sorted(groups.items()):
         if not eligible(fil[key[0]], key[1]):
             continue
         v.sort(key=rules._order)
         kinds = [rules.kind(f) for f in v]
-        dates = Counter(f.filing_date for f in v)
+        amend_days = Counter(f.filing_date for f in v if f.form_type == "13F-HR/A")
         after_nh = "NEW HOLDINGS" in kinds and "RESTATEMENT" in kinds[kinds.index("NEW HOLDINGS"):]
-        if after_nh or max(dates.values()) > 1 or len(v) >= 4:
-            special.append((key, v))
+        if after_nh or max(amend_days.values(), default=0) > 1:
+            must.append((key, v))
+        elif amend_days and v[0].filing_date in amend_days:
+            same_day.append((key, v))
         elif "RESTATEMENT" in kinds:
             restated.append((key, v))
     rng = random.Random(seed)
-    chosen = special + rng.sample(restated, min(n_random, len(restated)))
+    chosen = must + rng.sample(same_day, min(n_random, len(same_day))) \
+        + rng.sample(restated, min(n_random, len(restated)))
     out = []
     for (cik, period), v in chosen:
         for d in sorted({f.filing_date for f in v[1:]}):
