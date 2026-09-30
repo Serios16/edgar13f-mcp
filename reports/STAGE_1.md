@@ -55,14 +55,19 @@ except where a line says otherwise.
 - REASONED: these requests are not in the logs above: 2 manual `curl` reachability probes made before the client existed, and 9 requests from a first unprivileged-user probe whose cache was wiped. The total is therefore 930.
 - MEASURED: the server runs as a separate unprivileged user that can only read its checkout. It writes only to $EDGAR13F_CACHE_DIR, then ~/.cache/edgar13f, then /tmp/edgar13f-UID, and a write into the checkout is denied. From `bash tests/tools/unprivileged_probe.sh`; see `reports/artifacts/unprivileged_run.txt`.
 - MEASURED: the cover-page period equals EDGAR `reportDate` for 598 of 598 fixture XML filings. From `python tests/tools/period_consistency.py` (cached documents); see `reports/artifacts/period_consistency.json`.
-- MEASURED: every runtime dependency is MIT, Apache-2.0 or BSD-3-Clause except `typing-extensions` (PSF-2.0). From `python tests/tools/license_audit.py`; see `reports/artifacts/license_audit.txt`.
+- MEASURED: every runtime dependency is MIT, Apache-2.0 or BSD-3-Clause except `typing-extensions` (PSF-2.0, accepted under ruling D3). From `python tests/tools/license_audit.py`; see `reports/artifacts/license_audit.txt`.
 
 ## REGISTER entries
 
-- DECISION NEEDED
-  - D1: contract §5.2 empty array vs §6 `unknown_cik`. The default is `unknown_cik`.
-  - D2: the blocklist conflicts with exact-match grading of the redacted CUSIPs. The default is to redact.
-  - D3: `typing-extensions` is PSF-2.0 and comes in through the MCP SDK and pydantic. The default is to keep it.
+- RULINGS (orchestrator, 2026-09-29, recorded in `REGISTER.md` before any grader result existed;
+  this section was updated in stage 2 to reflect them). No DECISION NEEDED item remains open.
+  - D1: contract §5.2 empty array vs §6 `unknown_cik`. Ruled: keep `unknown_cik` (§3 and §6 are
+    normative; the §5.2 empty-array case cannot be reached under them).
+  - D2: the blocklist conflicts with exact-match grading of the redacted CUSIPs. Ruled: redact.
+    Points lost on such items (including over-matched rows) are an accepted cost; the blocklist
+    is never narrowed to recover points.
+  - D3: `typing-extensions` is PSF-2.0 and comes in through the MCP SDK and pydantic. Ruled: keep
+    it; hard rule 4 now reads "permissive OSI licences (MIT/Apache/BSD/PSF/ISC)".
 - ASSUMED: A1–A12 (period source, is_amendment, a base made only of NEW HOLDINGS, pre-XML filings,
   manager name, strict types, cache freshness, isError on SEC outage, rate-limit scope, fixture hook,
   CLAUDE.md scope, case-insensitive diff keys). Each has the trigger "stage gate".
@@ -71,8 +76,16 @@ except where a line says otherwise.
 
 ## Deviations
 
-- None were made silently. D3 is a conflict between hard rules 4 and 5, and it is flagged rather than resolved.
-- ASSUMED: redacting blocklisted rows will cost points on any grader item about those CUSIPs (D2).
+- None were made silently. D3 was a conflict between hard rules 4 and 5; it was flagged and then
+  resolved by ruling D3 (rule 4 amended), so it is no longer a deviation.
+- REASONED: redacting blocklisted rows costs points on any grader item about those CUSIPs; ruling D2
+  accepts that cost.
+
+## Errata (added in stage 2)
+
+- "What was built" says the fixtures include a zero-row restatement. They do not: no committed
+  rows file is empty, and the SEC Form 13F Data Sets contain no zero-row RESTATEMENT in the
+  evaluation window. Stage 2 adds a synthetic zero-row restatement fixture; see `reports/STAGE_2.md`.
 
 ## Proposed stage 2
 

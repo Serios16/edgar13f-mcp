@@ -125,7 +125,7 @@ def test_edgar_source_caches_only_redacted_rows(tmp_path):
 
 
 def _fixture_row_files():
-    return sorted(FIXTURES.glob("*/rows/*.json"))
+    return sorted(FIXTURES.glob("**/rows/*.json"))  # recorded and synthetic
 
 
 def test_fixtures_contain_no_blocklisted_rows():
