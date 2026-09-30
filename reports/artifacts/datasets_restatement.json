@@ -17,7 +17,9 @@
    "01sep2024-30nov2024_form13f.zip",
    "01dec2024-28feb2025_form13f.zip",
    "01mar2025-31may2025_form13f.zip",
-   "01jun2025-31aug2025_form13f.zip"
+   "01jun2025-31aug2025_form13f.zip",
+   "2023q4_form13f.zip",
+   "01jan2024-29feb2024_form13f.zip"
   ],
   "strata": "restatement",
   "design": "\u00a74 hardening strata: for chosen (cik, period), as_of = the day before and the day of each amendment's filing date. Chosen: every (cik, period) with a RESTATEMENT after NEW HOLDINGS or two amendments on one day; plus `n_random` random pairs with an amendment on the ORIGINAL's filing day, and `n_random` random pairs with any RESTATEMENT. \u00a74 exclusions applied."
@@ -28,74 +30,27 @@
    "n": 104
   },
   "before": {
-   "agree": 100,
+   "agree": 104,
    "n": 104
   }
  },
  "agreement": {
-  "agree": 204,
+  "agree": 208,
   "n": 208,
-  "rate": 0.9808,
+  "rate": 1.0,
   "wilson_95": [
-   0.9516,
-   0.9925
+   0.9819,
+   1.0
   ]
  },
  "by_expected_status": {
   "ok": 188,
   "declined": 20
  },
- "disagreements_by_cause": {
-  "dataset_coverage": 4
- },
+ "disagreements_by_cause": {},
  "triples_with_redacted_rows": 146,
- "elapsed_s": 1842.4,
- "disagreements": [
-  {
-   "cik": "1970572",
-   "period": "2024-03-31",
-   "as_of": "2024-05-13",
-   "stratum": "before",
-   "agree": false,
-   "cause": "dataset_coverage",
-   "expected_status": "declined",
-   "got": "not_yet_filed",
-   "expected": "unknown_cik"
-  },
-  {
-   "cik": "1992316",
-   "period": "2024-03-31",
-   "as_of": "2024-04-23",
-   "stratum": "before",
-   "agree": false,
-   "cause": "dataset_coverage",
-   "expected_status": "declined",
-   "got": "not_yet_filed",
-   "expected": "unknown_cik"
-  },
-  {
-   "cik": "1840740",
-   "period": "2024-03-31",
-   "as_of": "2024-04-10",
-   "stratum": "before",
-   "agree": false,
-   "cause": "dataset_coverage",
-   "expected_status": "declined",
-   "got": "not_yet_filed",
-   "expected": "unknown_cik"
-  },
-  {
-   "cik": "1080523",
-   "period": "2024-03-31",
-   "as_of": "2024-04-09",
-   "stratum": "before",
-   "agree": false,
-   "cause": "dataset_coverage",
-   "expected_status": "declined",
-   "got": "not_yet_filed",
-   "expected": "unknown_cik"
-  }
- ],
+ "elapsed_s": 3.7,
+ "disagreements": [],
  "results": [
   {
    "cik": "1009012",
@@ -1528,11 +1483,9 @@
    "period": "2024-03-31",
    "as_of": "2024-05-13",
    "stratum": "before",
-   "agree": false,
-   "cause": "dataset_coverage",
-   "expected_status": "declined",
-   "got": "not_yet_filed",
-   "expected": "unknown_cik"
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
   },
   {
    "cik": "1970572",
@@ -1630,11 +1583,9 @@
    "period": "2024-03-31",
    "as_of": "2024-04-23",
    "stratum": "before",
-   "agree": false,
-   "cause": "dataset_coverage",
-   "expected_status": "declined",
-   "got": "not_yet_filed",
-   "expected": "unknown_cik"
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
   },
   {
    "cik": "1992316",
@@ -1652,11 +1603,9 @@
    "period": "2024-03-31",
    "as_of": "2024-04-10",
    "stratum": "before",
-   "agree": false,
-   "cause": "dataset_coverage",
-   "expected_status": "declined",
-   "got": "not_yet_filed",
-   "expected": "unknown_cik"
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
   },
   {
    "cik": "1840740",
@@ -1774,11 +1723,9 @@
    "period": "2024-03-31",
    "as_of": "2024-04-09",
    "stratum": "before",
-   "agree": false,
-   "cause": "dataset_coverage",
-   "expected_status": "declined",
-   "got": "not_yet_filed",
-   "expected": "unknown_cik"
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
   },
   {
    "cik": "1080523",
