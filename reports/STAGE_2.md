@@ -94,7 +94,26 @@ filing (REGISTER P6).
 
 ## e. Cold-cache latency (measure only)
 
-LATENCY_PLACEHOLDER
+Tool: `tests/tools/cold_latency.py` (A15). It picks the 5 largest 13F-HRs for 2025-03-31 by rows
+after redaction in the 01mar2025–31may2025 data set. It calls `get_holdings_as_of(cik, 2025-03-31,
+as_of=2025-08-27)` in-process on an empty cache dir, then calls it again warm. No tuning was done.
+
+| CIK | Visible 13F filings | Cold s | Cold requests | Warm s | Rows returned |
+|---|---|---|---|---|---|
+| 2012383 | 4 | 7.1 | 9 | 0.15 | 50,158 |
+| 319933 | 6 | 6.7 | 9 | 0.11 | 49,594 |
+| 1761755 | 28 | 14.0 | 31 | 0.11 | 44,548 |
+| 895421 | 154 | 51.4 | 118 | 0.23 | 44,192 |
+| 1776033 | 20 | 9.0 | 23 | 0.01 | 1,599 (a RESTATEMENT filed the next day supersedes the 34,332-row original; this is §4-correct and matches the data sets) |
+
+- MEASURED: 5 of 5 answers are ok and every request returned HTTP 200. From `python -m tests.tools.cold_latency --zip <01mar2025-31may2025 zip> --n 5`; see `reports/artifacts/cold_latency.json`.
+- REASONED: cold time is driven by the request count, one cover page per visible 13F of any period (REGISTER P5), at about 0.4 s per request with the lock held through each response (P4). The information-table size adds only a few seconds even at 50k rows. Warm calls take 0.01–0.23 s.
+
+## SEC access (stage 2)
+
+- MEASURED: 11,645 requests across all stage-2 logs (11,211 www.sec.gov, 434 data.sec.gov): 11,554 × HTTP 200 and 91 × HTTP 429. The 429s came in two bursts (14:16 and 14:21 UTC) while the P2 runs were sending about 2.5 req/s, and 91 of 91 later succeeded after backoff. At most 5 requests were logged in any 1-second window. From `python tests/tools/request_stats.py <logs>`; see `reports/artifacts/sec_requests_stage2.json`.
+- REASONED: the log records completion times, while the limiter spaces request starts ≥ 0.25 s apart, so up to 5 completions can fall in one second; that is within the ≤ 5 req/s rule. The cause of the 429s at 2.5 req/s is unclear; a shared egress IP behind the session proxy is plausible but not verified.
+- The data-set zips (8 files) were fetched through the same client, with the same User-Agent, limiter and backoff. Nothing used a mirror or proxy other than the environment's egress proxy.
 
 ## f, g. README, MAP, REGISTER
 
