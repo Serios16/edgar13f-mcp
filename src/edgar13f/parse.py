@@ -7,6 +7,7 @@ field of it; blocked rows are discarded immediately and never leave this module.
 from __future__ import annotations
 
 import io
+import re
 import xml.etree.ElementTree as ET
 from decimal import Decimal, InvalidOperation
 
@@ -98,6 +99,14 @@ def _row(node: ET.Element, accession: str) -> dict | None:
         "voting_authority_shared": _int(_text(node, "votingAuthority", "Shared")),
         "voting_authority_none": _int(_text(node, "votingAuthority", "None")),
     }
+
+
+_XML_BLOCK = re.compile(rb"<XML>\s*(.*?)\s*</XML>", re.DOTALL | re.IGNORECASE)
+
+
+def submission_xml(text: bytes) -> list[bytes]:
+    """The <XML> documents embedded in an EDGAR full submission text file (.txt)."""
+    return _XML_BLOCK.findall(text)
 
 
 def is_infotable(xml: bytes) -> bool:

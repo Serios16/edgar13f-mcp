@@ -1,0 +1,2493 @@
+{
+ "sample": {
+  "n": 250,
+  "seed": 20260930,
+  "periods": [
+   "2024-03-31",
+   "2024-06-30",
+   "2024-09-30",
+   "2024-12-31",
+   "2025-03-31",
+   "2025-06-30"
+  ],
+  "last_as_of": "2025-08-27",
+  "data_sets": [
+   "01mar2024-31may2024_form13f.zip",
+   "01jun2024-31aug2024_form13f.zip",
+   "01sep2024-30nov2024_form13f.zip",
+   "01dec2024-28feb2025_form13f.zip",
+   "01mar2025-31may2025_form13f.zip",
+   "01jun2025-31aug2025_form13f.zip",
+   "2023q4_form13f.zip",
+   "01jan2024-29feb2024_form13f.zip"
+  ],
+  "strata": "random",
+  "design": "(cik, period) uniform over eligible pairs; as_of uniform in [first filing - 14 d, 2025-08-27]."
+ },
+ "by_stratum": {},
+ "agreement": {
+  "agree": 250,
+  "n": 250,
+  "rate": 1.0,
+  "wilson_95": [
+   0.9849,
+   1.0
+  ]
+ },
+ "by_expected_status": {
+  "ok": 223,
+  "declined": 27
+ },
+ "disagreements_by_cause": {},
+ "triples_with_redacted_rows": 167,
+ "elapsed_s": 2.2,
+ "disagreements": [],
+ "results": [
+  {
+   "cik": "1876496",
+   "period": "2024-03-31",
+   "as_of": "2024-10-12",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 85,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1818014",
+   "period": "2024-06-30",
+   "as_of": "2024-12-27",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 117,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "2039659",
+   "period": "2025-03-31",
+   "as_of": "2025-08-19",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 32,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1619124",
+   "period": "2025-03-31",
+   "as_of": "2025-07-18",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "720672",
+   "period": "2024-12-31",
+   "as_of": "2025-06-24",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 9013,
+   "redacted_rows_in_dataset": 197
+  },
+  {
+   "cik": "1729428",
+   "period": "2024-03-31",
+   "as_of": "2024-06-14",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 182,
+   "redacted_rows_in_dataset": 5
+  },
+  {
+   "cik": "2049201",
+   "period": "2025-03-31",
+   "as_of": "2025-07-01",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 383,
+   "redacted_rows_in_dataset": 7
+  },
+  {
+   "cik": "1910984",
+   "period": "2024-03-31",
+   "as_of": "2025-05-25",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 96,
+   "redacted_rows_in_dataset": 14
+  },
+  {
+   "cik": "2052970",
+   "period": "2025-06-30",
+   "as_of": "2025-08-16",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 87,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1835549",
+   "period": "2024-12-31",
+   "as_of": "2025-06-09",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 5,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1066816",
+   "period": "2024-12-31",
+   "as_of": "2025-04-21",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 545,
+   "redacted_rows_in_dataset": 28
+  },
+  {
+   "cik": "1164833",
+   "period": "2024-09-30",
+   "as_of": "2025-03-19",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 480,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "1983670",
+   "period": "2024-06-30",
+   "as_of": "2024-09-24",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 77,
+   "redacted_rows_in_dataset": 10
+  },
+  {
+   "cik": "937567",
+   "period": "2024-03-31",
+   "as_of": "2024-08-21",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 478,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1696260",
+   "period": "2024-12-31",
+   "as_of": "2025-02-18",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 465,
+   "redacted_rows_in_dataset": 23
+  },
+  {
+   "cik": "1884799",
+   "period": "2024-12-31",
+   "as_of": "2025-07-10",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 163,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "2005660",
+   "period": "2024-12-31",
+   "as_of": "2025-08-12",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 300,
+   "redacted_rows_in_dataset": 15
+  },
+  {
+   "cik": "1843275",
+   "period": "2025-06-30",
+   "as_of": "2025-08-24",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 82,
+   "redacted_rows_in_dataset": 7
+  },
+  {
+   "cik": "1080576",
+   "period": "2024-06-30",
+   "as_of": "2024-10-23",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 462,
+   "redacted_rows_in_dataset": 27
+  },
+  {
+   "cik": "1121914",
+   "period": "2024-09-30",
+   "as_of": "2025-03-20",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 306,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1910173",
+   "period": "2025-06-30",
+   "as_of": "2025-08-12",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1336885",
+   "period": "2025-03-31",
+   "as_of": "2025-06-20",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 7,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1560123",
+   "period": "2025-03-31",
+   "as_of": "2025-05-25",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 4,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "2020781",
+   "period": "2024-03-31",
+   "as_of": "2024-10-04",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 35,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1952781",
+   "period": "2024-12-31",
+   "as_of": "2025-01-08",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1767513",
+   "period": "2024-12-31",
+   "as_of": "2025-04-23",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 341,
+   "redacted_rows_in_dataset": 16
+  },
+  {
+   "cik": "1316617",
+   "period": "2024-03-31",
+   "as_of": "2025-07-18",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 170,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1799877",
+   "period": "2024-03-31",
+   "as_of": "2024-11-11",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 165,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "719245",
+   "period": "2025-06-30",
+   "as_of": "2025-07-31",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1738726",
+   "period": "2025-06-30",
+   "as_of": "2025-08-08",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1277158",
+   "period": "2025-06-30",
+   "as_of": "2025-08-09",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1815025",
+   "period": "2024-06-30",
+   "as_of": "2025-07-17",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 125,
+   "redacted_rows_in_dataset": 7
+  },
+  {
+   "cik": "1140436",
+   "period": "2024-03-31",
+   "as_of": "2025-08-08",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 27,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1643833",
+   "period": "2024-12-31",
+   "as_of": "2025-05-15",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 130,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "1021117",
+   "period": "2024-09-30",
+   "as_of": "2025-02-07",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 138,
+   "redacted_rows_in_dataset": 7
+  },
+  {
+   "cik": "1911468",
+   "period": "2025-03-31",
+   "as_of": "2025-05-26",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 141,
+   "redacted_rows_in_dataset": 10
+  },
+  {
+   "cik": "1697162",
+   "period": "2025-03-31",
+   "as_of": "2025-05-17",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 29,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1847700",
+   "period": "2025-06-30",
+   "as_of": "2025-08-14",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 111,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1915687",
+   "period": "2024-12-31",
+   "as_of": "2025-08-02",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 88,
+   "redacted_rows_in_dataset": 4
+  },
+  {
+   "cik": "1964203",
+   "period": "2025-06-30",
+   "as_of": "2025-08-16",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 328,
+   "redacted_rows_in_dataset": 9
+  },
+  {
+   "cik": "1388279",
+   "period": "2024-09-30",
+   "as_of": "2025-06-23",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 49,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1596452",
+   "period": "2025-06-30",
+   "as_of": "2025-08-27",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 45,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "2024333",
+   "period": "2024-09-30",
+   "as_of": "2025-01-25",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 106,
+   "redacted_rows_in_dataset": 7
+  },
+  {
+   "cik": "1950962",
+   "period": "2025-03-31",
+   "as_of": "2025-05-16",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 79,
+   "redacted_rows_in_dataset": 5
+  },
+  {
+   "cik": "1540235",
+   "period": "2024-12-31",
+   "as_of": "2025-04-22",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 5716,
+   "redacted_rows_in_dataset": 100
+  },
+  {
+   "cik": "1687241",
+   "period": "2025-03-31",
+   "as_of": "2025-08-10",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 36,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1767564",
+   "period": "2024-06-30",
+   "as_of": "2024-09-27",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1966116",
+   "period": "2024-09-30",
+   "as_of": "2024-12-21",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 59,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1832274",
+   "period": "2024-06-30",
+   "as_of": "2025-05-25",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 403,
+   "redacted_rows_in_dataset": 18
+  },
+  {
+   "cik": "1944437",
+   "period": "2024-09-30",
+   "as_of": "2025-05-28",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 924,
+   "redacted_rows_in_dataset": 33
+  },
+  {
+   "cik": "1696438",
+   "period": "2024-06-30",
+   "as_of": "2025-05-01",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 62,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1512173",
+   "period": "2024-12-31",
+   "as_of": "2025-05-20",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 306,
+   "redacted_rows_in_dataset": 6
+  },
+  {
+   "cik": "1566601",
+   "period": "2024-03-31",
+   "as_of": "2024-04-29",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1103804",
+   "period": "2025-03-31",
+   "as_of": "2025-08-06",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 91,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1805250",
+   "period": "2025-06-30",
+   "as_of": "2025-07-26",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 173,
+   "redacted_rows_in_dataset": 11
+  },
+  {
+   "cik": "1123320",
+   "period": "2024-03-31",
+   "as_of": "2024-09-20",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 54,
+   "redacted_rows_in_dataset": 6
+  },
+  {
+   "cik": "1908893",
+   "period": "2024-09-30",
+   "as_of": "2025-08-27",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 32,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "2060504",
+   "period": "2025-06-30",
+   "as_of": "2025-08-12",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 53,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "2053653",
+   "period": "2025-03-31",
+   "as_of": "2025-08-18",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 15,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1992810",
+   "period": "2024-03-31",
+   "as_of": "2025-03-29",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 144,
+   "redacted_rows_in_dataset": 6
+  },
+  {
+   "cik": "1952532",
+   "period": "2025-06-30",
+   "as_of": "2025-08-10",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 55,
+   "redacted_rows_in_dataset": 6
+  },
+  {
+   "cik": "1677560",
+   "period": "2025-03-31",
+   "as_of": "2025-05-16",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 143,
+   "redacted_rows_in_dataset": 9
+  },
+  {
+   "cik": "1679688",
+   "period": "2024-03-31",
+   "as_of": "2025-03-06",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 135,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "917579",
+   "period": "2024-03-31",
+   "as_of": "2025-05-04",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 37,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1039765",
+   "period": "2024-06-30",
+   "as_of": "2025-08-20",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 528,
+   "redacted_rows_in_dataset": 6
+  },
+  {
+   "cik": "1946901",
+   "period": "2024-09-30",
+   "as_of": "2025-08-14",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1745885",
+   "period": "2025-06-30",
+   "as_of": "2025-07-27",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1580212",
+   "period": "2024-12-31",
+   "as_of": "2025-06-19",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 134,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1765690",
+   "period": "2025-06-30",
+   "as_of": "2025-08-04",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "2056069",
+   "period": "2025-03-31",
+   "as_of": "2025-07-20",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 14,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1675688",
+   "period": "2025-03-31",
+   "as_of": "2025-08-11",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 27,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1764403",
+   "period": "2024-09-30",
+   "as_of": "2025-02-11",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 20,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1569884",
+   "period": "2025-03-31",
+   "as_of": "2025-05-18",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 100,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1279886",
+   "period": "2024-06-30",
+   "as_of": "2024-09-02",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 11,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1486713",
+   "period": "2024-06-30",
+   "as_of": "2024-09-16",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 18,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1782124",
+   "period": "2025-06-30",
+   "as_of": "2025-08-13",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "2023380",
+   "period": "2024-06-30",
+   "as_of": "2024-08-28",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 168,
+   "redacted_rows_in_dataset": 6
+  },
+  {
+   "cik": "1661140",
+   "period": "2025-06-30",
+   "as_of": "2025-08-16",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 107,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "1844821",
+   "period": "2024-03-31",
+   "as_of": "2024-11-20",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 19,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1872501",
+   "period": "2024-06-30",
+   "as_of": "2025-01-30",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 28,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1693946",
+   "period": "2025-06-30",
+   "as_of": "2025-08-13",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1736079",
+   "period": "2024-09-30",
+   "as_of": "2025-01-05",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 64,
+   "redacted_rows_in_dataset": 4
+  },
+  {
+   "cik": "1902567",
+   "period": "2024-09-30",
+   "as_of": "2024-11-28",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 16,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "2043591",
+   "period": "2025-03-31",
+   "as_of": "2025-06-05",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 158,
+   "redacted_rows_in_dataset": 4
+  },
+  {
+   "cik": "1140753",
+   "period": "2024-09-30",
+   "as_of": "2024-12-29",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 22,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1965401",
+   "period": "2025-03-31",
+   "as_of": "2025-05-06",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1718251",
+   "period": "2025-03-31",
+   "as_of": "2025-06-15",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 167,
+   "redacted_rows_in_dataset": 8
+  },
+  {
+   "cik": "1670104",
+   "period": "2025-03-31",
+   "as_of": "2025-08-04",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 10,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "866780",
+   "period": "2025-03-31",
+   "as_of": "2025-06-18",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 684,
+   "redacted_rows_in_dataset": 28
+  },
+  {
+   "cik": "1353316",
+   "period": "2024-06-30",
+   "as_of": "2025-02-23",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 16,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1121908",
+   "period": "2024-03-31",
+   "as_of": "2024-09-13",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 65,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "1704268",
+   "period": "2024-03-31",
+   "as_of": "2025-08-03",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 19,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1541743",
+   "period": "2024-09-30",
+   "as_of": "2025-08-06",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 453,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1692590",
+   "period": "2025-03-31",
+   "as_of": "2025-06-14",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 6,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1803425",
+   "period": "2024-03-31",
+   "as_of": "2024-08-21",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1005,
+   "redacted_rows_in_dataset": 29
+  },
+  {
+   "cik": "1827734",
+   "period": "2024-03-31",
+   "as_of": "2025-06-23",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 19,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "898358",
+   "period": "2024-09-30",
+   "as_of": "2025-02-25",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 466,
+   "redacted_rows_in_dataset": 6
+  },
+  {
+   "cik": "1105344",
+   "period": "2024-12-31",
+   "as_of": "2025-07-01",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 64,
+   "redacted_rows_in_dataset": 5
+  },
+  {
+   "cik": "1134283",
+   "period": "2025-06-30",
+   "as_of": "2025-08-22",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 172,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1694284",
+   "period": "2024-06-30",
+   "as_of": "2025-03-24",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 80,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1310929",
+   "period": "2024-12-31",
+   "as_of": "2025-05-21",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 115,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "2012816",
+   "period": "2024-12-31",
+   "as_of": "2025-03-23",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 248,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1749744",
+   "period": "2024-09-30",
+   "as_of": "2025-07-08",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 3409,
+   "redacted_rows_in_dataset": 94
+  },
+  {
+   "cik": "1783599",
+   "period": "2025-03-31",
+   "as_of": "2025-04-15",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1040273",
+   "period": "2025-06-30",
+   "as_of": "2025-08-10",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1135730",
+   "period": "2024-03-31",
+   "as_of": "2024-07-27",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 225,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1605429",
+   "period": "2024-03-31",
+   "as_of": "2024-11-20",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 15,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1919142",
+   "period": "2024-06-30",
+   "as_of": "2024-10-30",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 205,
+   "redacted_rows_in_dataset": 13
+  },
+  {
+   "cik": "1125243",
+   "period": "2024-06-30",
+   "as_of": "2024-11-10",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 93,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "314169",
+   "period": "2024-06-30",
+   "as_of": "2024-11-11",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 54,
+   "redacted_rows_in_dataset": 4
+  },
+  {
+   "cik": "1333709",
+   "period": "2024-06-30",
+   "as_of": "2025-04-02",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 68,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1802838",
+   "period": "2024-03-31",
+   "as_of": "2025-01-03",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 12,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1802279",
+   "period": "2024-03-31",
+   "as_of": "2025-07-29",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 104,
+   "redacted_rows_in_dataset": 4
+  },
+  {
+   "cik": "1800502",
+   "period": "2024-09-30",
+   "as_of": "2025-04-15",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 284,
+   "redacted_rows_in_dataset": 14
+  },
+  {
+   "cik": "1998018",
+   "period": "2024-12-31",
+   "as_of": "2025-02-25",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 64,
+   "redacted_rows_in_dataset": 5
+  },
+  {
+   "cik": "1824263",
+   "period": "2024-12-31",
+   "as_of": "2025-06-30",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 23,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1482416",
+   "period": "2024-06-30",
+   "as_of": "2025-06-12",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 48,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1716997",
+   "period": "2024-12-31",
+   "as_of": "2025-08-24",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 2,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1757282",
+   "period": "2025-06-30",
+   "as_of": "2025-08-13",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 89,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "314969",
+   "period": "2024-06-30",
+   "as_of": "2025-08-18",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1621,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "936753",
+   "period": "2024-03-31",
+   "as_of": "2025-08-21",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 209,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "2001526",
+   "period": "2024-12-31",
+   "as_of": "2025-03-16",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 105,
+   "redacted_rows_in_dataset": 6
+  },
+  {
+   "cik": "928196",
+   "period": "2024-09-30",
+   "as_of": "2024-11-05",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1168889",
+   "period": "2024-09-30",
+   "as_of": "2025-08-08",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 72,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "2010351",
+   "period": "2025-03-31",
+   "as_of": "2025-07-31",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "2033232",
+   "period": "2025-03-31",
+   "as_of": "2025-08-11",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 64,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "1790688",
+   "period": "2024-06-30",
+   "as_of": "2025-05-03",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 78,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "937729",
+   "period": "2025-06-30",
+   "as_of": "2025-08-01",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1792283",
+   "period": "2024-03-31",
+   "as_of": "2024-07-02",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 532,
+   "redacted_rows_in_dataset": 21
+  },
+  {
+   "cik": "1767121",
+   "period": "2024-06-30",
+   "as_of": "2025-05-12",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 42,
+   "redacted_rows_in_dataset": 5
+  },
+  {
+   "cik": "1071061",
+   "period": "2025-03-31",
+   "as_of": "2025-05-23",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1955,
+   "redacted_rows_in_dataset": 11
+  },
+  {
+   "cik": "2057278",
+   "period": "2024-12-31",
+   "as_of": "2025-04-14",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 73,
+   "redacted_rows_in_dataset": 8
+  },
+  {
+   "cik": "1426449",
+   "period": "2025-03-31",
+   "as_of": "2025-05-23",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 7,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1666736",
+   "period": "2024-09-30",
+   "as_of": "2025-08-23",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 273,
+   "redacted_rows_in_dataset": 13
+  },
+  {
+   "cik": "1276460",
+   "period": "2025-03-31",
+   "as_of": "2025-04-25",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 91,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1891201",
+   "period": "2024-09-30",
+   "as_of": "2025-07-08",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 236,
+   "redacted_rows_in_dataset": 7
+  },
+  {
+   "cik": "2011052",
+   "period": "2024-03-31",
+   "as_of": "2025-03-04",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 28,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "1957259",
+   "period": "2024-09-30",
+   "as_of": "2025-04-05",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 91,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1546587",
+   "period": "2025-06-30",
+   "as_of": "2025-08-11",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 150,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1787596",
+   "period": "2024-12-31",
+   "as_of": "2025-08-14",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 76,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "1964631",
+   "period": "2025-06-30",
+   "as_of": "2025-08-15",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 8,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "2025905",
+   "period": "2025-06-30",
+   "as_of": "2025-07-08",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1942401",
+   "period": "2024-03-31",
+   "as_of": "2024-07-27",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1581655",
+   "period": "2025-06-30",
+   "as_of": "2025-08-25",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 158,
+   "redacted_rows_in_dataset": 4
+  },
+  {
+   "cik": "1807559",
+   "period": "2025-03-31",
+   "as_of": "2025-06-11",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 47,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "1418421",
+   "period": "2025-06-30",
+   "as_of": "2025-08-27",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 236,
+   "redacted_rows_in_dataset": 10
+  },
+  {
+   "cik": "1313559",
+   "period": "2024-09-30",
+   "as_of": "2025-03-06",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 193,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1447578",
+   "period": "2024-06-30",
+   "as_of": "2024-10-05",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 443,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1671657",
+   "period": "2024-12-31",
+   "as_of": "2025-04-19",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 11,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1927724",
+   "period": "2024-12-31",
+   "as_of": "2025-02-01",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "2056637",
+   "period": "2024-12-31",
+   "as_of": "2025-07-27",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 55,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "2008409",
+   "period": "2024-09-30",
+   "as_of": "2024-12-26",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 53,
+   "redacted_rows_in_dataset": 7
+  },
+  {
+   "cik": "1368465",
+   "period": "2024-06-30",
+   "as_of": "2025-07-16",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1919,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1830008",
+   "period": "2024-06-30",
+   "as_of": "2025-05-02",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 91,
+   "redacted_rows_in_dataset": 6
+  },
+  {
+   "cik": "1906683",
+   "period": "2024-03-31",
+   "as_of": "2025-08-03",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 69,
+   "redacted_rows_in_dataset": 5
+  },
+  {
+   "cik": "2056292",
+   "period": "2024-12-31",
+   "as_of": "2025-05-17",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 77,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1550509",
+   "period": "2024-09-30",
+   "as_of": "2025-07-04",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 38,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1783139",
+   "period": "2025-06-30",
+   "as_of": "2025-08-09",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1986812",
+   "period": "2024-09-30",
+   "as_of": "2025-08-05",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 10,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1259261",
+   "period": "2024-06-30",
+   "as_of": "2025-05-15",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 109,
+   "redacted_rows_in_dataset": 5
+  },
+  {
+   "cik": "1803679",
+   "period": "2024-09-30",
+   "as_of": "2025-08-04",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "928047",
+   "period": "2024-03-31",
+   "as_of": "2024-06-02",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 2922,
+   "redacted_rows_in_dataset": 22
+  },
+  {
+   "cik": "1329948",
+   "period": "2024-03-31",
+   "as_of": "2025-04-15",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 2617,
+   "redacted_rows_in_dataset": 95
+  },
+  {
+   "cik": "1907802",
+   "period": "2024-09-30",
+   "as_of": "2025-06-14",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 36,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1098151",
+   "period": "2025-06-30",
+   "as_of": "2025-08-24",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 160,
+   "redacted_rows_in_dataset": 9
+  },
+  {
+   "cik": "1537191",
+   "period": "2024-12-31",
+   "as_of": "2025-02-11",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1592,
+   "redacted_rows_in_dataset": 4
+  },
+  {
+   "cik": "1757043",
+   "period": "2024-09-30",
+   "as_of": "2025-01-29",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 232,
+   "redacted_rows_in_dataset": 11
+  },
+  {
+   "cik": "1174850",
+   "period": "2024-12-31",
+   "as_of": "2025-06-23",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 181,
+   "redacted_rows_in_dataset": 19
+  },
+  {
+   "cik": "1352187",
+   "period": "2024-06-30",
+   "as_of": "2025-03-14",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 371,
+   "redacted_rows_in_dataset": 13
+  },
+  {
+   "cik": "1767602",
+   "period": "2025-06-30",
+   "as_of": "2025-08-06",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1987321",
+   "period": "2024-12-31",
+   "as_of": "2025-07-07",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 93,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1278960",
+   "period": "2024-03-31",
+   "as_of": "2024-06-26",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 79,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1913482",
+   "period": "2024-12-31",
+   "as_of": "2025-06-30",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 38,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1632866",
+   "period": "2024-12-31",
+   "as_of": "2025-05-29",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 122,
+   "redacted_rows_in_dataset": 8
+  },
+  {
+   "cik": "1048703",
+   "period": "2025-06-30",
+   "as_of": "2025-08-27",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 196,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1602020",
+   "period": "2024-06-30",
+   "as_of": "2024-08-18",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 395,
+   "redacted_rows_in_dataset": 9
+  },
+  {
+   "cik": "1971029",
+   "period": "2024-03-31",
+   "as_of": "2025-07-13",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 148,
+   "redacted_rows_in_dataset": 5
+  },
+  {
+   "cik": "1106191",
+   "period": "2024-09-30",
+   "as_of": "2025-03-10",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 72,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1948622",
+   "period": "2025-06-30",
+   "as_of": "2025-08-27",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 43,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1750852",
+   "period": "2025-03-31",
+   "as_of": "2025-04-26",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 100,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1547926",
+   "period": "2025-03-31",
+   "as_of": "2025-04-25",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 677,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1845066",
+   "period": "2024-03-31",
+   "as_of": "2025-02-09",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 171,
+   "redacted_rows_in_dataset": 5
+  },
+  {
+   "cik": "1834600",
+   "period": "2025-06-30",
+   "as_of": "2025-08-01",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 4,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1965760",
+   "period": "2024-03-31",
+   "as_of": "2024-11-30",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 114,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1752579",
+   "period": "2024-12-31",
+   "as_of": "2025-07-21",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 123,
+   "redacted_rows_in_dataset": 6
+  },
+  {
+   "cik": "1633389",
+   "period": "2024-03-31",
+   "as_of": "2025-02-10",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 553,
+   "redacted_rows_in_dataset": 26
+  },
+  {
+   "cik": "1823172",
+   "period": "2025-06-30",
+   "as_of": "2025-07-25",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1843492",
+   "period": "2024-09-30",
+   "as_of": "2024-12-12",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 88,
+   "redacted_rows_in_dataset": 4
+  },
+  {
+   "cik": "2025098",
+   "period": "2024-06-30",
+   "as_of": "2025-05-05",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 3,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "2045579",
+   "period": "2024-09-30",
+   "as_of": "2025-01-31",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 29,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "2003287",
+   "period": "2024-03-31",
+   "as_of": "2025-03-24",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 653,
+   "redacted_rows_in_dataset": 16
+  },
+  {
+   "cik": "2028202",
+   "period": "2024-09-30",
+   "as_of": "2024-10-26",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 61,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1991463",
+   "period": "2025-03-31",
+   "as_of": "2025-08-26",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 202,
+   "redacted_rows_in_dataset": 15
+  },
+  {
+   "cik": "2002603",
+   "period": "2025-06-30",
+   "as_of": "2025-08-14",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 220,
+   "redacted_rows_in_dataset": 8
+  },
+  {
+   "cik": "1635007",
+   "period": "2024-12-31",
+   "as_of": "2025-07-13",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 63,
+   "redacted_rows_in_dataset": 8
+  },
+  {
+   "cik": "1569137",
+   "period": "2024-06-30",
+   "as_of": "2025-08-14",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 131,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1427514",
+   "period": "2025-06-30",
+   "as_of": "2025-08-21",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 526,
+   "redacted_rows_in_dataset": 11
+  },
+  {
+   "cik": "1859388",
+   "period": "2024-09-30",
+   "as_of": "2025-05-20",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 10,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "2004520",
+   "period": "2024-12-31",
+   "as_of": "2025-01-22",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "2019084",
+   "period": "2025-03-31",
+   "as_of": "2025-05-10",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 128,
+   "redacted_rows_in_dataset": 8
+  },
+  {
+   "cik": "2021589",
+   "period": "2024-03-31",
+   "as_of": "2025-07-17",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1947670",
+   "period": "2024-03-31",
+   "as_of": "2025-03-01",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 38,
+   "redacted_rows_in_dataset": 4
+  },
+  {
+   "cik": "1940869",
+   "period": "2025-06-30",
+   "as_of": "2025-08-16",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 170,
+   "redacted_rows_in_dataset": 5
+  },
+  {
+   "cik": "1076964",
+   "period": "2025-03-31",
+   "as_of": "2025-07-13",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 69,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "1868872",
+   "period": "2025-03-31",
+   "as_of": "2025-08-25",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 940,
+   "redacted_rows_in_dataset": 33
+  },
+  {
+   "cik": "1840755",
+   "period": "2024-09-30",
+   "as_of": "2025-06-28",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 34,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1953787",
+   "period": "2024-03-31",
+   "as_of": "2024-05-07",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1555170",
+   "period": "2024-09-30",
+   "as_of": "2025-08-07",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 3711,
+   "redacted_rows_in_dataset": 83
+  },
+  {
+   "cik": "1990699",
+   "period": "2025-06-30",
+   "as_of": "2025-08-21",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 542,
+   "redacted_rows_in_dataset": 13
+  },
+  {
+   "cik": "2063243",
+   "period": "2025-06-30",
+   "as_of": "2025-07-25",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1512397",
+   "period": "2024-12-31",
+   "as_of": "2025-02-25",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 8,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "315297",
+   "period": "2025-06-30",
+   "as_of": "2025-08-04",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1445893",
+   "period": "2024-09-30",
+   "as_of": "2025-01-09",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 265,
+   "redacted_rows_in_dataset": 13
+  },
+  {
+   "cik": "2058702",
+   "period": "2024-12-31",
+   "as_of": "2025-07-23",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 3,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1279627",
+   "period": "2024-03-31",
+   "as_of": "2025-01-11",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1180,
+   "redacted_rows_in_dataset": 21
+  },
+  {
+   "cik": "1904549",
+   "period": "2025-03-31",
+   "as_of": "2025-07-17",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 66,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1009207",
+   "period": "2024-12-31",
+   "as_of": "2025-06-08",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 5490,
+   "redacted_rows_in_dataset": 36
+  },
+  {
+   "cik": "1905198",
+   "period": "2024-12-31",
+   "as_of": "2025-08-06",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 113,
+   "redacted_rows_in_dataset": 8
+  },
+  {
+   "cik": "1799425",
+   "period": "2024-06-30",
+   "as_of": "2024-12-17",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 43,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1767715",
+   "period": "2024-09-30",
+   "as_of": "2025-08-01",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 348,
+   "redacted_rows_in_dataset": 13
+  },
+  {
+   "cik": "1536520",
+   "period": "2025-06-30",
+   "as_of": "2025-08-02",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1807878",
+   "period": "2024-06-30",
+   "as_of": "2024-08-17",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 3,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1946237",
+   "period": "2024-06-30",
+   "as_of": "2025-04-10",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 69,
+   "redacted_rows_in_dataset": 6
+  },
+  {
+   "cik": "1856405",
+   "period": "2025-06-30",
+   "as_of": "2025-08-23",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 218,
+   "redacted_rows_in_dataset": 10
+  },
+  {
+   "cik": "1595725",
+   "period": "2024-12-31",
+   "as_of": "2025-02-12",
+   "agree": true,
+   "cause": null,
+   "expected_status": "declined"
+  },
+  {
+   "cik": "1926753",
+   "period": "2024-09-30",
+   "as_of": "2024-10-14",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 26,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1315828",
+   "period": "2025-06-30",
+   "as_of": "2025-08-15",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 20,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "2005353",
+   "period": "2025-03-31",
+   "as_of": "2025-08-24",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 222,
+   "redacted_rows_in_dataset": 17
+  },
+  {
+   "cik": "1819815",
+   "period": "2024-12-31",
+   "as_of": "2025-03-07",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 502,
+   "redacted_rows_in_dataset": 12
+  },
+  {
+   "cik": "1830954",
+   "period": "2024-03-31",
+   "as_of": "2025-01-03",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 160,
+   "redacted_rows_in_dataset": 7
+  },
+  {
+   "cik": "1910503",
+   "period": "2025-03-31",
+   "as_of": "2025-07-29",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 59,
+   "redacted_rows_in_dataset": 5
+  },
+  {
+   "cik": "1843492",
+   "period": "2024-06-30",
+   "as_of": "2024-12-07",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 91,
+   "redacted_rows_in_dataset": 4
+  },
+  {
+   "cik": "1263548",
+   "period": "2025-06-30",
+   "as_of": "2025-08-17",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1728,
+   "redacted_rows_in_dataset": 40
+  },
+  {
+   "cik": "1911520",
+   "period": "2025-03-31",
+   "as_of": "2025-05-30",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 133,
+   "redacted_rows_in_dataset": 4
+  },
+  {
+   "cik": "1775391",
+   "period": "2024-12-31",
+   "as_of": "2025-06-19",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 129,
+   "redacted_rows_in_dataset": 17
+  },
+  {
+   "cik": "809339",
+   "period": "2024-03-31",
+   "as_of": "2024-06-12",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 171,
+   "redacted_rows_in_dataset": 5
+  },
+  {
+   "cik": "1802655",
+   "period": "2024-12-31",
+   "as_of": "2025-04-02",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 157,
+   "redacted_rows_in_dataset": 6
+  },
+  {
+   "cik": "1535602",
+   "period": "2025-03-31",
+   "as_of": "2025-05-16",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 386,
+   "redacted_rows_in_dataset": 8
+  },
+  {
+   "cik": "1625986",
+   "period": "2025-06-30",
+   "as_of": "2025-08-11",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 108,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "2000730",
+   "period": "2025-03-31",
+   "as_of": "2025-06-10",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 29,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "1534261",
+   "period": "2024-06-30",
+   "as_of": "2025-02-17",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 38,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "1259887",
+   "period": "2024-06-30",
+   "as_of": "2025-01-10",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 169,
+   "redacted_rows_in_dataset": 2
+  },
+  {
+   "cik": "1900481",
+   "period": "2025-03-31",
+   "as_of": "2025-07-28",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 146,
+   "redacted_rows_in_dataset": 4
+  },
+  {
+   "cik": "1197853",
+   "period": "2024-09-30",
+   "as_of": "2025-03-22",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 8,
+   "redacted_rows_in_dataset": 0
+  },
+  {
+   "cik": "2014454",
+   "period": "2025-03-31",
+   "as_of": "2025-05-04",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 37,
+   "redacted_rows_in_dataset": 1
+  },
+  {
+   "cik": "1831984",
+   "period": "2024-09-30",
+   "as_of": "2024-11-05",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 245,
+   "redacted_rows_in_dataset": 7
+  },
+  {
+   "cik": "1883897",
+   "period": "2024-12-31",
+   "as_of": "2025-07-15",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1669,
+   "redacted_rows_in_dataset": 3
+  },
+  {
+   "cik": "1994563",
+   "period": "2025-03-31",
+   "as_of": "2025-05-03",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 1373,
+   "redacted_rows_in_dataset": 13
+  },
+  {
+   "cik": "1927724",
+   "period": "2024-06-30",
+   "as_of": "2025-07-04",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 132,
+   "redacted_rows_in_dataset": 10
+  },
+  {
+   "cik": "1538037",
+   "period": "2024-06-30",
+   "as_of": "2025-03-24",
+   "agree": true,
+   "cause": null,
+   "expected_status": "ok",
+   "rows": 15,
+   "redacted_rows_in_dataset": 0
+  }
+ ]
+}

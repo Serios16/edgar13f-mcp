@@ -1,0 +1,19 @@
+{
+ "real": {
+  "cases": 981,
+  "tool_calls": {
+   "list": 981,
+   "holdings": 747,
+   "diff": 675
+  },
+  "violations": 0
+ },
+ "mutant_as_of_filter_disabled": {
+  "cases": 981,
+  "violations": 8663
+ },
+ "noop_wrapper": {
+  "cases": 981,
+  "violations": 0
+ }
+}

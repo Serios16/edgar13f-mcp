@@ -1,0 +1,42 @@
+# python -m ... : sudo env PYTHON=python3.11 bash tests/tools/unprivileged_probe.sh --offline (local container, root)
+== EDGAR13F_CACHE_DIR set (expect cache dir /home/edgar13f-probe/explicit-cache)
+edgar13f: list_13f_filings failed: SecUnavailable('SEC_USER_AGENT is not set; refusing to contact sec.gov')
+malformed: isError False reason invalid_argument
+live: isError True status -
+created by edgar13f-probe since start (files and dirs):
+      1 /home/edgar13f-probe
+      1 /home/edgar13f-probe/explicit-cache
+      1 /home/edgar13f-probe/explicit-cache/http
+== unset, HOME writable (expect cache dir /home/edgar13f-probe/.cache/edgar13f)
+edgar13f: list_13f_filings failed: SecUnavailable('SEC_USER_AGENT is not set; refusing to contact sec.gov')
+malformed: isError False reason invalid_argument
+live: isError True status -
+created by edgar13f-probe since start (files and dirs):
+      1 /home/edgar13f-probe
+      1 /home/edgar13f-probe/.cache
+      1 /home/edgar13f-probe/.cache/edgar13f
+      1 /home/edgar13f-probe/.cache/edgar13f/http
+== unset, HOME unwritable (expect cache dir /tmp/edgar13f-1001)
+edgar13f: cache dir /nonexistent/.cache/edgar13f not writable, trying next
+edgar13f: list_13f_filings failed: SecUnavailable('SEC_USER_AGENT is not set; refusing to contact sec.gov')
+malformed: isError False reason invalid_argument
+live: isError True status -
+created by edgar13f-probe since start (files and dirs):
+      1 /tmp/edgar13f-1001
+      1 /tmp/edgar13f-1001/http
+== write attempt into checkout
+denied as expected
+PROBE OK (offline)
+
+# control: PROBE_PLANT=1 (expected exit 1)
+== EDGAR13F_CACHE_DIR set (expect cache dir /home/edgar13f-probe/explicit-cache)
+edgar13f: list_13f_filings failed: SecUnavailable('SEC_USER_AGENT is not set; refusing to contact sec.gov')
+malformed: isError False reason invalid_argument
+live: isError True status -
+created by edgar13f-probe since start (files and dirs):
+      1 /home/edgar13f-probe
+      1 /home/edgar13f-probe/explicit-cache
+      1 /home/edgar13f-probe/explicit-cache/http
+      1 /tmp/edgar13f-planted
+PROBE FAIL: EDGAR13F_CACHE_DIR set: write outside the cache dir: /tmp/edgar13f-planted
+PROBE FAILED (offline)

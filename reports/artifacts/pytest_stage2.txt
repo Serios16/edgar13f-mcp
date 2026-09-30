@@ -1,0 +1,22 @@
+# python -m pytest -q tests   (branch head, offline)
+230 passed, 1 skipped in 19.26s
+
+# python -m pytest -q tests/unit/test_restatement.py -rA (per test function)
+      1 PASSED tests/unit/test_restatement.py::test_filter_on_blocked_cusip_returns_ok_empty_with_same_citation
+      1 PASSED tests/unit/test_restatement.py::test_fully_redacted_restatement_still_supersedes_original
+      1 PASSED tests/unit/test_restatement.py::test_list_orders_same_day_filings_by_accession
+      1 PASSED tests/unit/test_restatement.py::test_oracle_control_detects_accession_only_ordering
+      1 PASSED tests/unit/test_restatement.py::test_over_matched_row_disappears_at_restatement_accepted_cost_d2
+      1 PASSED tests/unit/test_restatement.py::test_planted_failure_disabled_blocklist_is_detected_in_restatement
+      5 PASSED tests/unit/test_restatement.py::test_planted_rule_mutants_are_detected
+     82 PASSED tests/unit/test_restatement.py::test_recorded_section4_cases_match_data_set_expectation
+      1 PASSED tests/unit/test_restatement.py::test_resolve_matches_section4_oracle_exhaustively
+      1 PASSED tests/unit/test_restatement.py::test_restatement_rows_are_redacted_and_citation_is_the_restatement
+      1 PASSED tests/unit/test_restatement.py::test_restatement_with_lowercase_cusips
+      1 PASSED tests/unit/test_restatement.py::test_same_day_restatement_drops_earlier_same_day_new_holdings
+     18 PASSED tests/unit/test_restatement.py::test_synthetic_section4_citations
+      1 PASSED tests/unit/test_restatement.py::test_zero_row_restatement_is_ok_with_no_holdings_and_filter_keeps_citation
+116 passed in 1.50s
+
+# python -m pytest -q tests/invariants/test_blocklist.py
+38 passed in 0.21s

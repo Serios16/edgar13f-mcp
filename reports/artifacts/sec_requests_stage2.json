@@ -1,0 +1,13 @@
+{
+ "requests": 11645,
+ "max_requests_in_any_1s_window": 5,
+ "by_host": {
+  "www.sec.gov": 11211,
+  "data.sec.gov": 434
+ },
+ "by_status": {
+  "200": 11554,
+  "429": 91
+ },
+ "logs": 8
+}

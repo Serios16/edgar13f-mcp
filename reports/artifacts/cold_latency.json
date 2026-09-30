@@ -1,0 +1,109 @@
+{
+ "period": "2025-03-31",
+ "as_of": "2025-08-27",
+ "selection": "top 5 13F-HR by rows after redaction in 01mar2025-31may2025_form13f.zip",
+ "call": "in-process tools.call(get_holdings_as_of), empty cache dir per filer",
+ "min_interval_s": 0.25,
+ "results": [
+  {
+   "cik": "2012383",
+   "cold_s": 7.11,
+   "cold_requests": 9,
+   "warm_s": 0.15,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 50158,
+   "source_accessions": [
+    "0001576419-25-000869"
+   ],
+   "filings_visible": 4,
+   "cold_requests_by_kind": {
+    "json": 4,
+    "xml": 5
+   },
+   "non_200": 0,
+   "dataset_13f_hr": "0001576419-25-000869",
+   "dataset_rows_after_redaction": 50158
+  },
+  {
+   "cik": "319933",
+   "cold_s": 6.65,
+   "cold_requests": 9,
+   "warm_s": 0.11,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 49594,
+   "source_accessions": [
+    "0000319933-25-000005"
+   ],
+   "filings_visible": 6,
+   "cold_requests_by_kind": {
+    "json": 2,
+    "xml": 7
+   },
+   "non_200": 0,
+   "dataset_13f_hr": "0000319933-25-000005",
+   "dataset_rows_after_redaction": 49594
+  },
+  {
+   "cik": "1761755",
+   "cold_s": 13.97,
+   "cold_requests": 31,
+   "warm_s": 0.11,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 44548,
+   "source_accessions": [
+    "0001580642-25-003053"
+   ],
+   "filings_visible": 28,
+   "cold_requests_by_kind": {
+    "json": 2,
+    "xml": 29
+   },
+   "non_200": 0,
+   "dataset_13f_hr": "0001580642-25-003053",
+   "dataset_rows_after_redaction": 44548
+  },
+  {
+   "cik": "895421",
+   "cold_s": 51.36,
+   "cold_requests": 118,
+   "warm_s": 0.23,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 44192,
+   "source_accessions": [
+    "0000895421-25-000381"
+   ],
+   "filings_visible": 154,
+   "cold_requests_by_kind": {
+    "json": 47,
+    "xml": 71
+   },
+   "non_200": 0,
+   "dataset_13f_hr": "0000895421-25-000381",
+   "dataset_rows_after_redaction": 44192
+  },
+  {
+   "cik": "1776033",
+   "cold_s": 8.99,
+   "cold_requests": 23,
+   "warm_s": 0.01,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 1599,
+   "source_accessions": [
+    "0001776033-25-000005"
+   ],
+   "filings_visible": 20,
+   "cold_requests_by_kind": {
+    "json": 2,
+    "xml": 21
+   },
+   "non_200": 0,
+   "dataset_13f_hr": "0001776033-25-000004",
+   "dataset_rows_after_redaction": 34332
+  }
+ ]
+}

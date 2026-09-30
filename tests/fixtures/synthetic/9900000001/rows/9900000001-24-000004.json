@@ -1,0 +1,5 @@
+[
+{"accession_number": "9900000001-24-000004", "cusip": "90000A101", "figi": null, "investment_discretion": "SOLE", "name_of_issuer": "SYNTH ALPHA INC", "other_manager": null, "put_call": null, "sh_prn": "SH", "shares_or_principal_amount": 111, "title_of_class": "COM", "value": 1110, "voting_authority_none": 0, "voting_authority_shared": 0, "voting_authority_sole": 111},
+{"accession_number": "9900000001-24-000004", "cusip": "90000B102", "figi": null, "investment_discretion": "SOLE", "name_of_issuer": "SYNTH BETA CORP", "other_manager": null, "put_call": null, "sh_prn": "SH", "shares_or_principal_amount": 211, "title_of_class": "COM", "value": 2110, "voting_authority_none": 0, "voting_authority_shared": 0, "voting_authority_sole": 211},
+{"accession_number": "9900000001-24-000004", "cusip": "900000103", "figi": null, "investment_discretion": "SOLE", "name_of_issuer": "SYNTH GAMMA CO", "other_manager": null, "put_call": null, "sh_prn": "SH", "shares_or_principal_amount": 311, "title_of_class": "CL A", "value": 3110, "voting_authority_none": 0, "voting_authority_shared": 0, "voting_authority_sole": 311}
+]

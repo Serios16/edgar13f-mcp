@@ -31,11 +31,18 @@ None open.
 | A10 | `EDGAR13F_FIXTURE_DIR` switches the server to recorded fixtures (used by the offline stdio test). | Test hook; unset in normal use. | stage gate |
 | A11 | CLAUDE.md contains the brief's HARD RULES and CLAIMS AND UNCERTAINTY sections verbatim. | "these rules" read as both rule blocks. | stage gate |
 | A12 | CUSIP comparison in `diff_holdings` consolidation keys is case-insensitive; the CUSIP returned is as filed (period B preferred). | PREREG Amendment 1 (case-insensitive comparison). | stage gate |
+| A13 | P2 cross-check: the expected answer is §4 applied to the data sets' SUBMISSION/COVERPAGE metadata (period = COVERPAGE `REPORTCALENDARORQUARTER`), rows = INFOTABLE after the blocklist, compared as a multiset of (cusip case-insensitive, value, shares, sh_prn, put_call). `unknown_cik` is expected when the data sets hold no 13F by the CIK on or before `as_of`; a server `not_yet_filed` there is cause `dataset_coverage` (the data sets start 2024-03-01). (cik, period) pairs that §4 says are never evaluated (UNSPECIFIED, >1 ORIGINAL) are not sampled. | Test-time only; the server never reads the data sets. | stage gate |
+| A14 | Synthetic fixture manager uses CIK 9900000001 (above every assigned EDGAR CIK) and lives under `tests/fixtures/synthetic/`. Blocklisted rows for restatement tests are built in memory from the synthetic rows in `tests/invariants/test_blocklist.py`, never stored. | Hard rule 2: fixtures must not contain blocked rows. | stage gate |
+| A15 | Cold-cache latency is measured in-process (`tools.call` on `EdgarSource`, empty cache dir), not over stdio; the stdio layer adds a constant. Filers = top 5 13F-HR for 2025-03-31 by rows after redaction. | Measure only (stage 2 scope e). | stage gate |
+| A16 | CI probe runs `--offline`: `SEC_USER_AGENT` unset, so the live call must be `isError: true` (A8) while a malformed call must be an `invalid_argument` decline; the cache dir is still created. The live-mode probe stays a manual tool. | CI stays offline (no sec.gov). | stage gate |
 
 ## PROPOSALS (out of scope; not done)
 
 | ID | Proposal |
 |---|---|
-| P1 | Add the unprivileged-user probe (`tests/tools/unprivileged_probe.sh`) as a CI step (needs `sudo useradd` on the runner). |
-| P2 | Stage 2: cross-check holdings against the SEC Form 13F Data Sets (the source named in §3) for a sample of (cik, period, as_of). |
+| P1 | DONE in stage 2: the probe runs offline in the `invariants` job, with a planted-failure control. |
+| P2 | DONE in stage 2 (test time only): `tests/tools/datasets_crosscheck.py`; results in `reports/STAGE_2.md`. |
 | P3 | Note: the brief names `PREREG_COMMITMENT.md` at the repo root; it is at `contracts/PREREG_COMMITMENT.md` and is treated as read-only there. No change made. |
+| P4 | Throughput: `SecClient._throttled` holds the rate-limit lock until the whole response is read, so measured throughput is ~2.5 req/s, not the permitted 4. Releasing the lock after the response headers would keep the <= 5 req/s start spacing. Not done (stage 2 is measure-only). |
+| P6 | Caches written before the F5 fix (stage 2) may hold `rows/<accession>.json` = `[]` for a filing whose information table is named `index.xml`. The fix does not invalidate old caches; delete `<cache>/rows/` to refresh. A versioned rows dir would do it automatically. Not done: the smallest reversible change was preferred. |
+| P5 | Cold latency: `EdgarSource.filings` fetches the cover page of every visible 13F of every period, so a first call costs one request per historical filing. Fetching covers lazily (only for the requested period, and for `list_13f_filings`) would cut cold latency. Not done (measure-only). |
