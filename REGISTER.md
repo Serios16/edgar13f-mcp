@@ -5,11 +5,15 @@ at the next stage gate review.
 
 ## DECISION NEEDED
 
-| ID | Topic | Issue | Default in code (reversible) | Trigger |
-|---|---|---|---|---|
-| D1 | Contract §5.2 vs §6 | §5.2 says an empty `filings` array is a valid success "when the CIK is a known 13F filer but nothing is visible yet"; §6 says `unknown_cik` when the CIK "has never filed a Form 13F … on or before `as_of`". For a manager whose first 13F is after `as_of` both apply. | Decline `unknown_cik` (the reading that lets nothing filed after `as_of` influence the response, §3). Work on this branch point stopped here; the empty-array path is unreachable. | stage gate |
-| D2 | Blocklist vs contract §5.3/§7 | Hard rule 2 redacts rows for gold / US-energy-sector / S&P 500 funds and UCITS copies before any processing. Contract §7 grades exact values and citation validity per CUSIP, so any grader item about a redacted CUSIP will get no rows (or a diff without that key). Redaction also drops over-matched rows (e.g. equity units named "… ENERGY … UNIT"). | Redact (hard rule wins over contract). No change to `contracts/`. | stage gate |
-| D3 | Dependency licenses (rule 4) | The MCP Python SDK 2.x (required by rule 5) and pydantic depend on `typing-extensions`, licensed PSF-2.0, which is outside MIT/Apache/BSD. Every other runtime dependency is MIT, Apache-2.0 or BSD-3-Clause (`reports/artifacts/license_audit.txt`). | Keep it (no SDK 2.x install is possible without it). | stage gate |
+None open.
+
+## RULINGS (2026-09-29, orchestrator; recorded before any grader result exists)
+
+| ID | Topic | Ruling | Reasoning / standing rule |
+|---|---|---|---|
+| D1 | Contract §5.2 vs §6 (a manager whose first 13F is filed after `as_of`) | Keep `unknown_cik`. | §3 and §6 are normative and agree: nothing filed after `as_of` may influence a response, and a CIK that has not filed a Form 13F on or before `as_of` is `unknown_cik`. The empty-array sentence in §5.2 cannot be reached under them. Test: `tests/unit/test_tools.py::test_first_13f_after_as_of_is_unknown_cik`. |
+| D2 | Blocklist vs contract §5.3/§7 exact-match grading | Redact. | Hard rule 2 outranks exact-match score. Lost points on grader items about redacted CUSIPs (including over-matched rows) are an **accepted cost**. Standing rule for all stages: never narrow the blocklist to recover points. |
+| D3 | `typing-extensions` (PSF-2.0), a transitive dependency of MCP SDK 2.x and pydantic | Keep it. | Rule 4 in CLAUDE.md is amended to "permissive OSI licences (MIT/Apache/BSD/PSF/ISC)". `tests/tools/license_audit.py` accepts that list and its output (`reports/artifacts/license_audit.txt`) shows every runtime dependency as `ok`. |
 
 ## ASSUMED
 

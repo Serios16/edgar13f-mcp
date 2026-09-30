@@ -6,7 +6,7 @@ import importlib.metadata as md
 
 from packaging.requirements import Requirement
 
-ALLOWED = ("MIT", "APACHE", "BSD")
+ALLOWED = ("MIT", "APACHE", "BSD", "PSF", "ISC")  # CLAUDE.md rule 4 (ruling D3, 2026-09-29)
 
 
 def closure(name: str, seen: dict) -> None:

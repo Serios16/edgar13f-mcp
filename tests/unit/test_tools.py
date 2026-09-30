@@ -1,5 +1,6 @@
 """Tool behaviour against recorded fixtures (offline)."""
 
+import datetime as dt
 import json
 
 from edgar13f import DISCLAIMER, tools
@@ -113,3 +114,18 @@ def test_diff_consolidates_and_classifies(fixture_source):
                 as_of="2025-08-27", cusip=[one["cusip"]])
     assert [c["cusip"] for c in filt["changes"]] == [one["cusip"]]
     assert filt["accession_a"] == out["accession_a"] and filt["source_accessions_b"] == out["source_accessions_b"]
+
+
+def test_first_13f_after_as_of_is_unknown_cik(fixture_source):
+    """Ruling D1: a manager whose first 13F is filed after as_of is unknown_cik, for every tool."""
+    first = min(f.filing_date for f in fixture_source.filings("2037077", "9999-12-31"))
+    as_of = (dt.date.fromisoformat(first) - dt.timedelta(days=1)).isoformat()
+    calls = [
+        ("list_13f_filings", {}),
+        ("get_holdings_as_of", {"period": "2024-12-31"}),
+        ("diff_holdings", {"period_a": "2024-09-30", "period_b": "2024-12-31"}),
+    ]
+    for tool, extra in calls:
+        out = call(fixture_source, tool, cik="2037077", as_of=as_of, **extra)
+        assert out["status"] == "declined" and out["reason"] == "unknown_cik", tool
+    assert call(fixture_source, "list_13f_filings", cik="2037077", as_of=first)["status"] == "ok"

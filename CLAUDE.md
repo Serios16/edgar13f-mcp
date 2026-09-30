@@ -15,7 +15,7 @@ HARD RULES (breaking any = stop and report)
    exponential backoff on 403/429 and on HTML error pages returned in
    place of data (treat as retryable); on-disk cache. If sec.gov is
    unreachable, stop and report; no mirrors or proxies.
-4. Dependencies MIT/Apache/BSD only. Do not depend on edgartools (it is
+4. Dependencies: permissive OSI licences (MIT/Apache/BSD/PSF/ISC) only. Do not depend on edgartools (it is
    the baseline). Do not copy AGPL code (e.g. sec-edgar-mcp).
 5. MCP: official Python SDK 2.x, stdio only, no HTTP. Python 3.11.
 6. No filer-specific logic: no hard-coded CIKs, accession numbers,

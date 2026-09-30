@@ -21,6 +21,6 @@ rpds-py                      2026.6.3     MIT                  ok
 sse-starlette                3.5.0        BSD-3-Clause         ok
 starlette                    1.7.0        BSD-3-Clause         ok
 truststore                   0.10.4       MIT                  ok
-typing-extensions            4.16.0       PSF-2.0              NOT-ALLOWED
+typing-extensions            4.16.0       PSF-2.0              ok
 typing-inspection            0.4.4        MIT                  ok
 uvicorn                      0.54.0       BSD-3-Clause         ok
