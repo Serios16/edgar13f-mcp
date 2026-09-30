@@ -12,8 +12,10 @@ MEASURED: `python tests/checks/size_budget.py .` passes; see `reports/artifacts/
 - `reports/STAGE_1.md` now records D1 (keep `unknown_cik`), D2 (redact; lost points are an
   accepted cost) and D3 (keep `typing-extensions`, PSF). None is open.
 - Erratum: stage 1 said the fixtures held a zero-row restatement. They did not; the erratum is
-  in `reports/STAGE_1.md`. MEASURED: no stage-1 rows file is empty, and the data sets contain
-  no zero-row RESTATEMENT in the window (survey with `tests/tools/datasets_crosscheck.py` loaders).
+  in `reports/STAGE_1.md`. The synthetic manager (b) now covers that case.
+- MEASURED: no rows file among the stage-1 fixtures is empty; each file was checked; the fixtures are in `tests/fixtures/`.
+- ASSUMED (scratch survey, no committed artifact): the data sets contain no RESTATEMENT with zero
+  information-table rows among the evaluated periods.
 
 ## b. Restatement hardening (contract §4)
 
@@ -27,15 +29,15 @@ New suite `tests/unit/test_restatement.py`:
 | Blocklist in restatements (D2) | Synthetic XML parsed in memory: rows redacted, the citation is still the restatement, a fully redacted restatement still supersedes the original, a filter on a blocked CUSIP gives `ok` with no rows, and an over-matched row disappears at the restatement; plus a planted failure | 5 tests |
 | Recorded edge cases | 7 managers recorded from EDGAR (redacted at parse): same-day ORR/ORN, ONRN, ONRR, ONR, a lowercase-CUSIP restatement. Expected citations are derived from the SEC Form 13F Data Sets metadata (`tests/fixtures/section4_expected.json`) | 82 cases |
 
-- MEASURED: 116 of 116 pass; full suite 228 passed, 1 skipped (root-only skip). From `python -m pytest -q tests`; see `reports/artifacts/pytest_stage2.txt`.
+- MEASURED: 116 of 116 pass; full suite 230 passed, 1 skipped (root-only skip). From `python -m pytest -q tests`; see `reports/artifacts/pytest_stage2.txt`.
 - MEASURED: the leakage suite now covers 981 cases with 0 violations; the mutant finds 8,663 and the no-op 0. From `python -m tests.tools.leakage_summary`; see `reports/artifacts/leakage_summary_stage2.json`.
-- MEASURED: the offline run of the planted mutants is in CI; the step list is in `.github/workflows/invariants.yml`.
+- The rule mutants and the oracle run in CI in the "Unit tests" step of `.github/workflows/invariants.yml`.
 
 Findings and their cause:
 
 | # | Finding | Cause |
 |---|---|---|
-| F1 | A restatement whose rows are all removed by the blocklist gives `ok` with no rows and cites the restatement, not the original. This follows §4, and a grader item about those CUSIPs would miss. | blocklist (D2, accepted cost) |
+| F1 | A restatement whose rows are all removed by the blocklist gives `ok` with no rows and cites the restatement, not the original. This follows §4. REASONED: a grader item about those CUSIPs would miss. | blocklist (D2, accepted cost) |
 | F2 | A row that passes the blocklist in the original can be removed in the restatement when its title changes (e.g. `COM` to `COM UNIT` for an energy issuer). The CUSIP then looks "removed" at the restatement. | blocklist (D2, accepted cost; over-dropping is allowed) |
 | F3 | Data-set oracle vs server for managers whose first 13F is filed after `as_of`: `unknown_cik` vs `not_yet_filed`. | Neither. It was a gap in the test harness; the server follows D1. The harness now expects `unknown_cik` |
 | F4 | The server disagreed with §4 in no case: none of the rule tests, the 82 recorded cases or the 208 restatement-strata triples in d | n/a |
@@ -80,7 +82,7 @@ counts, accessions and causes only.
 - MEASURED: after the fix, 223 ok answers (77,074 rows compared) and 27 declines; 167 of the 250 triples had data-set rows removed by the blocklist, identically on both sides. See `reports/artifacts/datasets_crosscheck.json`.
 - MEASURED: restatement strata, 188 ok answers (340,242 rows compared) and 20 declines. From `... run --strata restatement --n 20`; see `reports/artifacts/datasets_restatement.json`.
 - MEASURED: an earlier scoring of the strata, without the 2023q4 and Jan–Feb 2024 data sets, showed 4 cases of cause `dataset_coverage` (server `not_yet_filed`, oracle `unknown_cik`). All 4 CIKs had filed 13Fs from 2023-10-16 to 2024-02-13, so the server was right and the harness was not; the rescored run is in `reports/artifacts/datasets_restatement.json`.
-- REASONED: both windows' results come from one sample each; the Wilson bounds, not the point rates, are the claim.
+- REASONED: each run is one sample, so the claim is the Wilson bound, not the point rate. The strata runs used the server from before the F5 fix; none of their filings is affected by F5 (208/208 either way).
 
 **Server finding F5 (fixed).** For accession 0001012975-25-000102 the server returned 0 rows,
 while the data sets hold 8 rows after redaction. The filer named its information table `index.xml`.
@@ -124,7 +126,7 @@ as_of=2025-08-27)` in-process on an empty cache dir, then calls it again warm. N
 - `REGISTER.md`: P1 and P2 are done. New assumptions A13-A16 (cross-check oracle, synthetic
   CIK, how latency is measured, offline probe). New proposals P4 (the rate-limit lock is held
   through the whole response) and P5 (cover pages are fetched lazily). Both are out of scope
-  for a measure-only stage.
+  for a measure-only stage. P6: caches written before the F5 fix are not invalidated.
 
 ## Gate 1 (REPORTED by the evaluator)
 

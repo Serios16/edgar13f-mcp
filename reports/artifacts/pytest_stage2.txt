@@ -1,9 +1,7 @@
 # python -m pytest -q tests   (branch head, offline)
-........................................................................ [ 94%]
-.............                                                            [100%]
-228 passed, 1 skipped in 18.58s
+230 passed, 1 skipped in 19.26s
 
-# python -m pytest -q tests/unit/test_restatement.py -v | summary
+# python -m pytest -q tests/unit/test_restatement.py -rA (per test function)
       1 PASSED tests/unit/test_restatement.py::test_filter_on_blocked_cusip_returns_ok_empty_with_same_citation
       1 PASSED tests/unit/test_restatement.py::test_fully_redacted_restatement_still_supersedes_original
       1 PASSED tests/unit/test_restatement.py::test_list_orders_same_day_filings_by_accession
@@ -18,4 +16,7 @@
       1 PASSED tests/unit/test_restatement.py::test_same_day_restatement_drops_earlier_same_day_new_holdings
      18 PASSED tests/unit/test_restatement.py::test_synthetic_section4_citations
       1 PASSED tests/unit/test_restatement.py::test_zero_row_restatement_is_ok_with_no_holdings_and_filter_keeps_citation
-116 passed in 1.38s
+116 passed in 1.50s
+
+# python -m pytest -q tests/invariants/test_blocklist.py
+38 passed in 0.21s
