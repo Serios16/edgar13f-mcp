@@ -35,3 +35,13 @@ jobs:
         run: python tests/checks/claims_check.py .
       - name: Planted-failure tests (each check can fail)
         run: python -m pytest -q tests/invariants/test_checks.py
+      - name: Unprivileged-user probe (offline; separate user, read-only checkout, writes only to its cache dir)
+        run: sudo env PYTHON="$(command -v python)" bash tests/tools/unprivileged_probe.sh --offline
+      - name: Unprivileged-user probe planted failure (a stray write must be detected)
+        run: |
+          out="$RUNNER_TEMP/probe_planted.txt"
+          if sudo env PYTHON="$(command -v python)" PROBE_PLANT=1 bash tests/tools/unprivileged_probe.sh --offline > "$out" 2>&1; then
+            cat "$out"; echo "planted stray write was not detected"; exit 1
+          fi
+          cat "$out"
+          grep -q "write outside the cache dir: /tmp/edgar13f-planted" "$out"
