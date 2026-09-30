@@ -4,7 +4,7 @@ Labels: each claim is tagged measured, reported, reasoned or assumed (upper-case
 Artifacts are in `reports/artifacts/`. Offline results come from the branch head. Live results
 come from sec.gov with `SEC_USER_AGENT` set, a <= 5 req/s limit, and on-disk caches outside the repo.
 
-No file under `src/` changed in stage 2 (970 lines, same as stage 1).
+`src/` changed only for finding F5 (+19 lines, 989 in total).
 MEASURED: `python tests/checks/size_budget.py .` passes; see `reports/artifacts/size_budget.txt`.
 
 ## a. Stage 1 report and rulings D1-D3
@@ -38,7 +38,8 @@ Findings and their cause:
 | F1 | A restatement whose rows are all removed by the blocklist gives `ok` with no rows and cites the restatement, not the original. This follows §4, and a grader item about those CUSIPs would miss. | blocklist (D2, accepted cost) |
 | F2 | A row that passes the blocklist in the original can be removed in the restatement when its title changes (e.g. `COM` to `COM UNIT` for an energy issuer). The CUSIP then looks "removed" at the restatement. | blocklist (D2, accepted cost; over-dropping is allowed) |
 | F3 | Data-set oracle vs server for managers whose first 13F is filed after `as_of`: `unknown_cik` vs `not_yet_filed`. | Neither. It was a gap in the test harness; the server follows D1. The harness now expects `unknown_cik` |
-| F4 | The server disagreed with §4 in no case: none of the rule tests, the 82 recorded cases or the restatement strata below | n/a |
+| F4 | The server disagreed with §4 in no case: none of the rule tests, the 82 recorded cases or the 208 restatement-strata triples in d | n/a |
+| F5 | A filer's information table named `index.xml` is shadowed by EDGAR's directory listing, so 0 rows were returned (found by P2, see d) | **server**, fixed |
 
 The two hidden gate-1 misses were not investigated item by item, as instructed.
 
@@ -57,7 +58,39 @@ A second step plants a stray write and requires the probe to fail.
 
 ## d. P2: cross-check against the SEC Form 13F Data Sets
 
-P2_PLACEHOLDER
+Script: `tests/tools/datasets_crosscheck.py`. It runs at test time only, not in CI, and the server
+never reads the data sets. The data sets were downloaded to a scratch dir outside the repo and are
+not committed. They are the six SEC Form 13F Data Sets covering filings dated 2024-03-01 to
+2025-08-31, plus 2023q4 and Jan–Feb 2024, which are used only to tell whether a CIK had already
+filed a 13F (ruling D1). The script samples (cik, period) uniformly over pairs in the data sets with
+period 2024-03-31 … 2025-06-30, leaving out the §4 never-evaluated cases, and draws `as_of`
+uniformly from [first filing − 14 days, 2025-08-27] (seed 20260930). It calls `get_holdings_as_of`
+on live EDGAR and compares the answer with §4 applied to the data sets: the decline reason, or
+`source_accessions` + `filing_date` + the row multiset (CUSIP case-insensitive, value, shares,
+SH/PRN, put/call). Data-set rows pass through the same blocklist first (A13). The artifacts hold
+counts, accessions and causes only.
+
+| Run | Agree / n | Rate | Wilson 95% | Disagreements by cause |
+|---|---|---|---|---|
+| Random, first pass (server before the fix below) | 249 / 250 | 0.996 | [0.978, 0.999] | 1 × rows: **server** |
+| Random, after the fix (same triples) | 250 / 250 | 1.000 | [0.985, 1.000] | none |
+| Restatement strata (before/after each amendment date; 84 (cik, period) pairs incl. every restatement-after-NEW-HOLDINGS and multi-amendment-same-day pair) | 208 / 208 | 1.000 | [0.982, 1.000] | none (104 before, 104 after) |
+
+- MEASURED: first pass. From `python -m tests.tools.datasets_crosscheck run --n 250 --seed 20260930`; see `reports/artifacts/datasets_crosscheck_prefix.json`.
+- MEASURED: after the fix, 223 ok answers (77,074 rows compared) and 27 declines; 167 of the 250 triples had data-set rows removed by the blocklist, identically on both sides. See `reports/artifacts/datasets_crosscheck.json`.
+- MEASURED: restatement strata, 188 ok answers (340,242 rows compared) and 20 declines. From `... run --strata restatement --n 20`; see `reports/artifacts/datasets_restatement.json`.
+- MEASURED: an earlier scoring of the strata, without the 2023q4 and Jan–Feb 2024 data sets, showed 4 cases of cause `dataset_coverage` (server `not_yet_filed`, oracle `unknown_cik`). All 4 CIKs had filed 13Fs from 2023-10-16 to 2024-02-13, so the server was right and the harness was not; the rescored run is in `reports/artifacts/datasets_restatement.json`.
+- REASONED: both windows' results come from one sample each; the Wilson bounds, not the point rates, are the claim.
+
+**Server finding F5 (fixed).** For accession 0001012975-25-000102 the server returned 0 rows,
+while the data sets hold 8 rows after redaction. The filer named its information table `index.xml`.
+At that URL EDGAR serves its own directory listing, so the table was never seen. Cause:
+**server** (`EdgarSource.rows`). The fix is in `src/edgar13f/sources.py` and `parse.py`
+(+19 lines): when no XML item of the filing is an information table, the server reads the
+`<XML>` documents of the full submission text (`<accession>.txt`). The blocklist still applies
+to each row first, and the text is never cached. Tests are in `tests/invariants/test_blocklist.py`;
+the new one fails on the old code. Caches written before the fix may still hold `[]` for such a
+filing (REGISTER P6).
 
 ## e. Cold-cache latency (measure only)
 
