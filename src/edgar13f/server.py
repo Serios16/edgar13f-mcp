@@ -3,7 +3,8 @@
 Uses the low-level MCP Python SDK 2.x `Server` so that argument validation stays
 ours: unknown or malformed arguments become `invalid_argument` declines
 (isError=false) as CONTRACTS §2/§6 require, instead of SDK-level errors.
-Set EDGAR13F_FIXTURE_DIR to serve recorded fixtures instead of live EDGAR.
+Set EDGAR13F_FIXTURE_DIR to serve recorded fixtures instead of live EDGAR; it is
+refused together with EDGAR13F_REDACT=off.
 """
 
 from __future__ import annotations
@@ -18,7 +19,7 @@ import mcp_types as types
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 
-from . import __version__, config, tools
+from . import __version__, blocklist, config, tools
 from .schemas import TOOL_DEFS
 from .sec_client import SecClient
 from .sources import EdgarSource, FixtureSource
@@ -27,6 +28,8 @@ from .sources import EdgarSource, FixtureSource
 def make_source():
     fixtures = os.environ.get("EDGAR13F_FIXTURE_DIR")
     if fixtures:
+        if not blocklist.redacting():
+            sys.exit("edgar13f: EDGAR13F_REDACT=off is not allowed with EDGAR13F_FIXTURE_DIR")
         return FixtureSource(Path(fixtures))
     cache = config.cache_dir()
     return EdgarSource(SecClient(cache, config.user_agent()), cache)

@@ -6,10 +6,14 @@ them. Matching is case-insensitive over issuer name + title of class, plus a
 CUSIP list. Over-dropping is acceptable; under-dropping is not. Applied by
 `parse.parse_infotable` to each row before any other field is read, so a
 blocked row never reaches the cache, a response, a log or a fixture.
+
+Redaction is ON unless $EDGAR13F_REDACT is exactly "off" (`redacting()`); the
+list itself is the same either way.
 """
 
 from __future__ import annotations
 
+import os
 import re
 
 _ETF_WORDS = (
@@ -75,6 +79,11 @@ BLOCKED_CUSIPS = frozenset(c.upper() for c in (
     "78468R556",  # SPDR S&P Oil & Gas Exploration & Production ETF (XOP)
     "316092402",  # Fidelity MSCI Energy Index ETF (FENY)
 ))
+
+
+def redacting() -> bool:
+    """The redaction switch: ON unless $EDGAR13F_REDACT is exactly "off"."""
+    return os.environ.get("EDGAR13F_REDACT") != "off"
 
 
 def _norm(text: str | None) -> str:

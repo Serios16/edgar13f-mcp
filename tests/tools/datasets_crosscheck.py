@@ -315,6 +315,8 @@ def run(args) -> None:
 
 
 def main() -> None:
+    if not blocklist.redacting():
+        sys.exit("refusing to run with redaction switched off (CLAUDE.md rule 2)")
     p = argparse.ArgumentParser()
     p.add_argument("cmd", choices=["download", "run"])
     p.add_argument("--data", type=Path, required=True)

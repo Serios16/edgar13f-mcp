@@ -251,7 +251,7 @@ class _XmlSource:
     def __init__(self, tables: dict[Filing, list[tuple]]):
         self.tables = tables
 
-    def filings(self, cik, as_of):
+    def filings(self, cik, as_of, periods=None):
         return list(self.tables)
 
     def rows(self, f):

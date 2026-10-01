@@ -2,6 +2,7 @@
 
 `parse_infotable` applies the blocklist to each row before reading any other
 field of it; blocked rows are discarded immediately and never leave this module.
+Only `redact=False` (EDGAR13F_REDACT=off, see `blocklist.redacting`) skips it.
 """
 
 from __future__ import annotations
@@ -77,27 +78,50 @@ def _upper(text: str | None) -> str | None:
     return text.upper() if text else None
 
 
-def _row(node: ET.Element, accession: str) -> dict | None:
-    name = _text(node, "nameOfIssuer")
-    title = _text(node, "titleOfClass")
-    cusip = _text(node, "cusip")
-    if blocklist.is_blocked(name, title, cusip):
+def _kids(elem: ET.Element | None) -> dict[str, ET.Element]:
+    """First child per local name (what `_find` returns), collected in one pass."""
+    out: dict[str, ET.Element] = {}
+    for child in elem if elem is not None else ():
+        out.setdefault(_local(child.tag), child)
+    return out
+
+
+def _txt(node: ET.Element | None) -> str | None:
+    if node is None or node.text is None:
+        return None
+    return node.text.strip() or None
+
+
+def _blocked(name: str | None, title: str | None, cusip: str | None, seen: dict) -> bool:
+    key = (name, title, cusip)
+    if key not in seen:  # is_blocked is a pure function of these three fields
+        seen[key] = blocklist.is_blocked(name, title, cusip)
+    return seen[key]
+
+
+def _row(node: ET.Element, accession: str, redact: bool = True, seen: dict | None = None) -> dict | None:
+    kids = _kids(node)
+    name = _txt(kids.get("nameOfIssuer"))
+    title = _txt(kids.get("titleOfClass"))
+    cusip = _txt(kids.get("cusip"))
+    if redact and _blocked(name, title, cusip, {} if seen is None else seen):
         return None  # redacted before any other field is read
+    shr, vote = _kids(kids.get("shrsOrPrnAmt")), _kids(kids.get("votingAuthority"))
     return {
         "accession_number": accession,
         "name_of_issuer": name or "",
         "title_of_class": title or "",
         "cusip": cusip or "",
-        "figi": _text(node, "figi"),
-        "value": _int(_text(node, "value")),
-        "shares_or_principal_amount": _int(_text(node, "shrsOrPrnAmt", "sshPrnamt")),
-        "sh_prn": _upper(_text(node, "shrsOrPrnAmt", "sshPrnamtType")),
-        "put_call": _upper(_text(node, "putCall")),
-        "investment_discretion": _text(node, "investmentDiscretion"),
-        "other_manager": _text(node, "otherManager"),
-        "voting_authority_sole": _int(_text(node, "votingAuthority", "Sole")),
-        "voting_authority_shared": _int(_text(node, "votingAuthority", "Shared")),
-        "voting_authority_none": _int(_text(node, "votingAuthority", "None")),
+        "figi": _txt(kids.get("figi")),
+        "value": _int(_txt(kids.get("value"))),
+        "shares_or_principal_amount": _int(_txt(shr.get("sshPrnamt"))),
+        "sh_prn": _upper(_txt(shr.get("sshPrnamtType"))),
+        "put_call": _upper(_txt(kids.get("putCall"))),
+        "investment_discretion": _txt(kids.get("investmentDiscretion")),
+        "other_manager": _txt(kids.get("otherManager")),
+        "voting_authority_sole": _int(_txt(vote.get("Sole"))),
+        "voting_authority_shared": _int(_txt(vote.get("Shared"))),
+        "voting_authority_none": _int(_txt(vote.get("None"))),
     }
 
 
@@ -115,13 +139,14 @@ def is_infotable(xml: bytes) -> bool:
     return False
 
 
-def parse_infotable(xml: bytes, accession: str) -> list[dict]:
-    """Rows of an information table, blocklisted rows removed. Order as filed."""
+def parse_infotable(xml: bytes, accession: str, redact: bool = True) -> list[dict]:
+    """Rows of an information table, blocklisted rows removed unless redact=False. Order as filed."""
     rows: list[dict] = []
+    seen: dict = {}
     for _event, elem in ET.iterparse(io.BytesIO(xml), events=("end",)):
         if _local(elem.tag) != "infoTable":
             continue
-        row = _row(elem, accession)
+        row = _row(elem, accession, redact, seen)
         elem.clear()
         if row is not None:
             rows.append(row)

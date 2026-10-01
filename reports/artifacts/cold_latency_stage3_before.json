@@ -1,0 +1,129 @@
+{
+ "period": "2025-03-31",
+ "as_of": "2025-08-27",
+ "selection": "CIKs given with --ciks",
+ "call": "in-process tools.call, empty cache dir per filer and per tool",
+ "min_interval_s": 0.25,
+ "results": [
+  {
+   "cik": "2012383",
+   "cold_s": 8.26,
+   "cold_requests": 9,
+   "warm_s": 0.28,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 50158,
+   "source_accessions": [
+    "0001576419-25-000869"
+   ],
+   "cold_requests_by_kind": {
+    "json": 4,
+    "xml": 5
+   },
+   "non_200": 0,
+   "list_cold_s": 2.63,
+   "list_cold_requests": 7,
+   "list_warm_s": 0.01,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 4,
+   "list_non_200": 0
+  },
+  {
+   "cik": "319933",
+   "cold_s": 7.63,
+   "cold_requests": 9,
+   "warm_s": 0.31,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 49594,
+   "source_accessions": [
+    "0000319933-25-000005"
+   ],
+   "cold_requests_by_kind": {
+    "json": 2,
+    "xml": 7
+   },
+   "non_200": 0,
+   "list_cold_s": 1.71,
+   "list_cold_requests": 7,
+   "list_warm_s": 0.0,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 6,
+   "list_non_200": 0
+  },
+  {
+   "cik": "1761755",
+   "cold_s": 16.2,
+   "cold_requests": 31,
+   "warm_s": 0.35,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 44548,
+   "source_accessions": [
+    "0001580642-25-003053"
+   ],
+   "cold_requests_by_kind": {
+    "json": 2,
+    "xml": 29
+   },
+   "non_200": 0,
+   "list_cold_s": 7.56,
+   "list_cold_requests": 29,
+   "list_warm_s": 0.01,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 28,
+   "list_non_200": 0
+  },
+  {
+   "cik": "895421",
+   "cold_s": 44.53,
+   "cold_requests": 118,
+   "warm_s": 0.52,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 44192,
+   "source_accessions": [
+    "0000895421-25-000381"
+   ],
+   "cold_requests_by_kind": {
+    "json": 47,
+    "xml": 71
+   },
+   "non_200": 0,
+   "list_cold_s": 32.64,
+   "list_cold_requests": 116,
+   "list_warm_s": 0.15,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 154,
+   "list_non_200": 0
+  },
+  {
+   "cik": "1776033",
+   "cold_s": 8.09,
+   "cold_requests": 23,
+   "warm_s": 0.01,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 1599,
+   "source_accessions": [
+    "0001776033-25-000005"
+   ],
+   "cold_requests_by_kind": {
+    "json": 2,
+    "xml": 21
+   },
+   "non_200": 0,
+   "list_cold_s": 5.6,
+   "list_cold_requests": 21,
+   "list_warm_s": 0.0,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 20,
+   "list_non_200": 0
+  }
+ ]
+}
