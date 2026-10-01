@@ -30,8 +30,10 @@ MEASURED: full suite 269 passed, 1 skipped (root-only skip), offline, from `pyth
   (planted failure); the server refuses `off` with a fixture dir; and no workflow, test or tool
   sets the variable (pattern scan, with 5 planted lines detected). The rows are the invented ones
   from stage 1 (zero values, made-up CUSIPs), served by a fake client.
-- The server was never run with `off` against live SEC data or recorded fixtures, in this session
-  or in CI. `tests/conftest.py` unsets the variable for every test.
+  MEASURED: 62 of 62 tests in that file pass; part of `reports/artifacts/pytest_stage3.txt`.
+- REASONED: the server was never run with `off` against live SEC data or recorded fixtures, in
+  this session or in CI: no live job set it, `tests/conftest.py` unsets it for every test, and the
+  scan above fails if a workflow, test or tool sets it.
 - `CLAUDE.md` rule 2 now describes the switch; the default (ON) and the never-run-off rule are as
   the brief states them.
 
@@ -118,11 +120,11 @@ answers only through b (which filings are read). Evidence that they do not:
   (submissions split into a recent block and older pages with unrelated filings between the
   13Fs, two page layouts, cover pages from the recorded metadata), runs the whole golden grid
   through the new `EdgarSource`, and compares with the v1.0.0 golden. MEASURED: 2 layouts x 3,686 calls, all identical; part of `reports/artifacts/pytest_stage3.txt`.
-- Leakage suite and the §4 oracle suite unchanged and passing (same CI steps).
+- MEASURED: the leakage suite (mutant and no-op controls) and the §4 oracle suite are unchanged and pass, in the same CI steps; part of `reports/artifacts/pytest_stage3.txt`.
 - Live, SEC Form 13F Data Sets cross-check (P2), same samples and seed as stage 2, new code,
   cold cache. MEASURED: random 250/250 agree (Wilson 95% [0.985, 1.000]), 223 ok answers with 77,074 rows compared; see `reports/artifacts/datasets_crosscheck_stage3.json`.
   MEASURED: restatement strata 208/208 agree (104 before, 104 after), 340,242 rows compared; see `reports/artifacts/datasets_restatement_stage3.json`.
-  Both equal the stage-2 results.
+  MEASURED: both equal the stage-2 results (`reports/artifacts/datasets_crosscheck.json`, `reports/artifacts/datasets_restatement.json`): same agreement, same ok/decline split, same rows compared.
 - Live, v1.0.0 source vs new source on one shared cache dir, so both read the same EDGAR bytes
   (`tests/tools/equivalence.py`): for every triple of the two samples above, `get_holdings_as_of`,
   `diff_holdings` against the previous quarter, and `list_13f_filings`.
@@ -149,7 +151,7 @@ answers only through b (which filings are read). Evidence that they do not:
 
 | # | Finding | Cause | Action |
 |---|---|---|---|
-| F6 | Over MCP stdio, a warm 44-50k-row `get_holdings_as_of` takes 11-16 s with the MCP Python SDK client, but 1.1 s with a client that reads the line with `readline()`. The SDK 2.2.0 client joins its buffer with every chunk (`mcp/client/stdio.py`, `(buffer + chunk).split("\n")`), which is quadratic in the ~40 MB message. Stage 2's A15 ("stdio adds a constant") was wrong for large answers. | MCP SDK client (not this repo) | Measured and reported (A20); upstream report or dropping `structuredContent` for large answers left to the owner (P8). |
+| F6 | Over MCP stdio, a warm 44-50k-row `get_holdings_as_of` takes 6.2-14.5 s with the MCP Python SDK client, but 0.85-1.29 s with a client that reads the line with `readline()` (MEASURED; `stdio_*` fields of `reports/artifacts/cold_latency_stage3_after_run1.json` and the other latency artifacts in b). The SDK 2.2.0 client joins its buffer with every chunk (mcp/client/stdio.py: buffer + chunk, then split on newlines), which is quadratic in the ~40 MB message. Stage 2's A15 ("stdio adds a constant") was wrong for large answers. | MCP SDK client (not this repo) | Measured and reported (A20); upstream report or dropping `structuredContent` for large answers left to the owner (P8). |
 | F7 | A truncated transfer (`http.client.IncompleteRead`) is not retried by `SecClient`; it ended one data-set download in this session. Such a request is also missing from `requests.log` (only completed responses are logged). | server (robustness) | Proposal P7; not fixed (out of stage-3 scope). |
 
 ## v1.1 gate (pre-registered, not yet run)

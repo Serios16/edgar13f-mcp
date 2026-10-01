@@ -63,7 +63,8 @@ Environment variables:
   `~/.cache/edgar13f`), then a private per-user temp dir. The server writes nowhere else.
 * `EDGAR13F_REDACT`: set to exactly `off` to return the rows that are redacted by default (see
   Limits). Any other value, or none, keeps redaction on.
-* `EDGAR13F_FIXTURE_DIR`: serve recorded fixtures instead of EDGAR (used by the tests).
+* `EDGAR13F_FIXTURE_DIR`: serve recorded fixtures instead of EDGAR (used by the tests; refused
+  together with `EDGAR13F_REDACT=off`).
 
 SEC access follows the fair-access policy. Across processes that share a cache dir, request
 starts are spaced at least 0.25 s apart (under 5 per second). 403/429/5xx responses and HTML
@@ -146,8 +147,10 @@ with generated >= 698/700 and 0 leaks (pre-registered in `REGISTER.md`).
 ### Latency
 
 Cold start (empty cache), `get_holdings_as_of(cik, 2025-03-31, as_of=2025-08-27)` for the five
-largest 13F-HRs of that quarter, measured in-process (MEASURED; `tests/tools/cold_latency.py`,
-artifacts `reports/artifacts/cold_latency_stage3_*.json`). v1.1 is the worst of three runs.
+13F-HRs of that quarter with the most rows after redaction, measured in-process (MEASURED;
+`tests/tools/cold_latency.py`, artifacts `reports/artifacts/cold_latency_stage3_*.json`). Each
+cell is the worst of two runs (v1.0.0) or three runs (v1.1). For 1776033 a restatement filed the
+next day replaces the 34,332-row original, so the answer has 1,599 rows.
 
 | CIK | Rows | v1.0.0 | v1.1 | SEC requests |
 |---|---|---|---|---|
