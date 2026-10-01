@@ -54,7 +54,7 @@ EdgarSource.rows:    sec_client.get(index.json) → info-table XML (store=False,
 | §5.4 consolidation, change types, earlier-period decline first | `tools._consolidate`, `tools.diff_holdings` | `tests/unit/test_tools.py` |
 | §6 `unknown_cik` (never filed a 13F on or before `as_of`, or no such CIK) | `tools._visible_13f` | `tests/unit/test_tools.py` |
 | Hard rule 2 blocklist | `parse._row` → `blocklist.is_blocked` | `tests/invariants/test_blocklist.py`, `tests/unit/test_restatement.py` (restatements, D2) |
-| Hard rule 2 switch (`EDGAR13F_REDACT`) | `blocklist.redacting`, `EdgarSource.__init__`, `server.make_source` | `tests/invariants/test_redact_switch.py` (synthetic rows only; truth table, separate cache, planted failures, no CI/test/tool sets it), `tests/unit/test_golden.py` (unset: byte-identical to v1.0.0 on every fixture) |
+| Hard rule 2 switch (`EDGAR13F_REDACT`) | `blocklist.redacting`, `EdgarSource.__init__`, `server.make_source` | `tests/invariants/test_blocklist.py` (switch section; synthetic rows only; truth table, separate cache, planted failures, no CI/test/tool sets it), `tests/unit/test_golden.py` (unset: byte-identical to v1.0.0 on every fixture) |
 | Period-aware fetching (A17) | `EdgarSource.filings` | `tests/unit/test_lazy_fetch.py` (every fixture manager as an offline EDGAR, two page layouts, vs the v1.0.0 golden; unknown_cik paging; the documented limit) |
 | Hard rule 3 fair access | `sec_client.SecClient` | `tests/unit/test_sec_client.py` |
 | Cache dir / unprivileged user | `config.cache_dir` | `tests/unit/test_config.py`, `tests/tools/unprivileged_probe.sh --offline` (CI step, with planted stray write) |
@@ -67,7 +67,7 @@ EdgarSource.rows:    sec_client.get(index.json) → info-table XML (store=False,
   row parser against the v1.0.0 parser.
 * `tests/invariants/leakage.py`, `test_leakage.py` – leakage suite and controls.
 * `tests/invariants/test_blocklist.py` – synthetic-row blocklist proofs and fixture scan (recorded and synthetic).
-* `tests/invariants/test_redact_switch.py` – the `EDGAR13F_REDACT` switch, synthetic rows only.
+* `tests/invariants/test_blocklist.py` also holds the `EDGAR13F_REDACT` switch tests (synthetic rows only).
 * `tests/golden/v1_0_fixture_responses.json` – hashes of every tool response over the fixtures, written by the
   v1.0.0 source (`tests/tools/fixture_golden.py`).
 * `tests/checks/` – size budget, MAP check, claims check; `tests/invariants/test_checks.py` plants a failure for each.
