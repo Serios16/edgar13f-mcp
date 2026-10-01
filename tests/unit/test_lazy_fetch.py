@@ -112,7 +112,7 @@ def test_edgar_source_on_every_fixture_manager_matches_v1_0(tmp_path, layout):
         bad = [i for i, tool, args in calls if fg.response_hash(src, tool, args) != GOLDEN["responses"][i]]
         assert bad == [], (tag, cik, len(bad))
         checked += len(calls)
-    assert checked >= 3600
+    assert checked == 3686  # every golden call on a fixture manager
 
 
 def test_holdings_fetch_far_fewer_covers_and_no_page_before_the_period(tmp_path):

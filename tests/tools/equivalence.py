@@ -108,8 +108,12 @@ def compare(a) -> None:
         "by_tool": {k: {**v, "outcomes": dict(v["outcomes"])} for k, v in by_tool.items()},
         "differences": [{"tool": n["tool"], "args": n["args"], "new": n["outcome"], "old": o["outcome"]}
                         for n, o in pairs if n["sha256"] != o["sha256"] or n["is_error"] != o["is_error"]],
+        "calls_answered": [{"tool": n["tool"], "args": n["args"], "outcome": n["outcome"],
+                            "sha256_new": n["sha256"][:16], "sha256_old": o["sha256"][:16]} for n, o in pairs],
     }
-    a.out.write_text(json.dumps(report, indent=1) + "\n")
+    head = json.dumps({k: v for k, v in report.items() if k != "calls_answered"}, indent=1)[:-2]
+    rows = ",\n".join(json.dumps(c, sort_keys=True) for c in report["calls_answered"])
+    a.out.write_text(f'{head},\n "calls_answered": [\n{rows}\n ]\n}}\n')
     print(json.dumps({k: report[k] for k in ("identical", "calls")}))
 
 
