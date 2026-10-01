@@ -1,0 +1,155 @@
+{
+ "edgar13f": "1.1.0 (/home/user/edgar13f-mcp/src/edgar13f)",
+ "period": "2025-03-31",
+ "as_of": "2025-08-27",
+ "selection": "CIKs given with --ciks",
+ "call": "in-process tools.call, empty cache dir per filer and per tool",
+ "min_interval_s": 0.25,
+ "results": [
+  {
+   "cik": "2012383",
+   "cold_s": 4.13,
+   "cold_requests": 6,
+   "warm_s": 0.17,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 50158,
+   "source_accessions": [
+    "0001576419-25-000869"
+   ],
+   "cold_requests_by_kind": {
+    "json": 3,
+    "xml": 3
+   },
+   "non_200": 0,
+   "list_cold_s": 1.86,
+   "list_cold_requests": 7,
+   "list_warm_s": 0.01,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 4,
+   "list_non_200": 0,
+   "stdio_cold_s": 4.91,
+   "stdio_cold_requests": 6,
+   "stdio_status": "ok",
+   "stdio_warm_s": 1.07,
+   "stdio_warm_sdk_client_s": 13.55
+  },
+  {
+   "cik": "319933",
+   "cold_s": 4.35,
+   "cold_requests": 5,
+   "warm_s": 0.14,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 49594,
+   "source_accessions": [
+    "0000319933-25-000005"
+   ],
+   "cold_requests_by_kind": {
+    "json": 2,
+    "xml": 3
+   },
+   "non_200": 0,
+   "list_cold_s": 1.75,
+   "list_cold_requests": 7,
+   "list_warm_s": 0.0,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 6,
+   "list_non_200": 0,
+   "stdio_cold_s": 4.32,
+   "stdio_cold_requests": 5,
+   "stdio_status": "ok",
+   "stdio_warm_s": 0.93,
+   "stdio_warm_sdk_client_s": 7.89
+  },
+  {
+   "cik": "1761755",
+   "cold_s": 4.23,
+   "cold_requests": 5,
+   "warm_s": 0.16,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 44548,
+   "source_accessions": [
+    "0001580642-25-003053"
+   ],
+   "cold_requests_by_kind": {
+    "json": 2,
+    "xml": 3
+   },
+   "non_200": 0,
+   "list_cold_s": 8.57,
+   "list_cold_requests": 29,
+   "list_warm_s": 0.01,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 28,
+   "list_non_200": 0,
+   "stdio_cold_s": 4.86,
+   "stdio_cold_requests": 5,
+   "stdio_status": "ok",
+   "stdio_warm_s": 0.85,
+   "stdio_warm_sdk_client_s": 6.61
+  },
+  {
+   "cik": "895421",
+   "cold_s": 6.1,
+   "cold_requests": 13,
+   "warm_s": 0.18,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 44192,
+   "source_accessions": [
+    "0000895421-25-000381"
+   ],
+   "cold_requests_by_kind": {
+    "json": 7,
+    "xml": 6
+   },
+   "non_200": 0,
+   "list_cold_s": 33.54,
+   "list_cold_requests": 116,
+   "list_warm_s": 0.14,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 154,
+   "list_non_200": 0,
+   "stdio_cold_s": 7.62,
+   "stdio_cold_requests": 13,
+   "stdio_status": "ok",
+   "stdio_warm_s": 1.02,
+   "stdio_warm_sdk_client_s": 6.5
+  },
+  {
+   "cik": "1776033",
+   "cold_s": 2.19,
+   "cold_requests": 6,
+   "warm_s": 0.01,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 1599,
+   "source_accessions": [
+    "0001776033-25-000005"
+   ],
+   "cold_requests_by_kind": {
+    "json": 2,
+    "xml": 4
+   },
+   "non_200": 0,
+   "list_cold_s": 5.45,
+   "list_cold_requests": 21,
+   "list_warm_s": 0.0,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 20,
+   "list_non_200": 0,
+   "stdio_cold_s": 1.81,
+   "stdio_cold_requests": 6,
+   "stdio_status": "ok",
+   "stdio_warm_s": 0.04,
+   "stdio_warm_sdk_client_s": 0.06
+  }
+ ]
+}

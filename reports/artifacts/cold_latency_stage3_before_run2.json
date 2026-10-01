@@ -1,0 +1,155 @@
+{
+ "edgar13f": "0.1.0 (/tmp/claude-0/-home-user-edgar13f-mcp/639f3031-941a-54d8-8c72-bf5e6aa5c232/scratchpad/v10/src/edgar13f)",
+ "period": "2025-03-31",
+ "as_of": "2025-08-27",
+ "selection": "CIKs given with --ciks",
+ "call": "in-process tools.call, empty cache dir per filer and per tool",
+ "min_interval_s": 0.25,
+ "results": [
+  {
+   "cik": "2012383",
+   "cold_s": 7.97,
+   "cold_requests": 9,
+   "warm_s": 0.17,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 50158,
+   "source_accessions": [
+    "0001576419-25-000869"
+   ],
+   "cold_requests_by_kind": {
+    "json": 4,
+    "xml": 5
+   },
+   "non_200": 0,
+   "list_cold_s": 1.83,
+   "list_cold_requests": 7,
+   "list_warm_s": 0.01,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 4,
+   "list_non_200": 0,
+   "stdio_cold_s": 8.89,
+   "stdio_cold_requests": 9,
+   "stdio_status": "ok",
+   "stdio_warm_s": 0.98,
+   "stdio_warm_sdk_client_s": 14.54
+  },
+  {
+   "cik": "319933",
+   "cold_s": 8.08,
+   "cold_requests": 9,
+   "warm_s": 0.13,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 49594,
+   "source_accessions": [
+    "0000319933-25-000005"
+   ],
+   "cold_requests_by_kind": {
+    "json": 2,
+    "xml": 7
+   },
+   "non_200": 0,
+   "list_cold_s": 2.01,
+   "list_cold_requests": 7,
+   "list_warm_s": 0.0,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 6,
+   "list_non_200": 0,
+   "stdio_cold_s": 8.31,
+   "stdio_cold_requests": 9,
+   "stdio_status": "ok",
+   "stdio_warm_s": 1.06,
+   "stdio_warm_sdk_client_s": 9.1
+  },
+  {
+   "cik": "1761755",
+   "cold_s": 13.24,
+   "cold_requests": 31,
+   "warm_s": 0.13,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 44548,
+   "source_accessions": [
+    "0001580642-25-003053"
+   ],
+   "cold_requests_by_kind": {
+    "json": 2,
+    "xml": 29
+   },
+   "non_200": 0,
+   "list_cold_s": 7.67,
+   "list_cold_requests": 29,
+   "list_warm_s": 0.01,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 28,
+   "list_non_200": 0,
+   "stdio_cold_s": 14.43,
+   "stdio_cold_requests": 31,
+   "stdio_status": "ok",
+   "stdio_warm_s": 0.96,
+   "stdio_warm_sdk_client_s": 6.75
+  },
+  {
+   "cik": "895421",
+   "cold_s": 41.42,
+   "cold_requests": 118,
+   "warm_s": 0.32,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 44192,
+   "source_accessions": [
+    "0000895421-25-000381"
+   ],
+   "cold_requests_by_kind": {
+    "json": 47,
+    "xml": 71
+   },
+   "non_200": 0,
+   "list_cold_s": 34.07,
+   "list_cold_requests": 116,
+   "list_warm_s": 0.15,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 154,
+   "list_non_200": 0,
+   "stdio_cold_s": 39.99,
+   "stdio_cold_requests": 118,
+   "stdio_status": "ok",
+   "stdio_warm_s": 1.0,
+   "stdio_warm_sdk_client_s": 6.44
+  },
+  {
+   "cik": "1776033",
+   "cold_s": 7.01,
+   "cold_requests": 23,
+   "warm_s": 0.01,
+   "warm_requests": 0,
+   "status": "ok",
+   "rows_returned": 1599,
+   "source_accessions": [
+    "0001776033-25-000005"
+   ],
+   "cold_requests_by_kind": {
+    "json": 2,
+    "xml": 21
+   },
+   "non_200": 0,
+   "list_cold_s": 5.76,
+   "list_cold_requests": 21,
+   "list_warm_s": 0.0,
+   "list_warm_requests": 0,
+   "list_status": "ok",
+   "filings_visible": 20,
+   "list_non_200": 0,
+   "stdio_cold_s": 6.48,
+   "stdio_cold_requests": 23,
+   "stdio_status": "ok",
+   "stdio_warm_s": 0.04,
+   "stdio_warm_sdk_client_s": 0.08
+  }
+ ]
+}

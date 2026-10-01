@@ -163,7 +163,7 @@ def measure(cik: str, period: str, as_of: str) -> dict:
 
 
 def main() -> None:
-    if not blocklist.redacting():
+    if not getattr(blocklist, "redacting", lambda: True)():  # v1.0.0 has no switch (always on)
         sys.exit("refusing to run with redaction switched off (CLAUDE.md rule 2)")
     p = argparse.ArgumentParser()
     p.add_argument("--zip", type=Path)

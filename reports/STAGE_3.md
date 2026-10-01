@@ -7,7 +7,7 @@ criteria were fixed by the brief before any work. Item-level gate results were n
 
 `src/` changed in 6 files (+107/-53 lines against v1.0.0; 1,043 lines in total; no file over 250).
 MEASURED: `python tests/checks/size_budget.py .` passes; see `reports/artifacts/size_budget.txt`.
-MEASURED: full suite PYTEST_SUMMARY; see `reports/artifacts/pytest_stage3.txt`.
+MEASURED: full suite 269 passed, 1 skipped (root-only skip), offline, from `python -m pytest -q tests`; see `reports/artifacts/pytest_stage3.txt`.
 
 ## a. Redaction switch (`EDGAR13F_REDACT`)
 
@@ -52,7 +52,31 @@ Changes (no contract or CI change):
    children, missing and empty fields, CDATA, other namespaces, nested tables, with and without
    redaction).
 
-LATENCY_SECTION
+Method (A15, A20): `python -m tests.tools.cold_latency --ciks 2012383,319933,1761755,895421,1776033 --stdio`
+on the five stage-2 filers, `get_holdings_as_of(cik, 2025-03-31, as_of=2025-08-27)` in-process on an
+empty cache dir, then warm; `list_13f_filings` cold in a second empty dir; and the same holdings call
+end to end over MCP stdio in a third (server subprocess, client reading each response line with
+`readline()`). "Before" is the v1.0.0 source (run 1: the checkout at b208c47 before any change;
+run 2: the v1.0.0 tree on `PYTHONPATH`); "after" is this branch, three runs. Cells: worst run
+(each run).
+
+| CIK | Rows | `get_holdings_as_of` cold, v1.0.0 (s) | cold, v1.1 (s) | Requests | stdio cold, v1.0.0 | stdio cold, v1.1 | `list_13f_filings` cold, v1.0.0 | v1.1 |
+|---|---|---|---|---|---|---|---|---|
+| 2012383 | 50,158 | 8.3 (8.3, 8.0) | **4.1** (4.1, 3.9, 4.0) | 9 -> 6 | 8.9 | 5.4 (4.9, 5.0, 5.4) | 2.6 (2.6, 1.8) | 2.0 (1.9, 1.9, 2.0) |
+| 319933 | 49,594 | 8.1 (7.6, 8.1) | **4.3** (4.3, 4.0, 4.0) | 9 -> 5 | 8.3 | 5.2 (4.3, 4.7, 5.2) | 2.0 (1.7, 2.0) | 2.4 (1.8, 2.4, 1.8) |
+| 1761755 | 44,548 | 16.2 (16.2, 13.2) | **4.2** (4.2, 3.8, 3.7) | 31 -> 5 | 14.4 | 4.9 (4.9, 4.3, 4.0) | 7.7 (7.6, 7.7) | 9.2 (8.6, 9.2, 7.8) |
+| 895421 | 44,192 | 44.5 (44.5, 41.4) | **7.6** (6.1, 7.2, 7.6) | 118 -> 13 | 40.0 | 7.7 (7.6, 7.7, 7.7) | 34.1 (32.6, 34.1) | 35.5 (33.5, 33.5, 35.5) |
+| 1776033 | 1,599 | 8.1 (8.1, 7.0) | **2.9** (2.2, 2.9, 2.1) | 23 -> 6 | 6.5 | 1.9 (1.8, 1.8, 1.9) | 5.8 (5.6, 5.8) | 5.6 (5.5, 5.5, 5.6) |
+
+- MEASURED: target met; cold `get_holdings_as_of` <= 7.6 s for each filer in every after-run (v1.0.0: 7.0-44.5 s); see `reports/artifacts/cold_latency_stage3_after_run1.json`, `reports/artifacts/cold_latency_stage3_after_run2.json`, `reports/artifacts/cold_latency_stage3_after_run3.json`.
+- MEASURED: before, two runs of the v1.0.0 source; see `reports/artifacts/cold_latency_stage3_before.json` and `reports/artifacts/cold_latency_stage3_before_run2.json` (run 2 adds the stdio columns).
+- MEASURED: every run returned the same answer per filer (status ok, same `source_accessions`, same row count) with 0 non-200 responses; warm calls 0.00-0.52 s; see `reports/artifacts/cold_latency_stage3_after_run1.json` (runs 2-3 and before likewise).
+- MEASURED: `list_13f_filings` (reported only) is unchanged by design: 1.8-35.5 s cold, 7-116 requests, as before; see `reports/artifacts/cold_latency_stage3_after_run1.json` (runs 2-3 and before likewise).
+- MEASURED: end to end over stdio with a line-reading client, cold <= 7.7 s after (v1.0.0: up to 40.0 s); the server writes a 44-50k-row answer (~40 MB) in about 1 s; see the `stdio_*` fields of `reports/artifacts/cold_latency_stage3_after_run1.json` (runs 2-3 likewise) and `reports/artifacts/cold_latency_stage3_before_run2.json`.
+- MEASURED: the same warm call through the MCP Python SDK 2.2.0 stdio client takes 6.2-14.5 s for the four 44-50k-row answers (0.1 s for 1,599 rows), in every run; see `stdio_warm_sdk_client_s` in `reports/artifacts/cold_latency_stage3_after_run1.json` (runs 2-3 and `reports/artifacts/cold_latency_stage3_before_run2.json` likewise); finding F6.
+- REASONED: what is left of the cold time is the information table (30-40 MB of XML downloaded and
+  parsed) plus 5-13 requests spaced >= 0.25 s apart. 895421 still needs 6 submission files: its
+  history is split by date into 45 pages, and the window 2025-03-31 .. 2025-08-27 spans five.
 
 ## c. Install: one command from GitHub
 
@@ -96,13 +120,27 @@ answers only through b (which filings are read). Evidence that they do not:
   cold cache. MEASURED: random 250/250 agree (Wilson 95% [0.985, 1.000]), 223 ok answers with 77,074 rows compared; see `reports/artifacts/datasets_crosscheck_stage3.json`.
   MEASURED: restatement strata 208/208 agree (104 before, 104 after), 340,242 rows compared; see `reports/artifacts/datasets_restatement_stage3.json`.
   Both equal the stage-2 results.
-- Live, v1.0.0 vs new source on one shared cache dir (same EDGAR bytes): EQUIVALENCE_LINES
+- Live, v1.0.0 source vs new source on one shared cache dir, so both read the same EDGAR bytes
+  (`tests/tools/equivalence.py`): for every triple of the two samples above, `get_holdings_as_of`,
+  `diff_holdings` against the previous quarter, and `list_13f_filings`.
+  MEASURED: 1,328 of 1,328 responses byte-identical (456 + 456 + 416 calls over 310 CIKs; outcomes ok, not_yet_filed, notice_only, unknown_cik); the v1.0.0 run needed no request beyond what the new run had cached; see `reports/artifacts/equivalence_stage3.json`.
+  REASONED: in this run the v1.0.0 source read information-table rows from the cache the new
+  parser wrote, so the parser change is covered by the offline oracle test, not by this run.
 - A17's premise: MEASURED: 0 of 80,690 13F submissions (13F-HR, 13F-HR/A, 13F-NT, 13F-NT/A) in the eight data sets (2023q4 to Aug 2025) have a period of report after their filing date, and 0 have a cover period different from the submission period; see `reports/artifacts/period_after_filing.json`.
 - REASONED: the one input on which new and old code can differ is a report filed before its own
   period end that sits in a skipped page (pinned by a test). None exists in the data sets above,
   which cover every evaluated period. Visibility still goes through `rules.visible` only.
 
-SEC_LINES
+## SEC access (stage 3)
+
+- MEASURED: 12,619 requests across the 81 request logs of this stage (11,711 www.sec.gov, 908 data.sec.gov), all HTTP 200 (no 403/429), at most 5 completions logged in any 1-second window. From `python tests/tools/request_stats.py <logs>`; see `reports/artifacts/sec_requests_stage3.json`.
+- One more request is not in the logs: a data-set zip download that the session proxy cut off
+  (F7). The retry succeeded.
+- REASONED: as in stage 2, the log records completion times, while the limiter spaces request
+  starts >= 0.25 s apart. All live jobs in this session ran one at a time. The install smoke test
+  and the stdio checks on warm caches ran with `SEC_USER_AGENT` unset, so they could not reach
+  sec.gov. The eight data-set zips came through the same client (User-Agent, limiter, backoff).
+  No mirror or other proxy was used besides the environment's egress proxy.
 
 ## Findings
 

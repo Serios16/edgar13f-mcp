@@ -145,7 +145,23 @@ with generated >= 698/700 and 0 leaks (pre-registered in `REGISTER.md`).
 
 ### Latency
 
-LATENCY_PLACEHOLDER
+Cold start (empty cache), `get_holdings_as_of(cik, 2025-03-31, as_of=2025-08-27)` for the five
+largest 13F-HRs of that quarter, measured in-process (MEASURED; `tests/tools/cold_latency.py`,
+artifacts `reports/artifacts/cold_latency_stage3_*.json`). v1.1 is the worst of three runs.
+
+| CIK | Rows | v1.0.0 | v1.1 | SEC requests |
+|---|---|---|---|---|
+| 2012383 | 50,158 | 8.3 s | 4.1 s | 9 -> 6 |
+| 319933 | 49,594 | 8.1 s | 4.3 s | 9 -> 5 |
+| 1761755 | 44,548 | 16.2 s | 4.2 s | 31 -> 5 |
+| 895421 | 44,192 | 44.5 s | 7.6 s | 118 -> 13 |
+| 1776033 | 1,599 | 8.1 s | 2.9 s | 23 -> 6 |
+
+v1.1 reads only the cover pages and history pages that can affect the requested quarter.
+Warm calls take under 0.6 s. `list_13f_filings` still reads every filing's cover page, so its
+first call costs 2-36 s for these managers. Over MCP stdio the server adds about 1 s for a
+50k-row answer (~40 MB), but the MCP Python SDK's stdio client (2.2.0) itself needs 6-15 s to
+read a message that large.
 
 Stage reports with measured artifacts are in [`reports/`](reports/).
 
