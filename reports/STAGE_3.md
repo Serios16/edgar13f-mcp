@@ -86,7 +86,10 @@ runs that command with an empty uv cache and `SEC_USER_AGENT` unset (so nothing 
 sec.gov), does an MCP handshake, and requires the three tools, an `invalid_argument` decline for
 a malformed call, and `isError` for a well-formed one (A8).
 
-INSTALL_LINES
+- MEASURED: SMOKE OK for this branch (resolved to 0cf425b, server 1.1.0), for tag v1.0.0 and for the default branch (both b208c47, server 0.1.0), each in 6-11 s from an empty uv cache with uv 0.8.17; from `PYTHON=python bash tests/tools/install_smoke.sh [ref]`; see `reports/artifacts/install_smoke.txt`.
+- REASONED: once this PR is merged, the README command without a ref runs v1.1 code; a tag
+  (`@v1.0.0`, later `@v1.1.0` if gate 3 passes) pins a release. The branch run and the merged
+  commit have the same `src/`.
 
 It is not run in CI: that would need `uv` on the runner (REGISTER P9).
 
