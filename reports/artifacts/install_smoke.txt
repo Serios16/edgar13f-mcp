@@ -1,0 +1,34 @@
+# PYTHON=python bash tests/tools/install_smoke.sh [ref]   (2026-10-01T18:42:08Z)
+
+## ref: claude/edgar13f-stage-3-release-7gsic1
+command: uvx --from git+https://github.com/Serios16/edgar13f-mcp@claude/edgar13f-stage-3-release-7gsic1 edgar13f-server
+uv: uv 0.8.17
+edgar13f: list_13f_filings failed: SecUnavailable('SEC_USER_AGENT is not set; refusing to contact sec.gov')
+server: edgar13f 1.1.0
+tools: ['diff_holdings', 'get_holdings_as_of', 'list_13f_filings']
+malformed call: isError=False status=declined reason=invalid_argument
+call without SEC_USER_AGENT: isError=True
+SMOKE OK
+elapsed (install + run, empty uv cache): 6 s
+
+## ref: v1.0.0
+command: uvx --from git+https://github.com/Serios16/edgar13f-mcp@v1.0.0 edgar13f-server
+uv: uv 0.8.17
+edgar13f: list_13f_filings failed: SecUnavailable('SEC_USER_AGENT is not set; refusing to contact sec.gov')
+server: edgar13f 0.1.0
+tools: ['diff_holdings', 'get_holdings_as_of', 'list_13f_filings']
+malformed call: isError=False status=declined reason=invalid_argument
+call without SEC_USER_AGENT: isError=True
+SMOKE OK
+elapsed (install + run, empty uv cache): 8 s
+
+## ref: <default branch>
+command: uvx --from git+https://github.com/Serios16/edgar13f-mcp edgar13f-server
+uv: uv 0.8.17
+edgar13f: list_13f_filings failed: SecUnavailable('SEC_USER_AGENT is not set; refusing to contact sec.gov')
+server: edgar13f 0.1.0
+tools: ['diff_holdings', 'get_holdings_as_of', 'list_13f_filings']
+malformed call: isError=False status=declined reason=invalid_argument
+call without SEC_USER_AGENT: isError=True
+SMOKE OK
+elapsed (install + run, empty uv cache): 6 s

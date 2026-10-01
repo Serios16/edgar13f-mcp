@@ -116,7 +116,7 @@ def compare(a) -> None:
 def scan(a) -> None:
     from tests.tools import datasets_crosscheck as dc
 
-    totals: Counter = Counter()
+    totals: Counter = Counter({"submissions": 0, "cover_differs_from_period": 0, "period_after_filing_date": 0})
     early = []
     for name in dc.ZIPS + dc.HISTORY:
         with zipfile.ZipFile(a.data / f"{name}_form13f.zip") as zf:

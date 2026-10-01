@@ -11,6 +11,11 @@ HARD RULES (breaking any = stop and report)
    is fine, under-dropping is not. Never output, log, commit or display
    such rows, their values, or any price. Fixtures must not contain
    them. Prove it with synthetic-row tests.
+   Switch (end users only): redaction is ON unless the environment
+   variable EDGAR13F_REDACT is exactly "off". Default: ON. Never run
+   the server with "off" against live SEC data or recorded fixtures,
+   in any session or CI job; tests of "off" use synthetic rows only.
+   The default list is never narrowed (ruling D2).
 3. SEC fair access: User-Agent from $SEC_USER_AGENT; <= 5 req/s global;
    exponential backoff on 403/429 and on HTML error pages returned in
    place of data (treat as retryable); on-disk cache. If sec.gov is

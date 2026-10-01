@@ -7,6 +7,14 @@ at the next stage gate review.
 
 None open.
 
+## GATES (REPORTED by the evaluator; aggregates only)
+
+| Gate | Result |
+|---|---|
+| Gate 1 | PASS on the stage-1 server: generated 698/700 (misses: 1 restatement_before, 1 restatement_after), citations 669/671, 0 leaks over 3,114, curated 34/34, declines 6/6. |
+| Gate 2 | Gate 2 PASS -> v1.0.0 (2026-10-01). Pre-registered decision gate, run on b208c47; aggregates identical to gate 1. |
+| v1.1 gate | Pre-registered 2026-10-01, before any stage-3 work: tag v1.1.0 only if gate 3, run on the merged commit, passes every primary gate with generated >= 698/700 and 0 leaks. Open. |
+
 ## RULINGS (2026-09-29, orchestrator; recorded before any grader result exists)
 
 | ID | Topic | Ruling | Reasoning / standing rule |
@@ -35,6 +43,11 @@ None open.
 | A14 | Synthetic fixture manager uses CIK 9900000001 (above every assigned EDGAR CIK) and lives under `tests/fixtures/synthetic/`. Blocklisted rows for restatement tests are built in memory from the synthetic rows in `tests/invariants/test_blocklist.py`, never stored. | Hard rule 2: fixtures must not contain blocked rows. | stage gate |
 | A15 | Cold-cache latency is measured in-process (`tools.call` on `EdgarSource`, empty cache dir), not over stdio; the stdio layer adds a constant. Filers = top 5 13F-HR for 2025-03-31 by rows after redaction. | Measure only (stage 2 scope e). | stage gate |
 | A16 | CI probe runs `--offline`: `SEC_USER_AGENT` unset, so the live call must be `isError: true` (A8) while a malformed call must be an `invalid_argument` decline; the cache dir is still created. The live-mode probe stays a manual tool. | CI stays offline (no sec.gov). | stage gate |
+| A17 | A 13F for period P is filed on or after P. With it, `get_holdings_as_of`/`diff_holdings` read cover pages only for filings dated on or after the earliest requested period (or whose index period is blank or requested), and skip submission pages that end before it unless no 13F is visible otherwise (then older pages are read until one is found, for `unknown_cik`). If a report were filed before its period end and sat in a skipped page, it would be missed (pinned in `tests/unit/test_lazy_fetch.py`). Measured: 0 of 80,690 13F submissions in the eight Form 13F Data Sets (2023q4 to Aug 2025) have a period after their filing date (`reports/artifacts/period_after_filing.json`). `list_13f_filings` still reads every page and cover. | Stage 3 (b): cold latency without a contract change. | stage gate |
+| A18 | `EDGAR13F_REDACT`: only the exact string `off` disables redaction (`OFF`, ` off`, `0`, `false`, empty, ... keep it on). Rows parsed with it off are cached in `rows-unredacted/`, never in `rows/`, so a cache written with it off is never served with it on. `parse.parse_infotable` redacts by default whatever the variable says; only `EdgarSource` passes the switch. The server exits if `off` is combined with `EDGAR13F_FIXTURE_DIR`, and the live test tools refuse to run with it. | Stage 3 (a); the most reversible reading of "ON unless exactly off". | stage gate |
+| A19 | `__version__` (MCP `serverInfo.version`) is bumped to 1.1.0 together with `pyproject.toml`. The tag v1.0.0 carries package version 0.1.0. The byte-identity requirement of (a) is read as covering tool results (the first text block and isError), not `serverInfo`. | Stage 3 (e) asks for 1.1.0 in pyproject; one version string avoids two. | stage gate |
+| A20 | Cold latency is re-measured with the stage-2 method (A15: in-process, empty cache dir) before and after; the <= 10 s target is judged on it, over three after-runs (worst case). End-to-end MCP stdio times are reported as well. A15's "stdio adds a constant" is corrected: the server writes a 50k-row response in about 1 s, but the MCP Python SDK stdio client takes 11-16 s to read it (client-side). | Stage 3 (b). | stage gate |
+| A21 | CLAUDE.md rule 2 now describes the switch, as instructed in stage 3 (A11's "verbatim" holds for the other rules). | Stage 3 (a). | stage gate |
 
 ## PROPOSALS (out of scope; not done)
 
@@ -45,4 +58,7 @@ None open.
 | P3 | Note: the brief names `PREREG_COMMITMENT.md` at the repo root; it is at `contracts/PREREG_COMMITMENT.md` and is treated as read-only there. No change made. |
 | P4 | Throughput: `SecClient._throttled` holds the rate-limit lock until the whole response is read, so measured throughput is ~2.5 req/s, not the permitted 4. Releasing the lock after the response headers would keep the <= 5 req/s start spacing. Not done (stage 2 is measure-only). |
 | P6 | Caches written before the F5 fix (stage 2) may hold `rows/<accession>.json` = `[]` for a filing whose information table is named `index.xml`. The fix does not invalidate old caches; delete `<cache>/rows/` to refresh. A versioned rows dir would do it automatically. Not done: the smallest reversible change was preferred. |
-| P5 | Cold latency: `EdgarSource.filings` fetches the cover page of every visible 13F of every period, so a first call costs one request per historical filing. Fetching covers lazily (only for the requested period, and for `list_13f_filings`) would cut cold latency. Not done (measure-only). |
+| P5 | DONE in stage 3 for `get_holdings_as_of` and `diff_holdings` (A17); `list_13f_filings` still fetches every cover page. |
+| P7 | `SecClient` does not retry a truncated response body (`http.client.IncompleteRead` is not an `OSError`): one occurred while downloading an 81 MB data-set zip through the session proxy in stage 3, and the call failed instead of backing off. Treating it like a network error would make large information tables more robust. Not done (out of stage-3 scope). |
+| P8 | MCP Python SDK 2.2.0 stdio client: `mcp/client/stdio.py` joins its line buffer with each chunk (`(buffer + chunk).split("\n")`), so reading one 40 MB response takes 11-16 s (A20). Worth reporting upstream. Sending `structuredContent` only for small results would halve the message, but changes v1.0 output; owner decision. Not done. |
+| P9 | Run `tests/tools/install_smoke.sh` in CI. It needs `uv` on the runner (a new CI tool) and network to GitHub; not done because CI checks are unchanged in stage 3. |
