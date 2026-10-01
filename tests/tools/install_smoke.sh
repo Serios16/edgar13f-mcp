@@ -4,7 +4,7 @@
 #
 #   PYTHON=.venv/bin/python bash tests/tools/install_smoke.sh [git ref]
 #
-# Runs the README command `uvx --from git+https://github.com/Serios16/edgar13f-mcp[@REF] edgar13f-server`
+# Runs the README command `uvx --python 3.11 --from git+https://github.com/Serios16/edgar13f-mcp[@REF] edgar13f-server`
 # with an empty uv cache, so the package and its dependencies are fetched from scratch.
 # SEC_USER_AGENT is unset, so the server never contacts sec.gov: a malformed call must be an
 # invalid_argument decline and a well-formed call must be isError (REGISTER A8).
@@ -16,7 +16,7 @@ PY="${PYTHON:-python3}"
 UV_CACHE_DIR="$(mktemp -d)"
 CACHE="$(mktemp -d)"
 trap 'rm -rf "$UV_CACHE_DIR" "$CACHE"' EXIT
-echo "command: uvx --from $SOURCE edgar13f-server"
+echo "command: uvx --python 3.11 --from $SOURCE edgar13f-server"
 echo "uv: $(uv --version)"
 start=$(date +%s)
 SOURCE="$SOURCE" UV_CACHE_DIR="$UV_CACHE_DIR" CACHE="$CACHE" "$PY" - <<'PY'
@@ -25,9 +25,10 @@ import anyio
 from mcp.client.session import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
-env = {k: v for k, v in os.environ.items() if k not in ("SEC_USER_AGENT", "EDGAR13F_FIXTURE_DIR")}
+env = {k: v for k, v in os.environ.items() if not k.startswith(("SEC_USER_AGENT", "EDGAR13F_"))}
 env["EDGAR13F_CACHE_DIR"] = os.environ["CACHE"]
-params = StdioServerParameters(command="uvx", args=["--from", os.environ["SOURCE"], "edgar13f-server"], env=env)
+params = StdioServerParameters(command="uvx", args=["--python", "3.11", "--from", os.environ["SOURCE"], "edgar13f-server"],
+                                env=env)
 
 
 async def main():

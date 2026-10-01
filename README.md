@@ -27,6 +27,27 @@ and agent answers. This server takes an `as_of` date with every call and follows
 
 Python 3.11, with the official MCP Python SDK 2.x. The server speaks MCP over stdio only.
 
+One command, straight from GitHub (needs [uv](https://docs.astral.sh/uv/); nothing is published to a
+package registry):
+
+```sh
+export SEC_USER_AGENT="Your Name your.email@example.com"   # required by SEC fair access
+uvx --python 3.11 --from git+https://github.com/Serios16/edgar13f-mcp edgar13f-server
+```
+
+Append a tag to pin a release, e.g. `git+https://github.com/Serios16/edgar13f-mcp@v1.0.0`. For an MCP
+client such as Claude Desktop:
+
+```json
+{"mcpServers": {"edgar13f": {
+  "command": "uvx",
+  "args": ["--python", "3.11", "--from", "git+https://github.com/Serios16/edgar13f-mcp", "edgar13f-server"],
+  "env": {"SEC_USER_AGENT": "Your Name your.email@example.com"}}}}
+```
+
+This command is tested by `tests/tools/install_smoke.sh` (empty uv cache, MCP handshake; output in
+`reports/artifacts/install_smoke.txt`). From a clone instead:
+
 ```sh
 python3.11 -m venv .venv && . .venv/bin/activate
 pip install -e .
@@ -34,15 +55,14 @@ export SEC_USER_AGENT="Your Name your.email@example.com"   # required by SEC fai
 python -m edgar13f.server                                   # or: edgar13f-server
 ```
 
-For an MCP client such as Claude Desktop, configure the command
-`python -m edgar13f.server` and set `SEC_USER_AGENT` in its environment.
-
 Environment variables:
 
 * `SEC_USER_AGENT`: the User-Agent sent to sec.gov. It is required; without it the server
   does not contact sec.gov.
 * `EDGAR13F_CACHE_DIR`: the on-disk cache. The default is `$XDG_CACHE_HOME/edgar13f` (or
   `~/.cache/edgar13f`), then a private per-user temp dir. The server writes nowhere else.
+* `EDGAR13F_REDACT`: set to exactly `off` to return the rows that are redacted by default (see
+  Limits). Any other value, or none, keeps redaction on.
 * `EDGAR13F_FIXTURE_DIR`: serve recorded fixtures instead of EDGAR (used by the tests).
 
 SEC access follows the fair-access policy. Across processes that share a cache dir, request
@@ -68,12 +88,15 @@ result with `status: "declined"` and one of six reasons: `unknown_cik`, `not_yet
   `"long"` is declined.
 * **Lag.** Reports are due up to 45 days after quarter end, and amendments can arrive months
   later. An answer is only as current as what was filed by `as_of`.
-* **Redaction.** Rows for gold ETFs/trusts, US energy-sector ETFs, S&P 500 index funds/ETFs,
-  and UCITS copies of these are removed when the information table is parsed. They are never
+* **Redaction.** By default, rows for gold ETFs/trusts, US energy-sector ETFs, S&P 500 index
+  funds/ETFs, and UCITS copies of these are removed when the information table is parsed,
+  because the author keeps a separate study blind to these instruments. They are then never
   returned, cached or logged. Matching uses issuer-name and title patterns plus a CUSIP list,
   and deliberately errs toward removing too much. Some ordinary securities are dropped too,
   for example an energy company whose class title says "UNIT". A query for a removed CUSIP
-  returns `ok` with no rows. See `CLAUDE.md` rule 2 and ruling D2 in `REGISTER.md`.
+  returns `ok` with no rows. To switch redaction off, set `EDGAR13F_REDACT=off` (exactly
+  `off`); rows read that way are cached in a separate directory and never served once
+  redaction is back on. See `CLAUDE.md` rule 2 and ruling D2 in `REGISTER.md`.
 * The server does not cover pre-2013 text-format 13F filings, and it has no prices, charts or
   performance figures.
 
@@ -102,18 +125,27 @@ result with `status: "declined"` and one of six reasons: `unknown_cik`, `not_yet
   answers for randomly sampled (cik, period, as_of) triples against the SEC Form 13F Data
   Sets. The server never reads the data sets.
 
-### Gate 1 results (REPORTED by the evaluator; aggregates only)
+### Gate results (REPORTED by the evaluator; aggregates only)
 
-Item-level results are withheld by design.
+Item-level results are withheld by design. Gate 2, the pre-registered decision gate, passed on
+commit b208c47, which is tagged **v1.0.0**. Its aggregates are identical to gate 1.
 
-| Measure | Result |
-|---|---|
-| Primary gates | all PASS |
-| Generated items | 698 / 700; one miss in `restatement_before`, one in `restatement_after`; every other stratum 100% |
-| Citation validity | 669 / 671 |
-| Leakage | 0 violations over 3,114 cases |
-| Curated items | 34 / 34 |
-| Declines | 6 / 6 |
+| Measure | Gate 1 | Gate 2 (v1.0.0) |
+|---|---|---|
+| Primary gates | all PASS | all PASS |
+| Generated items | 698 / 700 | 698 / 700 |
+| Generated misses | 1 `restatement_before`, 1 `restatement_after` | 1 `restatement_before`, 1 `restatement_after` |
+| Citation validity | 669 / 671 | 669 / 671 |
+| Leakage | 0 violations over 3,114 cases | 0 violations over 3,114 cases |
+| Curated items | 34 / 34 | 34 / 34 |
+| Declines | 6 / 6 | 6 / 6 |
+
+v1.1.0 is tagged only if gate 3, run on the merged stage-3 commit, passes every primary gate
+with generated >= 698/700 and 0 leaks (pre-registered in `REGISTER.md`).
+
+### Latency
+
+LATENCY_PLACEHOLDER
 
 Stage reports with measured artifacts are in [`reports/`](reports/).
 
