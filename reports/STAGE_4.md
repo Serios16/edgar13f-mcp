@@ -118,7 +118,9 @@ MEASURED: one 40 MB line takes 8.9 s through `stdio_client`, 9.4 s through its r
 
 Gate 3 and out-of-sample results (REPORTED), the two over-match patterns and D2, the tag spelling,
 the four tools, an "Agent use" section with a call sequence and an MCP client config with
-`EDGAR13F_AGENT_MODE=on`, and the stage-4 latency and size numbers.
+`EDGAR13F_AGENT_MODE=on`, and the stage-4 latency and size numbers. `tests/tools/install_smoke.sh` now
+accepts the four-tool list.
+MEASURED: SMOKE OK for this branch (server 1.2.0, four tools) and for tag V1.1.0 (server 1.1.0, three tools), each in 6-7 s from an empty uv cache with uv 0.8.17 and `SEC_USER_AGENT` unset; see `reports/artifacts/install_smoke_stage4.txt`.
 
 ## f. REGISTER and version
 
