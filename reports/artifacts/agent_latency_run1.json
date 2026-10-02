@@ -1,0 +1,399 @@
+{
+ "edgar13f": "1.2.0",
+ "period": "2025-03-31",
+ "prev": "2024-12-31",
+ "as_of": "2025-08-27",
+ "min_interval_s": 0.25,
+ "results": [
+  {
+   "cik": "2012383",
+   "find_manager": {
+    "query": "BlackRock, Inc.",
+    "cold_s": 66.48,
+    "cold_requests": 139,
+    "cold_requests_by_kind": {
+     "names": 1,
+     "full_index": 136,
+     "submissions": 2
+    },
+    "non_200_206": 0,
+    "candidates": 2,
+    "rank": 2,
+    "has_13f_filings": true,
+    "warm_s": 0.03,
+    "warm_requests": 0,
+    "warm_same_answer": true,
+    "restart_s": 3.21,
+    "restart_requests": 0,
+    "restart_same_answer": true,
+    "as_of_s": 0.03,
+    "as_of_requests": 0,
+    "as_of_rank": 2,
+    "as_of_has_13f_filings": true
+   },
+   "list_period": {
+    "status": "ok",
+    "filings": 1,
+    "cold_s": 1.24,
+    "cold_requests": 4,
+    "warm_s": 0.0,
+    "warm_requests": 0,
+    "full_list_after_s": 0.8,
+    "full_list_after_requests": 3,
+    "full_list_filings": 4,
+    "equals_full_list_filtered": true,
+    "non_200": 0
+   },
+   "sizes": {
+    "get_holdings_as_of": {
+     "status": "ok",
+     "text_bytes": 19283759,
+     "jsonrpc_result_bytes": 40674600,
+     "items": 50158,
+     "total_positions": null,
+     "truncated": null,
+     "sdk_stdio_warm_s": 11.93
+    },
+    "get_holdings_as_of_max50": {
+     "status": "ok",
+     "text_bytes": 440640,
+     "jsonrpc_result_bytes": 929186,
+     "items": 1137,
+     "total_positions": 5355,
+     "truncated": true,
+     "sdk_stdio_warm_s": 0.2
+    },
+    "diff_holdings": {
+     "status": "ok",
+     "text_bytes": 1424638,
+     "jsonrpc_result_bytes": 3017164,
+     "items": 5586,
+     "total_positions": null,
+     "truncated": null,
+     "sdk_stdio_warm_s": 0.51
+    },
+    "diff_holdings_max50": {
+     "status": "ok",
+     "text_bytes": 13939,
+     "jsonrpc_result_bytes": 29538,
+     "items": 50,
+     "total_positions": 5586,
+     "truncated": true,
+     "sdk_stdio_warm_s": 0.38
+    }
+   }
+  },
+  {
+   "cik": "319933",
+   "find_manager": {
+    "query": "THURSTON, SPRINGER, MILLER, HERD & TITAK, INC.",
+    "cold_s": 66.59,
+    "cold_requests": 138,
+    "cold_requests_by_kind": {
+     "names": 1,
+     "full_index": 136,
+     "submissions": 1
+    },
+    "non_200_206": 0,
+    "candidates": 1,
+    "rank": 1,
+    "has_13f_filings": true,
+    "warm_s": 0.02,
+    "warm_requests": 0,
+    "warm_same_answer": true,
+    "restart_s": 2.13,
+    "restart_requests": 0,
+    "restart_same_answer": true,
+    "as_of_s": 0.02,
+    "as_of_requests": 0,
+    "as_of_rank": 1,
+    "as_of_has_13f_filings": true
+   },
+   "list_period": {
+    "status": "ok",
+    "filings": 1,
+    "cold_s": 0.71,
+    "cold_requests": 3,
+    "warm_s": 0.0,
+    "warm_requests": 0,
+    "full_list_after_s": 1.07,
+    "full_list_after_requests": 4,
+    "full_list_filings": 6,
+    "equals_full_list_filtered": true,
+    "non_200": 0
+   },
+   "sizes": {
+    "get_holdings_as_of": {
+     "status": "ok",
+     "text_bytes": 18875433,
+     "jsonrpc_result_bytes": 39734770,
+     "items": 49594,
+     "total_positions": null,
+     "truncated": null,
+     "sdk_stdio_warm_s": 7.69
+    },
+    "get_holdings_as_of_max50": {
+     "status": "ok",
+     "text_bytes": 6741333,
+     "jsonrpc_result_bytes": 14192458,
+     "items": 17741,
+     "total_positions": 1671,
+     "truncated": true,
+     "sdk_stdio_warm_s": 1.28
+    },
+    "diff_holdings": {
+     "status": "ok",
+     "text_bytes": 416263,
+     "jsonrpc_result_bytes": 885358,
+     "items": 1756,
+     "total_positions": null,
+     "truncated": null,
+     "sdk_stdio_warm_s": 0.54
+    },
+    "diff_holdings_max50": {
+     "status": "ok",
+     "text_bytes": 12849,
+     "jsonrpc_result_bytes": 27358,
+     "items": 50,
+     "total_positions": 1756,
+     "truncated": true,
+     "sdk_stdio_warm_s": 0.32
+    }
+   }
+  },
+  {
+   "cik": "1761755",
+   "find_manager": {
+    "query": "TOWNSQUARE CAPITAL LLC",
+    "cold_s": 66.41,
+    "cold_requests": 138,
+    "cold_requests_by_kind": {
+     "names": 1,
+     "full_index": 136,
+     "submissions": 1
+    },
+    "non_200_206": 0,
+    "candidates": 1,
+    "rank": 1,
+    "has_13f_filings": true,
+    "warm_s": 0.02,
+    "warm_requests": 0,
+    "warm_same_answer": true,
+    "restart_s": 2.11,
+    "restart_requests": 0,
+    "restart_same_answer": true,
+    "as_of_s": 0.02,
+    "as_of_requests": 0,
+    "as_of_rank": 1,
+    "as_of_has_13f_filings": true
+   },
+   "list_period": {
+    "status": "ok",
+    "filings": 1,
+    "cold_s": 0.8,
+    "cold_requests": 3,
+    "warm_s": 0.0,
+    "warm_requests": 0,
+    "full_list_after_s": 6.78,
+    "full_list_after_requests": 26,
+    "full_list_filings": 28,
+    "equals_full_list_filtered": true,
+    "non_200": 0
+   },
+   "sizes": {
+    "get_holdings_as_of": {
+     "status": "ok",
+     "text_bytes": 16721750,
+     "jsonrpc_result_bytes": 35311400,
+     "items": 44548,
+     "total_positions": null,
+     "truncated": null,
+     "sdk_stdio_warm_s": 6.95
+    },
+    "get_holdings_as_of_max50": {
+     "status": "ok",
+     "text_bytes": 1014700,
+     "jsonrpc_result_bytes": 2141660,
+     "items": 2677,
+     "total_positions": 1645,
+     "truncated": true,
+     "sdk_stdio_warm_s": 0.25
+    },
+    "diff_holdings": {
+     "status": "ok",
+     "text_bytes": 431992,
+     "jsonrpc_result_bytes": 916912,
+     "items": 1759,
+     "total_positions": null,
+     "truncated": null,
+     "sdk_stdio_warm_s": 0.32
+    },
+    "diff_holdings_max50": {
+     "status": "ok",
+     "text_bytes": 13024,
+     "jsonrpc_result_bytes": 27708,
+     "items": 50,
+     "total_positions": 1759,
+     "truncated": true,
+     "sdk_stdio_warm_s": 0.25
+    }
+   }
+  },
+  {
+   "cik": "895421",
+   "find_manager": {
+    "query": "MORGAN STANLEY",
+    "cold_s": 75.24,
+    "cold_requests": 147,
+    "cold_requests_by_kind": {
+     "names": 1,
+     "full_index": 136,
+     "submissions": 10
+    },
+    "non_200_206": 0,
+    "candidates": 10,
+    "rank": 2,
+    "has_13f_filings": true,
+    "warm_s": 0.05,
+    "warm_requests": 0,
+    "warm_same_answer": true,
+    "restart_s": 2.58,
+    "restart_requests": 0,
+    "restart_same_answer": true,
+    "as_of_s": 0.05,
+    "as_of_requests": 0,
+    "as_of_rank": 2,
+    "as_of_has_13f_filings": true
+   },
+   "list_period": {
+    "status": "ok",
+    "filings": 1,
+    "cold_s": 3.73,
+    "cold_requests": 11,
+    "warm_s": 0.03,
+    "warm_requests": 0,
+    "full_list_after_s": 39.83,
+    "full_list_after_requests": 105,
+    "full_list_filings": 154,
+    "equals_full_list_filtered": true,
+    "non_200": 0
+   },
+   "sizes": {
+    "get_holdings_as_of": {
+     "status": "ok",
+     "text_bytes": 16909245,
+     "jsonrpc_result_bytes": 35674698,
+     "items": 44192,
+     "total_positions": null,
+     "truncated": null,
+     "sdk_stdio_warm_s": 5.93
+    },
+    "get_holdings_as_of_max50": {
+     "status": "ok",
+     "text_bytes": 364836,
+     "jsonrpc_result_bytes": 769766,
+     "items": 951,
+     "total_positions": 7903,
+     "truncated": true,
+     "sdk_stdio_warm_s": 0.2
+    },
+    "diff_holdings": {
+     "status": "ok",
+     "text_bytes": 2070240,
+     "jsonrpc_result_bytes": 4389152,
+     "items": 8284,
+     "total_positions": null,
+     "truncated": null,
+     "sdk_stdio_warm_s": 0.55
+    },
+    "diff_holdings_max50": {
+     "status": "ok",
+     "text_bytes": 13745,
+     "jsonrpc_result_bytes": 29150,
+     "items": 50,
+     "total_positions": 8284,
+     "truncated": true,
+     "sdk_stdio_warm_s": 0.35
+    }
+   }
+  },
+  {
+   "cik": "1776033",
+   "find_manager": {
+    "query": "Golden State Wealth Management, LLC",
+    "cold_s": 78.76,
+    "cold_requests": 138,
+    "cold_requests_by_kind": {
+     "names": 1,
+     "full_index": 136,
+     "submissions": 1
+    },
+    "non_200_206": 0,
+    "candidates": 1,
+    "rank": 1,
+    "has_13f_filings": true,
+    "warm_s": 0.02,
+    "warm_requests": 0,
+    "warm_same_answer": true,
+    "restart_s": 2.38,
+    "restart_requests": 0,
+    "restart_same_answer": true,
+    "as_of_s": 0.02,
+    "as_of_requests": 0,
+    "as_of_rank": 1,
+    "as_of_has_13f_filings": true
+   },
+   "list_period": {
+    "status": "ok",
+    "filings": 2,
+    "cold_s": 2.14,
+    "cold_requests": 4,
+    "warm_s": 0.0,
+    "warm_requests": 0,
+    "full_list_after_s": 5.07,
+    "full_list_after_requests": 17,
+    "full_list_filings": 20,
+    "equals_full_list_filtered": true,
+    "non_200": 0
+   },
+   "sizes": {
+    "get_holdings_as_of": {
+     "status": "ok",
+     "text_bytes": 615084,
+     "jsonrpc_result_bytes": 1294272,
+     "items": 1599,
+     "total_positions": null,
+     "truncated": null,
+     "sdk_stdio_warm_s": 0.06
+    },
+    "get_holdings_as_of_max50": {
+     "status": "ok",
+     "text_bytes": 25557,
+     "jsonrpc_result_bytes": 53826,
+     "items": 64,
+     "total_positions": 1555,
+     "truncated": true,
+     "sdk_stdio_warm_s": 0.01
+    },
+    "diff_holdings": {
+     "status": "ok",
+     "text_bytes": 377361,
+     "jsonrpc_result_bytes": 803654,
+     "items": 1626,
+     "total_positions": null,
+     "truncated": null,
+     "sdk_stdio_warm_s": 0.04
+    },
+    "diff_holdings_max50": {
+     "status": "ok",
+     "text_bytes": 12765,
+     "jsonrpc_result_bytes": 27190,
+     "items": 50,
+     "total_positions": 1626,
+     "truncated": true,
+     "sdk_stdio_warm_s": 0.02
+    }
+   }
+  }
+ ]
+}
