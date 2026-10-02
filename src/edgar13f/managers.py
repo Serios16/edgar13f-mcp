@@ -9,7 +9,7 @@
 * entity_name: the current `name` in the CIK's submissions JSON, fetched only for candidates
   that reach the answer.
 `has_13f_filings` with `as_of` goes through `rules.visible` (§3). Candidates whose names match
-the holdings blocklist are left out while redaction is on (REGISTER A26).
+the holdings blocklist are left out while redaction is on (REGISTER A27, N1).
 """
 
 from __future__ import annotations
@@ -18,6 +18,7 @@ import datetime as dt
 import heapq
 import json
 import re
+import threading
 import time
 import zlib
 from collections import Counter
@@ -123,9 +124,14 @@ class EdgarDirectory:
         self._names: tuple[float, str, dict[str, tuple[str, ...]]] | None = None
         self._first: dict[str, str] = {}
         self._loaded: dict[str, float] = {}
+        self._lock = threading.Lock()  # tool calls run in worker threads: build each index once
 
     def _lookup(self) -> tuple[str, dict[str, tuple[str, ...]]]:
         """The CIK lookup text (upper case) and every name of each CIK that has several."""
+        with self._lock:
+            return self._load_names()
+
+    def _load_names(self) -> tuple[str, dict[str, tuple[str, ...]]]:
         if self._names is None or self._names[0] < time.time() - DAY:
             body = self.client.get(NAMES_URL, fetched_after=time.time() - DAY) or b""
             text = body.decode("latin-1").upper()
@@ -152,6 +158,11 @@ class EdgarDirectory:
         return out
 
     def first_13f(self, as_of: str | None) -> dict[str, str]:
+        with self._lock:
+            self._update(as_of)
+            return dict(self._first)
+
+    def _update(self, as_of: str | None) -> None:
         today = dt.datetime.now(dt.timezone.utc).date()
         for y in range(FIRST_YEAR, today.year + 1):
             for q in range(1, 5):
@@ -166,7 +177,6 @@ class EdgarDirectory:
                     for cik, date in json.loads(path.read_text()).items():
                         self._first[cik] = min(date, self._first.get(cik, date))
                     self._loaded[path.name] = path.stat().st_mtime
-        return self._first
 
     def _fetch(self, url: str) -> dict[str, str]:
         z, text, pos, size = zlib.decompressobj(16 + zlib.MAX_WBITS), b"", 0, RANGE

@@ -309,3 +309,16 @@ def test_current_name_missing_falls_back_to_the_lookup_name(tmp_path, monkeypatc
 
     out = tools.call(Source(), "find_manager", {"name": "ghost"})
     assert out["candidates"] == [{"cik": "99", "entity_name": "NORTHWIND GHOST CO", "has_13f_filings": False}]
+
+
+def test_concurrent_first_calls_build_the_index_once(tmp_path, monkeypatch):
+    import threading
+
+    d, fake = _directory(tmp_path, monkeypatch)
+    threads = [threading.Thread(target=d.first_13f, args=(None,)) for _ in range(4)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    urls = [u for u, _ in fake.calls if "/full-index/" in u]
+    assert len(urls) == len(set(urls)) == (dt.datetime.now(dt.timezone.utc).month - 1) // 3 + 1

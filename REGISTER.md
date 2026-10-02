@@ -5,7 +5,9 @@ at the next stage gate review.
 
 ## DECISION NEEDED
 
-None open.
+| ID | Topic | Question | What this branch does meanwhile |
+|---|---|---|---|
+| N1 | Blocklist and `find_manager` (stage 4) | Hard rule 2 covers holdings rows; `find_manager` returns EDGAR entity names, which can be the names of blocked instruments (e.g. an entity named like a gold trust). Should entity names be redacted? | The most conservative reading (A27): while redaction is on, a candidate is left out if any of its current or former EDGAR names matches the blocklist name patterns (no CUSIP or class title exists for an entity). Nothing is narrowed. The owner may keep or drop this; it is not a contract change. |
 
 ## GATES (REPORTED by the evaluator; aggregates only)
 
@@ -13,7 +15,11 @@ None open.
 |---|---|
 | Gate 1 | PASS on the stage-1 server: generated 698/700 (misses: 1 restatement_before, 1 restatement_after), citations 669/671, 0 leaks over 3,114, curated 34/34, declines 6/6. |
 | Gate 2 | Gate 2 PASS -> v1.0.0 (2026-10-01). Pre-registered decision gate, run on b208c47; aggregates identical to gate 1. |
-| v1.1 gate | Pre-registered 2026-10-01, before any stage-3 work: tag v1.1.0 only if gate 3, run on the merged commit, passes every primary gate with generated >= 698/700 and 0 leaks. Open. |
+| v1.1 gate | Pre-registered 2026-10-01, before any stage-3 work: tag v1.1.0 only if gate 3, run on the merged commit, passes every primary gate with generated >= 698/700 and 0 leaks. |
+| Gate 3 | Gate 3 PASS -> v1.1.0. Run on ca60c5c: generated 698/700, 0 leaks; aggregates identical to gates 1-2. Both misses are ruling D2 over-matches (accepted cost). The tag on origin is spelled `V1.1.0` (MEASURED: `git ls-remote --tags origin`; v1.0.0 is lower-case). |
+| Out-of-sample | Filings 2025-09 to 2026-08: generated 699/700, 0 leaks over 3,102 cases, citations 639/640, declines 6/6, all primary gates PASS. The one miss is a D2 over-match, predicted before grading. |
+| Known over-matches | Every "SPDR S&P ..." fund (any SPDR fund naming S&P); bonds of trust/fund-named issuers whose class title carries a ".500" coupon. D2 stands: the list is never narrowed. |
+| v1.2 gate | Pre-registered in the stage-4 brief (2026-10-02), before any stage-4 work: tag v1.2.0 only if gate 4, run on the merged commit, passes every primary gate with generated >= 698/700 and 0 leaks. Open. |
 
 ## RULINGS (2026-09-29, orchestrator; recorded before any grader result exists)
 
@@ -48,6 +54,16 @@ None open.
 | A19 | `__version__` (MCP `serverInfo.version`) is bumped to 1.1.0 together with `pyproject.toml`. The tag v1.0.0 carries package version 0.1.0. The byte-identity requirement of (a) is read as covering tool results (the first text block and isError), not `serverInfo`. | Stage 3 (e) asks for 1.1.0 in pyproject; one version string avoids two. | stage gate |
 | A20 | Cold latency is re-measured with the stage-2 method (A15: in-process, empty cache dir) before and after; the <= 10 s target is judged on it, over three after-runs (worst case). End-to-end MCP stdio times are reported as well. A15's "stdio adds a constant" is corrected: the server writes a 44-50k-row response in about 1 s, but the MCP Python SDK stdio client takes 6-15 s to read it (client-side). | Stage 3 (b). | stage gate |
 | A21 | CLAUDE.md rule 2 now describes the switch, as instructed in stage 3 (A11's "verbatim" holds for the other rules). | Stage 3 (a). | stage gate |
+| A22 | `issuer` (A1): query and `name_of_issuer` both get runs of whitespace collapsed to one space and are case-folded; the query is not stripped, so leading/trailing spaces are part of the substring. The 2-100 length is counted on the query as given; a non-string is `invalid_argument`. | "runs of whitespace collapsed" says nothing about trimming; not trimming is the literal reading. | stage gate |
+| A23 | `matched_cusips` (A1): the distinct CUSIP strings as filed (case-sensitive) of the rows that pass every filter, before the `max_positions` cut; for `diff_holdings`, the rows of both periods. Present whenever `issuer` is given (`[]` if nothing matched). | "that matched" = the filter's matches; the cut is a separate step. | stage gate |
+| A24 | `max_positions` (A2): a JSON integer only (`true`, `1.0`, `"5"` → `invalid_argument`, as A6). Group key = (upper-cased CUSIP, put_call, sh_prn), as A12; null `put_call`/`sh_prn` sort first; `value` null counts as 0. Holdings come back group by group in rank order (rows of a group in filed order, base before supplements). `total_positions` counts groups (holdings) or changes (diff). The added fields are placed before `holdings`/`changes`. | A2 gives the order of groups, not of rows; ranked output is what an agent reads first. | stage gate |
+| A25 | `period` on `list_13f_filings` (A3): the visible list filtered by `period_of_report`, fetched with A17's period-aware reads; an empty `filings` (ok) when nothing of that period is visible; `unknown_cik` unchanged. No `period` field is added to the response. | A3 adds no output field. | stage gate |
+| A26 | `find_manager` (A4) sources: names = EDGAR's `cik-lookup-data.txt` (every current and former name, upper case; re-read after a day); the query is a case-insensitive substring of any of them (no whitespace collapsing). `has_13f_filings` = earliest 13F-HR/HR-A/NT/NT-A date per CIK from the quarterly `full-index/YYYY/QTRn/form.gz` since 1993 QTR1, read as a 1 MiB HTTP Range prefix (doubled if the 13F block is not complete), through `rules.visible`. A quarter's result is final once fetched two days after the quarter ended (A7's margin); otherwise it is refetched after a day (no `as_of`) or when fetched before `as_of` + 2 days. `entity_name` = the submissions JSON `name`, fetched for candidates that reach the answer (cached a day; the lookup name if missing). Order: (no 13F first = false, upper-cased current name, numeric CIK). `query` echoes `name` as given; `note` is one of two fixed texts. | Exact for every query size without one request per candidate (a "morgan stanley" query matches 1,093 CIKs). MEASURED basis: all 136 quarterly indexes sorted by form type, ISO dates, 13F block within the first 576 KiB compressed (`reports/artifacts/fullindex_verify.json`). | stage gate |
+| A27 | `find_manager` redaction: see DECISION NEEDED N1. With `EDGAR13F_REDACT=off` (end users) names are not filtered. | Most reversible: dropping names can be undone; showing them cannot. | stage gate |
+| A28 | Agent mode (A5) is read from the environment on every call. It changes only `get_holdings_as_of` and `diff_holdings` calls without `cusip`, `issuer` and `max_positions`; with it on, every other call is byte-identical to v1 (tested over the golden grid). | A5. | stage gate |
+| A29 | P7: `SecClient` retries any `http.client.HTTPException` (`IncompleteRead`, `BadStatusLine`, ...) like a network error, with the same backoff, and logs it as `neterr:<name>` in `requests.log`. | P7; the other HTTPException cases are the same kind of broken transfer. | stage gate |
+| A30 | The size-budget check no longer counts `src/*.egg-info/` (written by `pip install -e`, untracked, its `PKG-INFO` embeds README.md). Tracked source is what the budget measures; a planted test shows a real `.py` file is still counted. | Without it, stage 4's README alone would have pushed CI over 1,500 lines. | stage gate |
+| A31 | Version 1.2.0 in `pyproject.toml` and `__version__` (as A19). | Stage 4 (f). | stage gate |
 
 ## PROPOSALS (out of scope; not done)
 
@@ -59,6 +75,9 @@ None open.
 | P4 | Throughput: `SecClient._throttled` holds the rate-limit lock until the whole response is read, so measured throughput is ~2.5 req/s, not the permitted 4. Releasing the lock after the response headers would keep the <= 5 req/s start spacing. Not done (stage 2 is measure-only). |
 | P6 | Caches written before the F5 fix (stage 2) may hold `rows/<accession>.json` = `[]` for a filing whose information table is named `index.xml`. The fix does not invalidate old caches; delete `<cache>/rows/` to refresh. A versioned rows dir would do it automatically. Not done: the smallest reversible change was preferred. |
 | P5 | DONE in stage 3 for `get_holdings_as_of` and `diff_holdings` (A17); `list_13f_filings` still fetches every cover page. |
-| P7 | `SecClient` does not retry a truncated response body (`http.client.IncompleteRead` is not an `OSError`): one occurred while downloading an 81 MB data-set zip through the session proxy in stage 3, and the call failed instead of backing off. Treating it like a network error would make large information tables more robust. Not done (out of stage-3 scope). |
-| P8 | MCP Python SDK 2.2.0 stdio client: `mcp/client/stdio.py` joins its line buffer with each chunk (`(buffer + chunk).split("\n")`), so reading one 40 MB response takes 6-15 s (A20). Worth reporting upstream. Sending `structuredContent` only for small results would halve the message, but changes v1.0 output; owner decision. Not done. |
+| P7 | DONE in stage 4 (A29): truncated bodies are retried with backoff and logged; tested with a fake client. |
+| P8 | MCP Python SDK 2.2.0 stdio client: `mcp/client/stdio.py` joins its line buffer with each chunk (`(buffer + chunk).split("\n")`), so reading one 40 MB response takes 6-15 s (A20). Upstream report drafted, not posted: `reports/upstream/mcp_sdk_stdio_issue.md`. Sending `structuredContent` only for small results would halve the message, but changes v1.0 output; owner decision. `max_positions` (A2) avoids the large message for agents. |
 | P9 | Run `tests/tools/install_smoke.sh` in CI. It needs `uv` on the runner (a new CI tool) and network to GitHub; not done because CI checks are unchanged in stage 3. |
+| P10 | Tag spelling: the gate-3 tag is `V1.1.0`, the earlier one `v1.0.0`. `uvx --from git+...@v1.1.0` fails (tags are case-sensitive). A lower-case alias, and `v1.2.0` if gate 4 passes, would keep pins uniform. Owner action; the builder does not tag. |
+| P11 | `find_manager` first call on an empty cache reads 136 quarterly index prefixes (about a minute, see `reports/STAGE_4.md`); later calls are fast. A warm-up command, building the index in the background at server start, or releasing the rate-limit lock after the response headers (P4) would shorten the first call. Not done. |
+| P12 | The addendum file is named `contracts/CONTRACTS_ADDENDUM_A.md.` (trailing dot). Read as the addendum the brief names; not renamed (contracts/ is read-only). Owner may rename. |
