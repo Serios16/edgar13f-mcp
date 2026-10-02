@@ -287,3 +287,16 @@ def test_agent_mode_on_keeps_v1_bytes_for_calls_it_does_not_apply_to(monkeypatch
 def test_structured_content_matches_text_for_new_fields():
     res = server.result_for(SRC, "get_holdings_as_of", {**HOLD, "issuer": "acme", "max_positions": 1})
     assert res.is_error is False and json.loads(res.content[0].text) == res.structured_content
+
+
+# A6 tool descriptions (not graded): name resolution, narrowing, and what as_of means
+
+def test_tool_descriptions_guide_models():
+    from edgar13f.schemas import TOOL_DEFS
+
+    text = json.dumps(TOOL_DEFS)
+    assert "with find_manager" in text and "publicly filed" in text
+    for tool in ("get_holdings_as_of", "diff_holdings"):
+        desc = TOOL_DEFS[tool]["description"]
+        assert all(word in desc for word in ("issuer", "cusip", "max_positions", "as_of"))
+    assert set(TOOL_DEFS) == set(tools.TOOLS)

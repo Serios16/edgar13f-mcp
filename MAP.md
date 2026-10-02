@@ -76,9 +76,10 @@ find_manager:        EdgarDirectory.search (cik-lookup-data.txt, daily) → firs
 ## Tests and checks
 
 * `tests/unit/` – unit and end-to-end (stdio) tests, all offline (`tests/conftest.py` refuses sockets and
-  unsets `EDGAR13F_REDACT`). `test_restatement.py` is the §4 hardening suite; `test_golden.py` compares every
-  fixture response with v1.0.0; `test_lazy_fetch.py` checks period-aware fetching; `test_parse.py` checks the
-  row parser against the v1.0.0 parser.
+  unsets `EDGAR13F_REDACT` and `EDGAR13F_AGENT_MODE`). `test_restatement.py` is the §4 hardening suite;
+  `test_golden.py` compares every fixture response with v1.0.0; `test_lazy_fetch.py` checks period-aware
+  fetching; `test_parse.py` checks the row parser against the v1.0.0 parser; `test_addendum.py` covers A0-A3,
+  A5, A6; `test_find_manager.py` covers A4 and `EdgarDirectory` on a fake SEC client.
 * `tests/invariants/leakage.py`, `test_leakage.py` – leakage suite and controls.
 * `tests/invariants/test_blocklist.py` – synthetic-row blocklist proofs and fixture scan (recorded and synthetic).
 * `tests/invariants/test_blocklist.py` also holds the `EDGAR13F_REDACT` switch tests (synthetic rows only).
@@ -91,7 +92,10 @@ find_manager:        EdgarDirectory.search (cik-lookup-data.txt, daily) → firs
   stats, period consistency, unprivileged-user probe (live mode), SEC Form 13F Data Sets cross-check
   (`datasets_crosscheck.py`; data sets stay outside the repo), cold-cache latency (`cold_latency.py`, also over
   stdio), v1.0 golden writer (`fixture_golden.py`), live v1.0.0-vs-new equivalence and the period-after-filing
-  scan (`equivalence.py`), one-command install from GitHub (`install_smoke.sh`).
+  scan (`equivalence.py`), one-command install from GitHub (`install_smoke.sh`); stage 4: `find_manager` and
+  `list_13f_filings(period)` latency and response sizes (`agent_latency.py`), `has_13f_filings` vs
+  `list_13f_filings` (`has13f_crosscheck.py`), the quarterly form-index premises (`fullindex_scan.py`), and the
+  MCP SDK stdio reproduction (`sdk_stdio_repro.py`, synthetic data only).
 * `tests/fixtures/<cik>/` – recorded, redacted EDGAR data (24 managers).
 * `tests/fixtures/synthetic/9900000001/` – invented manager, one §4 case per period (benign rows only).
 * `tests/fixtures/section4_expected.json` – expected §4 citations for recorded edge cases, derived from

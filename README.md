@@ -171,7 +171,8 @@ adds `auto_limited: true`. Every other call is unaffected. MCP client config:
 * **Controls in this repository.** They run in CI on every push, offline; the tests refuse
   sockets:
   * a leakage suite with a *mutant* control (visibility check disabled; it must find
-    violations) and a *no-op* control;
+    violations, also for every Addendum A parameter and `find_manager(as_of)`) and a *no-op*
+    control;
   * blocklist proofs on synthetic rows, with a planted failure;
   * an exhaustive check of the §4 amendment rules against an independent oracle, killed by
     each planted rule mutation (`tests/unit/test_restatement.py`);
@@ -231,7 +232,21 @@ v1.1 reads only the cover pages and history pages that can affect the requested 
 Warm calls take under 0.6 s. `list_13f_filings` still reads every filing's cover page, so its
 first call costs 2-36 s for these managers. Over MCP stdio the server adds about 1 s for a
 50k-row answer (~40 MB), but the MCP Python SDK's stdio client (2.2.0) itself needs 6-15 s to
-read a message that large.
+read a message that large (quadratic in the message size; an upstream report is drafted in
+[`reports/upstream/`](reports/upstream/mcp_sdk_stdio_issue.md)).
+
+Agent-use extensions, same five managers, two runs (MEASURED; `tests/tools/agent_latency.py`,
+artifacts `reports/artifacts/agent_latency_run1.json` and `_run2.json`):
+
+| Call | First call, empty cache | Later |
+|---|---|---|
+| `find_manager(name)` | 63-79 s (EDGAR's name file and 136 quarterly form-index prefixes, once per cache directory) | 0.02-0.05 s; 1.7-3.2 s in a new process |
+| `list_13f_filings(cik, as_of, period)` | 0.7-3.7 s (the full list: 2-36 s) | under 0.05 s |
+
+`max_positions=50` shrinks a 17-19 MB holdings answer (44-50k rows) to 0.4-1.0 MB for three of the
+four large managers, and the SDK client then reads it in 0.2-0.3 s instead of 6-14 s. The fourth
+reports each position in hundreds of rows, so its 50 positions are still 17,741 rows (6.7 MB).
+Diff answers drop from 0.4-2.1 MB to about 13 KB.
 
 Stage reports with measured artifacts are in [`reports/`](reports/).
 
