@@ -136,7 +136,7 @@ ruling N1; ASSUMED A22-A31; P7 done; P8 updated; P10 closed by the owner; propos
 | F9 | `max_positions` bounds positions, not rows: 50 positions of 319933 are 17,741 rows (6.7 MB). | A2 never splits a group; some filers report one position in hundreds of rows. | README says to use `issuer`/`cusip` for one security. No change (contract). |
 | F10 | Two threads writing the same cache file shared one temporary name (pid only); one rename failed. Found by the new concurrency test. | `_write_json` / HTTP cache temp names (v1). | Fixed: temp names per process and thread; tested. |
 | F11 | The gate-3 tag was pushed as `V1.1.0` (capital V); `@v1.1.0` did not resolve. | Tag spelling. | Closed by the owner (lower-case `v1.1.0` added); README pins `@v1.1.0` (P10). |
-| F12 | The addendum file is `contracts/CONTRACTS_ADDENDUM_A.md.` (trailing dot). | File name. | Not renamed (read-only); P12. |
+| F12 | The addendum file had a trailing dot in its name. | File name. | Renamed to `contracts/CONTRACTS_ADDENDUM_A.md` under ruling N2 (content byte-identical, SHA-256 95bf9772170b8d0e... before and after); P12 closed. |
 
 ## v1.2 gate (pre-registered, not yet run)
 

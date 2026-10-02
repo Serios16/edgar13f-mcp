@@ -19,13 +19,14 @@ None open.
 | Known over-matches | Every "SPDR S&P ..." fund (any SPDR fund naming S&P); bonds of trust/fund-named issuers whose class title carries a ".500" coupon. D2 stands: the list is never narrowed. |
 | v1.2 gate | Pre-registered in the stage-4 brief (2026-10-02), before any stage-4 work: tag v1.2.0 only if gate 4, run on the merged commit, passes every primary gate with generated >= 698/700 and 0 leaks. Open. |
 
-## RULINGS (orchestrator; D1-D3 2026-09-29, recorded before any grader result existed; N1 2026-10-02)
+## RULINGS (orchestrator; D1-D3 2026-09-29, recorded before any grader result existed; N1, N2 2026-10-02)
 
 | ID | Topic | Ruling | Reasoning / standing rule |
 |---|---|---|---|
 | D1 | Contract §5.2 vs §6 (a manager whose first 13F is filed after `as_of`) | Keep `unknown_cik`. | §3 and §6 are normative and agree: nothing filed after `as_of` may influence a response, and a CIK that has not filed a Form 13F on or before `as_of` is `unknown_cik`. The empty-array sentence in §5.2 cannot be reached under them. Test: `tests/unit/test_tools.py::test_first_13f_after_as_of_is_unknown_cik`. |
 | D2 | Blocklist vs contract §5.3/§7 exact-match grading | Redact. | Hard rule 2 outranks exact-match score. Lost points on grader items about redacted CUSIPs (including over-matched rows) are an **accepted cost**. Standing rule for all stages: never narrow the blocklist to recover points. |
 | N1 | `find_manager` and the blocklist (2026-10-02, orchestrator) | Drop the blocklist filter from `find_manager`. | Rule 2 covers holdings rows, their values and prices; an entity's name, CIK and `has_13f_filings` flag contain none of these. This does not narrow the holdings blocklist: D2 is unchanged and every holdings row is redacted exactly as in v1.1. Tests: `tests/unit/test_find_manager.py::test_entity_named_like_a_blocked_instrument_is_returned`, `tests/invariants/test_blocklist.py::test_find_manager_returns_entities_named_like_blocked_instruments`. |
+| N2 | Addendum file name (2026-10-02, orchestrator) | One-time exception to the contracts/ read-only rule, for a rename only. | `git mv` of the addendum to `contracts/CONTRACTS_ADDENDUM_A.md`, content byte-identical (SHA-256 95bf9772170b8d0eed5405a2468f915320b3fb58b4f47718427ee13c6f8ca462 before and after); every reference updated; no other change under contracts/. |
 | D3 | `typing-extensions` (PSF-2.0), a transitive dependency of MCP SDK 2.x and pydantic | Keep it. | Rule 4 in CLAUDE.md is amended to "permissive OSI licences (MIT/Apache/BSD/PSF/ISC)". `tests/tools/license_audit.py` accepts that list and its output (`reports/artifacts/license_audit.txt`) shows every runtime dependency as `ok`. |
 
 ## ASSUMED
@@ -79,4 +80,4 @@ None open.
 | P9 | Run `tests/tools/install_smoke.sh` in CI. It needs `uv` on the runner (a new CI tool) and network to GitHub; not done because CI checks are unchanged in stage 3. |
 | P10 | CLOSED by the owner (2026-10-02): the lower-case tag `v1.1.0` is being added next to `V1.1.0`; README pins use `v1.1.0`. |
 | P11 | `find_manager` first call on an empty cache reads 136 quarterly index prefixes (about a minute, see `reports/STAGE_4.md`); later calls are fast. A warm-up command, building the index in the background at server start, or releasing the rate-limit lock after the response headers (P4) would shorten the first call. Not done. |
-| P12 | The addendum file is named `contracts/CONTRACTS_ADDENDUM_A.md.` (trailing dot). Read as the addendum the brief names; not renamed (contracts/ is read-only). Owner may rename. |
+| P12 | CLOSED by ruling N2 (2026-10-02): renamed to `contracts/CONTRACTS_ADDENDUM_A.md` (trailing dot removed) with `git mv`; content byte-identical (SHA-256 95bf9772170b8d0eed5405a2468f915320b3fb58b4f47718427ee13c6f8ca462 before and after). |

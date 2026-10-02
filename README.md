@@ -83,7 +83,7 @@ error pages trigger exponential backoff. Responses are cached on disk.
 | `diff_holdings(cik, period_a, period_b, as_of[, cusip][, issuer][, max_positions])` | Position changes between two quarters, both resolved on the same `as_of`, keyed by (CUSIP, put/call, SH/PRN): added, removed, increased, decreased or unchanged. |
 
 `find_manager`, `period`, `issuer` and `max_positions` come from
-[Addendum A](contracts/CONTRACTS_ADDENDUM_A.md.) (additive: a call that uses none of them gets
+[Addendum A](contracts/CONTRACTS_ADDENDUM_A.md) (additive: a call that uses none of them gets
 exactly the v1.1.0 answer).
 
 Every response is a JSON object with the disclaimer *"13F reports long positions only; data
