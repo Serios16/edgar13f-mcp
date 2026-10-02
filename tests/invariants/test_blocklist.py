@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from edgar13f import blocklist, parse, server
+from edgar13f import blocklist, parse, server, tools
 from edgar13f.rules import Filing
 from edgar13f.sources import EdgarSource
 from tests.conftest import REPO
@@ -274,3 +274,100 @@ def test_no_ci_job_test_or_tool_sets_the_switch():
                                   'os.environ["EDGAR13F_REDACT"] = "off"'])
 def test_planted_switch_settings_are_detected(line):
     assert SETS_SWITCH.search(line)
+
+
+# Stage 4 (Addendum A): redaction comes before every new filter, and find_manager leaves out
+# candidates whose EDGAR names match the blocklist. Synthetic rows and invented entities only.
+
+class _SyntheticManager:
+    """get_holdings_as_of over the synthetic filing above, rows read through EdgarSource."""
+
+    def __init__(self, tmp_path):
+        self.edgar = EdgarSource(_Synthetic(), tmp_path)
+
+    def filings(self, cik, as_of, periods=None):
+        return [FILING]
+
+    def rows(self, f):
+        return self.edgar.rows(f)
+
+
+HOLD = {"cik": "1", "period": "2024-12-31", "as_of": "2025-08-27"}
+
+
+@pytest.mark.parametrize("extra", [{"issuer": "gold"}, {"issuer": "S&P 500"}, {"issuer": "ENERGY"}, {"issuer": "tr"},
+                                   {"max_positions": 200}, {"issuer": "spdr", "max_positions": 1}])
+def test_new_filters_never_see_redacted_rows(tmp_path, extra):
+    out = tools.call(_SyntheticManager(tmp_path), "get_holdings_as_of", {**HOLD, **extra})
+    assert out["status"] == "ok" and survivors(out["holdings"]) == []
+    assert survivors([{"cusip": c} for c in out.get("matched_cusips", [])]) == []
+    if "max_positions" in extra and "issuer" not in extra:
+        assert out["total_positions"] == len(KEPT)
+
+
+def test_agent_mode_never_sees_redacted_rows(tmp_path, monkeypatch):
+    monkeypatch.setenv("EDGAR13F_AGENT_MODE", "on")
+    out = tools.call(_SyntheticManager(tmp_path), "get_holdings_as_of", HOLD)
+    assert out["auto_limited"] is True and survivors(out["holdings"]) == [] and out["total_positions"] == len(KEPT)
+
+
+def test_issuer_filter_would_see_them_with_the_switch_off(monkeypatch, tmp_path):
+    _set(monkeypatch, "off")  # synthetic rows only: shows the test above can fail
+    out = tools.call(_SyntheticManager(tmp_path), "get_holdings_as_of", {**HOLD, "issuer": "gold"})
+    assert len(survivors(out["holdings"])) > 0
+
+
+class _Entities:
+    """find_manager directory of invented entities named like the synthetic blocked rows."""
+
+    def __init__(self):
+        names = [n for n, _, _ in BLOCKED[:26]] + [n for n, _, _ in KEPT]
+        self.entities = {str(i + 1): n.upper() for i, n in enumerate(names)}
+
+    def search(self, name):
+        return {c: (n,) for c, n in self.entities.items() if name.upper() in n}
+
+    def first_13f(self, as_of):
+        return {c: "2001-01-02" for c in self.entities}
+
+    def current_name(self, cik):
+        return self.entities[cik]
+
+
+class _EntitySource:
+    directory = _Entities()
+
+
+def _found(name):
+    out = tools.call(_EntitySource(), "find_manager", {"name": name, "limit": 20})
+    return [c["entity_name"] for c in out["candidates"]]
+
+
+# Names that identify a blocked instrument by themselves (others above are blocked as holdings only
+# through their class title or CUSIP, e.g. a multi-series trust; an entity name has neither).
+NAMED = {"SPDR GOLD TR", "SPDR GOLD TRUST", "ISHARES GOLD TR", "SPDR GOLD MINISHARES TRUST", "ABRDN GOLD ETF TRUST",
+         "SPROTT PHYSICAL GOLD TR", "GOLDMAN SACHS PHYSICAL GOLD ETF", "ISHARES PHYSICAL GOLD ETC",
+         "SPDR S&P 500 ETF TR", "VANGUARD 500 INDEX FUND", "ISHARES CORE S&P 500 UCITS ETF",
+         "INVESCO S&P 500 UCITS ETF", "SPDR GOLD UCITS COPY"}
+
+
+@pytest.mark.parametrize("name", ["GOLD", "S&P", "500", "ENERGY", "SPDR", "UCITS", "TRUST", " TR"])
+def test_find_manager_leaves_out_entities_named_like_blocked_instruments(name):
+    found = _found(name)
+    assert not any(blocklist.is_blocked(n, None, None) for n in found)
+    assert not NAMED & set(found)
+
+
+def test_find_manager_keeps_benign_names():
+    assert set(_found("GOLD")) == {"BARRICK GOLD CORP", "GOLDMAN SACHS GROUP INC"}
+    assert "NEXTERA ENERGY INC" in _found("ENERGY")
+
+
+def test_find_manager_name_redaction_follows_the_switch(monkeypatch):
+    _set(monkeypatch, "off")  # invented entities only
+    assert "SPDR GOLD TR" in _found("GOLD")
+
+
+def test_planted_failure_find_manager_without_name_redaction_is_detected(monkeypatch):
+    monkeypatch.setattr(blocklist, "is_blocked", lambda *a: False)
+    assert NAMED & set(_found("GOLD"))
