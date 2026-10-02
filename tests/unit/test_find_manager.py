@@ -23,7 +23,7 @@ ENTITIES = {
     "13": (("AAA NORTHWIND OLD NAME", "ZEBRA HOLDINGS NORTHWIND"), "Zebra Holdings Northwind", "2024-05-15"),
     "14": (("NORTHWIND PARTNERS",), "Northwind Partners", "2025-08-14"),
     "15": (("ALPHA NORTHWIND FUND",), "Alpha Northwind Fund", None),
-    "16": (("NORTHWIND GOLD TRUST",), "Northwind Gold Trust", "2010-01-04"),  # matches the blocklist
+    "16": (("NORTHWIND GOLD TRUST",), "Northwind Gold Trust", "2010-01-04"),  # matches the holdings blocklist: returned (N1)
     "17": (("BETA NORTHWIND ADVISORS",), "Beta Northwind Advisors", "2001-05-15"),
     "18": (("OTHER NAME ENTIRELY",), "Other Name Entirely", "2001-05-15"),
 }
@@ -62,19 +62,26 @@ def ciks(out):
 
 def test_filers_first_then_by_current_name():
     out = find(name="northwind")
-    assert ciks(out) == [("17", True), ("11", True), ("14", True), ("13", True), ("15", False), ("12", False)]
-    assert [c["entity_name"] for c in out["candidates"]][:4] == [
-        "Beta Northwind Advisors", "Northwind Capital LLC", "Northwind Partners", "Zebra Holdings Northwind"]
+    assert ciks(out) == [("17", True), ("11", True), ("16", True), ("14", True), ("13", True), ("15", False),
+                         ("12", False)]
+    assert [c["entity_name"] for c in out["candidates"]][:5] == [
+        "Beta Northwind Advisors", "Northwind Capital LLC", "Northwind Gold Trust", "Northwind Partners",
+        "Zebra Holdings Northwind"]
     assert list(out) == ["status", "disclaimer", "query", "candidates", "note"]
     assert out["query"] == "northwind" and "current name" in out["note"] and "not point-in-time" in out["note"]
 
 
 @pytest.mark.parametrize("as_of, want", [
-    ("2025-08-13", [("17", True), ("11", True), ("13", True), ("15", False), ("12", False), ("14", False)]),
-    ("2025-08-14", [("17", True), ("11", True), ("14", True), ("13", True), ("15", False), ("12", False)]),
-    ("2024-05-14", [("17", True), ("11", True), ("15", False), ("12", False), ("14", False), ("13", False)]),
-    ("2024-05-15", [("17", True), ("11", True), ("13", True), ("15", False), ("12", False), ("14", False)]),
-    ("2001-05-14", [("15", False), ("17", False), ("11", False), ("12", False), ("14", False), ("13", False)]),
+    ("2025-08-13", [("17", True), ("11", True), ("16", True), ("13", True), ("15", False), ("12", False),
+                    ("14", False)]),
+    ("2025-08-14", [("17", True), ("11", True), ("16", True), ("14", True), ("13", True), ("15", False),
+                    ("12", False)]),
+    ("2024-05-14", [("17", True), ("11", True), ("16", True), ("15", False), ("12", False), ("14", False),
+                    ("13", False)]),
+    ("2024-05-15", [("17", True), ("11", True), ("16", True), ("13", True), ("15", False), ("12", False),
+                    ("14", False)]),
+    ("2001-05-14", [("15", False), ("17", False), ("11", False), ("12", False), ("16", False), ("14", False),
+                    ("13", False)]),
 ])
 def test_has_13f_filings_counts_only_filings_on_or_before_as_of(as_of, want):
     out = find(name="Northwind", as_of=as_of)
@@ -83,7 +90,7 @@ def test_has_13f_filings_counts_only_filings_on_or_before_as_of(as_of, want):
 
 
 def test_limit_default_range_and_laziness():
-    assert len(find(name="northwind")["candidates"]) == 6
+    assert len(find(name="northwind")["candidates"]) == 7
     many = {str(100 + i): ((f"NORTHWIND FILER {i:03d}",), f"Northwind Filer {i:03d}", "2020-01-02") for i in range(150)}
     src = Src({**ENTITIES, **many})
     out = find(src, name="northwind", limit=3)
@@ -103,10 +110,14 @@ def test_no_match_is_an_empty_ok_answer():
     assert out["status"] == "ok" and out["candidates"] == []
 
 
-def test_blocklisted_entity_names_are_left_out():
-    out = find(name="northwind gold")
-    assert out["candidates"] == []
-    assert "16" not in [c["cik"] for c in find(name="northwind")["candidates"]]
+def test_entity_named_like_a_blocked_instrument_is_returned():
+    """Ruling N1: rule 2 covers holdings rows, their values and prices, not entity names."""
+    from edgar13f import blocklist
+
+    assert blocklist.is_blocked("NORTHWIND GOLD TRUST", None, None)  # the name does match the list
+    out = find(name="northwind gold", as_of="2025-08-27")
+    assert out["candidates"] == [{"cik": "16", "entity_name": "Northwind Gold Trust", "has_13f_filings": True}]
+    assert "16" in [c["cik"] for c in find(name="northwind")["candidates"]]
 
 
 def test_renamed_entity_sorts_under_its_current_name():

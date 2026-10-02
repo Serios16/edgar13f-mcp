@@ -13,7 +13,7 @@
 | `src/edgar13f/sources.py` | `EdgarSource` (submissions JSON → filings, primary_doc.xml → cover, index.json + info table → redacted rows cached as JSON; with requested periods, only the pages and covers that can bear on them, REGISTER A17; rows parsed with redaction off cached apart in `rows-unredacted/`; `directory` = `managers.EdgarDirectory`) and `FixtureSource` (offline; `directory` = `FixtureDirectory`, names and 13F dates from the fixture filings). |
 | `src/edgar13f/validate.py` | §2 input conventions and §6 decline precedence for argument-level reasons; Addendum A parameters (`issuer`, `max_positions`, `period` on `list_13f_filings`, `find_manager` arguments). |
 | `src/edgar13f/narrow.py` | Addendum A1/A2/A5 after §4 and redaction: `issuer` filter (AND `cusip`), `matched_cusips`, `max_positions` ordering and cut (`total_positions`, `truncated`, `order`), agent mode (`$EDGAR13F_AGENT_MODE` exactly `on` → `max_positions=50`, `auto_limited`). |
-| `src/edgar13f/managers.py` | Addendum A4 `find_manager`: ordering (13F filers first, then current name), `has_13f_filings` through `rules.visible`, blocklist on entity names; `EdgarDirectory` (EDGAR CIK lookup file for names, quarterly `full-index/form.gz` prefixes → earliest 13F date per CIK, submissions JSON for current names). |
+| `src/edgar13f/managers.py` | Addendum A4 `find_manager`: ordering (13F filers first, then current name), `has_13f_filings` through `rules.visible`, names unfiltered (ruling N1); `EdgarDirectory` (EDGAR CIK lookup file for names, quarterly `full-index/form.gz` prefixes → earliest 13F date per CIK, submissions JSON for current names). |
 | `src/edgar13f/tools.py` | The four tools (§1, §5, §6; A3, A4): envelopes, declines, consolidation for `diff_holdings`, `period` filter for `list_13f_filings`. |
 | `src/edgar13f/schemas.py` | Tool input schemas advertised over MCP (inlined from `contracts/tools.schema.json`, plus Addendum A parameters and `find_manager`; descriptions per A6). |
 | `src/edgar13f/server.py` | MCP stdio server on the low-level SDK 2.x `Server`; `python -m edgar13f.server` / `edgar13f-server`; refuses `EDGAR13F_REDACT=off` with a fixture dir. |
@@ -40,7 +40,7 @@ get_holdings_as_of / diff_holdings rows → narrow.keep (cusip AND issuer) → n
                      (max_positions or agent mode: order, cut, total_positions/truncated/order/auto_limited)
 find_manager:        EdgarDirectory.search (cik-lookup-data.txt, daily) → first_13f (full-index/YYYY/QTRn/form.gz,
                      Range prefix, cache/f13index/<YYYY>Q<n>.json) → rules.visible(earliest 13F, as_of)
-                     → heap by (no 13F, name) → current_name (submissions JSON) → blocklist on names
+                     → heap by (no 13F, name) → current_name (submissions JSON)
 ```
 
 ## Where each contract rule is enforced and tested

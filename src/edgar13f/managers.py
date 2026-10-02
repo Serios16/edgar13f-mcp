@@ -8,8 +8,8 @@
   fetched (HTTP Range). A quarter is final once fetched two days after it ends (as in A7).
 * entity_name: the current `name` in the CIK's submissions JSON, fetched only for candidates
   that reach the answer.
-`has_13f_filings` with `as_of` goes through `rules.visible` (§3). Candidates whose names match
-the holdings blocklist are left out while redaction is on (REGISTER A27, N1).
+`has_13f_filings` with `as_of` goes through `rules.visible` (§3). Entity names are not filtered by
+the holdings blocklist (ruling N1: rule 2 covers holdings rows, their values and prices).
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ import zlib
 from collections import Counter
 from pathlib import Path
 
-from . import blocklist, rules
+from . import rules
 from .config import write_json
 from .sec_client import SecUnavailable
 
@@ -54,10 +54,6 @@ def _has(cik: str, first: str | None, as_of: str | None) -> bool:
     return as_of is None or rules.visible(probe, as_of)
 
 
-def _blocked(names) -> bool:
-    return blocklist.redacting() and any(blocklist.is_blocked(n, None, None) for n in names)
-
-
 def find(directory, a: dict) -> dict:
     """A4 answer for validated args: candidates with 13F filings first, then by current name."""
     as_of, limit = a.get("as_of"), a.get("limit", DEFAULT_LIMIT)
@@ -74,8 +70,7 @@ def find(directory, a: dict) -> dict:
             if name.upper() != key:  # sorts under its current name: put it back there
                 heapq.heappush(heap, (miss, name.upper(), n, cik, name))
                 continue
-        if not _blocked((*found[cik], name)):
-            out.append(((miss, name.upper(), n), {"cik": cik, "entity_name": name, "has_13f_filings": not miss}))
+        out.append(((miss, name.upper(), n), {"cik": cik, "entity_name": name, "has_13f_filings": not miss}))
     out.sort(key=lambda t: t[0])
     return {"query": a["name"], "candidates": [c for _, c in out], "note": NOTE[as_of is not None]}
 

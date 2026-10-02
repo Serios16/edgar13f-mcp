@@ -35,8 +35,8 @@ export SEC_USER_AGENT="Your Name your.email@example.com"   # required by SEC fai
 uvx --python 3.11 --from git+https://github.com/Serios16/edgar13f-mcp edgar13f-server
 ```
 
-Append a tag to pin a release, e.g. `git+https://github.com/Serios16/edgar13f-mcp@V1.1.0` (that tag
-is spelled with a capital V; `@v1.0.0` is lower-case). For an MCP client such as Claude Desktop:
+Append a tag to pin a release, e.g. `git+https://github.com/Serios16/edgar13f-mcp@v1.1.0`. For an MCP
+client such as Claude Desktop:
 
 ```json
 {"mcpServers": {"edgar13f": {
@@ -152,8 +152,8 @@ adds `auto_limited: true`. Every other call is unaffected. MCP client config:
   not only S&P 500 ones), and bonds of issuers named like a trust or fund whose class title
   carries a ".500" coupon (e.g. "5.500% NOTES"). An energy company whose class title says
   "UNIT" is another. Ruling D2 forbids narrowing the list to recover such points. A query for a
-  removed CUSIP returns `ok` with no rows. `find_manager` also leaves out entities whose names
-  match the list (REGISTER N1). To switch redaction off, set `EDGAR13F_REDACT=off` (exactly
+  removed CUSIP returns `ok` with no rows. Redaction applies to holdings rows; `find_manager`
+  returns entity names unfiltered (ruling N1). To switch redaction off, set `EDGAR13F_REDACT=off` (exactly
   `off`); rows read that way are cached in a separate directory and never served once
   redaction is back on. See `CLAUDE.md` rule 2 and ruling D2 in `REGISTER.md`.
 * The server does not cover pre-2013 text-format 13F filings, and it has no prices, charts or
@@ -189,7 +189,7 @@ adds `auto_limited: true`. Every other call is unaffected. MCP client config:
 
 Item-level results are withheld by design. Gate 2, the pre-registered decision gate, passed on
 commit b208c47, which is tagged **v1.0.0**. Gate 3 passed on commit ca60c5c, which is tagged
-**v1.1.0** (spelled `V1.1.0` on GitHub). Both have the same aggregates as gate 1.
+**v1.1.0**. Both have the same aggregates as gate 1.
 
 | Measure | Gate 1 | Gate 2 (v1.0.0) | Gate 3 (v1.1.0) |
 |---|---|---|---|

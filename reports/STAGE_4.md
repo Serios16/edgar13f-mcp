@@ -11,14 +11,14 @@ identical to gates 1-2; both misses are ruling D2 over-matches. Out of sample (f
 2026-08): 699/700, 0 leaks over 3,102 cases, citations 639/640, declines 6/6, all primary gates PASS;
 the one miss is a D2 over-match, predicted before grading.
 
-`src/` against v1.1.0: 9 files changed, 2 of them new (`narrow.py`, `managers.py`), +430/-44 lines; 1,429 lines in total, none over 250.
-MEASURED: size budget, MAP and claims checks pass, and the full suite passes offline (408 passed, 1 skipped: the root-only test); see `reports/artifacts/pytest_stage4.txt`.
+`src/` against v1.1.0: 9 files changed, 2 of them new (`narrow.py`, `managers.py`), +425/-44 lines; 1,424 lines in total, none over 250.
+MEASURED: size budget, MAP and claims checks pass, and the full suite passes offline (399 passed, 1 skipped: the root-only test); see `reports/artifacts/pytest_stage4.txt`.
 
 ## a. Addendum A (A1-A6)
 
 No part needed a contract change. Readings of points the addendum leaves open are logged as
-ASSUMED A22-A28 in `REGISTER.md` (trigger: stage gate). One blocklist question is open as
-DECISION NEEDED N1 (below).
+ASSUMED A22-A28 in `REGISTER.md` (trigger: stage gate). The one blocklist question (N1) is now
+ruled (below).
 
 | Item | Where | What it does |
 |---|---|---|
@@ -35,13 +35,13 @@ Evidence:
 - MEASURED: every holdings/diff call of the golden grid, rerun with `max_positions=1`, `issuer="INC"` and `issuer="corp"` + `max_positions=200`, keeps status, reason and every citation field (more than 2,000 calls), and with agent mode on every call it does not apply to is byte-identical to v1.0.0 (`tests/unit/test_addendum.py`); part of `reports/artifacts/pytest_stage4.txt`.
 - Tests per parameter and tool: `tests/unit/test_addendum.py` (A1, A2, A3, A5, A6: exact orders on an invented manager that pins every tie-break, boundaries and bad types for each parameter, precedence), `tests/unit/test_find_manager.py` (A4: ordering, renamed entities, `as_of` boundaries, limit, declines, laziness; `EdgarDirectory` on a fake SEC client: Range prefixes, per-quarter cache and freshness, missing indexes, concurrent first calls), `tests/unit/test_server_stdio.py` (the four tools over MCP stdio).
 - Leakage suite: the 981 cases now also call, where they apply, `list_13f_filings(period)`, `get_holdings_as_of` with `issuer`+`max_positions`, with `max_positions=1` and in agent mode, `diff_holdings` with `issuer`+`max_positions`, and `find_manager(name, as_of)` (oracle: every candidate's `has_13f_filings` == its earliest fixture 13F <= `as_of`). MEASURED: 0 violations; the mutant control (as-of filter off) finds 12,314, in every one of the 9 categories (`find_manager`: 11); the no-op control 0; see `reports/artifacts/leakage_stage4.json`.
-- Blocklist: redaction precedes every new filter (synthetic rows: `issuer`, `max_positions` and agent mode never see a blocked row; with the switch off on the same synthetic rows they would). MEASURED: 81 tests in `tests/invariants/test_blocklist.py` pass, incl. planted failures; part of `reports/artifacts/pytest_stage4.txt`.
+- Blocklist: redaction precedes every new filter (synthetic rows: `issuer`, `max_positions` and agent mode never see a blocked row; with the switch off on the same synthetic rows they would). MEASURED: 72 tests in `tests/invariants/test_blocklist.py` pass, incl. planted failures and the N1 tests; part of `reports/artifacts/pytest_stage4.txt`.
 
-DECISION NEEDED N1 (blocklist): hard rule 2 covers holdings rows, but `find_manager` returns
-entity names, some of which name blocked instruments (e.g. a gold trust registrant). This branch
-takes the conservative reading: while redaction is on, a candidate is left out if any of its
-current or former names matches the blocklist name patterns. Nothing is narrowed. The owner may
-keep or drop it (REGISTER N1, A27).
+Ruling N1 (orchestrator, 2026-10-02): `find_manager` returns entity names without a blocklist
+filter. Rule 2 covers holdings rows, their values and prices; an entity's name, CIK and
+`has_13f_filings` flag contain none of these. The holdings blocklist is not narrowed (D2
+unchanged; every holdings row is redacted as in v1.1). The earlier conservative name filter was
+removed; tests now require a blocklist-matching entity name to be returned (REGISTER N1, A27).
 
 ## b. P7: truncated downloads
 
@@ -125,7 +125,7 @@ MEASURED: SMOKE OK for this branch (server 1.2.0, four tools) and for tag V1.1.0
 ## f. REGISTER and version
 
 "Gate 3 PASS -> v1.1.0" with the out-of-sample result, the known over-matches and the v1.2 gate;
-DECISION NEEDED N1; ASSUMED A22-A31; P7 done; P8 updated; proposals P10-P12. `pyproject.toml` and
+ruling N1; ASSUMED A22-A31; P7 done; P8 updated; P10 closed by the owner; proposals P11-P12. `pyproject.toml` and
 `__version__` are 1.2.0.
 
 ## Findings
@@ -135,7 +135,7 @@ DECISION NEEDED N1; ASSUMED A22-A31; P7 done; P8 updated; proposals P10-P12. `py
 | F8 | First `find_manager` on an empty cache takes 63-79 s (136 index requests); later calls are fast. An MCP client with a short tool timeout may give up on the first call. REASONED: the server finishes the build in its worker thread (and a concurrent call waits on the same build), so a retry is fast. | Exactness for broad queries needs every CIK's 13F history; request latency through the limiter (P4). | Measured; proposals P4/P11. |
 | F9 | `max_positions` bounds positions, not rows: 50 positions of 319933 are 17,741 rows (6.7 MB). | A2 never splits a group; some filers report one position in hundreds of rows. | README says to use `issuer`/`cusip` for one security. No change (contract). |
 | F10 | Two threads writing the same cache file shared one temporary name (pid only); one rename failed. Found by the new concurrency test. | `_write_json` / HTTP cache temp names (v1). | Fixed: temp names per process and thread; tested. |
-| F11 | The gate-3 tag is `V1.1.0` (capital V); `@v1.1.0` does not resolve. | Tag spelling. | README uses `@V1.1.0`; proposal P10. |
+| F11 | The gate-3 tag was pushed as `V1.1.0` (capital V); `@v1.1.0` did not resolve. | Tag spelling. | Closed by the owner (lower-case `v1.1.0` added); README pins `@v1.1.0` (P10). |
 | F12 | The addendum file is `contracts/CONTRACTS_ADDENDUM_A.md.` (trailing dot). | File name. | Not renamed (read-only); P12. |
 
 ## v1.2 gate (pre-registered, not yet run)

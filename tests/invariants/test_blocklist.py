@@ -343,31 +343,22 @@ def _found(name):
     return [c["entity_name"] for c in out["candidates"]]
 
 
-# Names that identify a blocked instrument by themselves (others above are blocked as holdings only
-# through their class title or CUSIP, e.g. a multi-series trust; an entity name has neither).
+# Ruling N1 (2026-10-02): find_manager returns entity names unfiltered; rule 2 covers holdings
+# rows, their values and prices. Names that by themselves match the list are still returned.
 NAMED = {"SPDR GOLD TR", "SPDR GOLD TRUST", "ISHARES GOLD TR", "SPDR GOLD MINISHARES TRUST", "ABRDN GOLD ETF TRUST",
          "SPROTT PHYSICAL GOLD TR", "GOLDMAN SACHS PHYSICAL GOLD ETF", "ISHARES PHYSICAL GOLD ETC",
          "SPDR S&P 500 ETF TR", "VANGUARD 500 INDEX FUND", "ISHARES CORE S&P 500 UCITS ETF",
          "INVESCO S&P 500 UCITS ETF", "SPDR GOLD UCITS COPY"}
 
 
-@pytest.mark.parametrize("name", ["GOLD", "S&P", "500", "ENERGY", "SPDR", "UCITS", "TRUST", " TR"])
-def test_find_manager_leaves_out_entities_named_like_blocked_instruments(name):
-    found = _found(name)
-    assert not any(blocklist.is_blocked(n, None, None) for n in found)
-    assert not NAMED & set(found)
+def test_find_manager_returns_entities_named_like_blocked_instruments():
+    assert all(blocklist.is_blocked(n, None, None) for n in NAMED)  # each name matches the list
+    found = set(_found("GOLD")) | set(_found("S&P 500")) | set(_found("500 INDEX"))
+    assert NAMED <= found
+    assert {"BARRICK GOLD CORP", "GOLDMAN SACHS GROUP INC"} <= set(_found("GOLD"))
 
 
-def test_find_manager_keeps_benign_names():
-    assert set(_found("GOLD")) == {"BARRICK GOLD CORP", "GOLDMAN SACHS GROUP INC"}
-    assert "NEXTERA ENERGY INC" in _found("ENERGY")
-
-
-def test_find_manager_name_redaction_follows_the_switch(monkeypatch):
-    _set(monkeypatch, "off")  # invented entities only
-    assert "SPDR GOLD TR" in _found("GOLD")
-
-
-def test_planted_failure_find_manager_without_name_redaction_is_detected(monkeypatch):
-    monkeypatch.setattr(blocklist, "is_blocked", lambda *a: False)
-    assert NAMED & set(_found("GOLD"))
+def test_find_manager_answers_the_same_whatever_the_blocklist(monkeypatch):
+    before = _found("GOLD")
+    monkeypatch.setattr(blocklist, "is_blocked", lambda *a: True)
+    assert _found("GOLD") == before
