@@ -18,6 +18,7 @@ import hashlib
 import http.client
 import json
 import os
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -78,7 +79,7 @@ class SecClient:
                 return path.read_bytes()
         body = self._fetch(url, headers or {})
         if body is not None and store:
-            tmp = path.with_suffix(f".tmp{os.getpid()}")
+            tmp = path.with_suffix(f".tmp{os.getpid()}-{threading.get_ident()}")
             tmp.write_bytes(body)
             tmp.replace(path)
         return body

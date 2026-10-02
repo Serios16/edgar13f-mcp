@@ -322,3 +322,30 @@ def test_concurrent_first_calls_build_the_index_once(tmp_path, monkeypatch):
         t.join()
     urls = [u for u, _ in fake.calls if "/full-index/" in u]
     assert len(urls) == len(set(urls)) == (dt.datetime.now(dt.timezone.utc).month - 1) // 3 + 1
+
+
+def test_missing_index_is_empty_only_for_a_quarter_not_yet_complete(tmp_path, monkeypatch):
+    from edgar13f.sec_client import SecUnavailable
+
+    d, fake = _directory(tmp_path, monkeypatch, first_year=dt.datetime.now(dt.timezone.utc).year - 1)
+    today = dt.datetime.now(dt.timezone.utc).date()
+    current = f"/{today.year}/QTR{(today.month - 1) // 3 + 1}/"
+    real = fake.__call__
+
+    def missing(where):
+        def opener(req, timeout):
+            if where in req.full_url:
+                fake.calls.append((req.full_url, req.get_header("Range")))
+                return 404, b"", {}
+            return real(req, timeout)
+        return opener
+
+    d.client.opener = missing(current)
+    assert d.first_13f(None)["14"] == "2026-03-30"  # the open quarter has no index yet: empty
+    assert json.loads((tmp_path / "f13index" / f"{today.year}Q{(today.month - 1) // 3 + 1}.json").read_text()) == {}
+    closed = tmp_path / "e2"
+    d2, fake2 = _directory(closed, monkeypatch, first_year=today.year - 1)
+    d2.client.opener = missing(f"/{today.year - 1}/QTR2/")
+    with pytest.raises(SecUnavailable):  # a complete quarter must have an index: never cached as empty
+        d2.first_13f(None)
+    assert not (closed / "f13index" / f"{today.year - 1}Q2.json").exists()

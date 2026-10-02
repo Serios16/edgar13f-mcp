@@ -26,6 +26,7 @@ from pathlib import Path
 
 from . import blocklist, rules
 from .config import write_json
+from .sec_client import SecUnavailable
 
 NAMES_URL = "https://www.sec.gov/Archives/edgar/cik-lookup-data.txt"
 INDEX_URL = "https://www.sec.gov/Archives/edgar/full-index/{y}/QTR{q}/form.gz"
@@ -172,18 +173,22 @@ class EdgarDirectory:
                 end = dt.date(y + q // 4, 3 * q % 12 + 1, 1) - dt.timedelta(days=1)
                 path = self.dir / f"{y}Q{q}.json"
                 if not path.exists() or not _fresh(path.stat().st_mtime, start, end, as_of):
-                    write_json(path, self._fetch(INDEX_URL.format(y=y, q=q)))
+                    found = self._fetch(INDEX_URL.format(y=y, q=q))
+                    if found is None and time.time() >= _ts(end + dt.timedelta(days=2)):
+                        raise SecUnavailable(f"EDGAR has no form index for {y} QTR{q}")  # never cache as final
+                    write_json(path, found or {})
                 if self._loaded.get(path.name) != path.stat().st_mtime:
                     for cik, date in json.loads(path.read_text()).items():
                         self._first[cik] = min(date, self._first.get(cik, date))
                     self._loaded[path.name] = path.stat().st_mtime
 
-    def _fetch(self, url: str) -> dict[str, str]:
+    def _fetch(self, url: str) -> dict[str, str] | None:
+        """Earliest 13F date per CIK in one quarter's form index; None if there is no index."""
         z, text, pos, size = zlib.decompressobj(16 + zlib.MAX_WBITS), b"", 0, RANGE
         while True:
             body = self.client.get(url, store=False, headers={"Range": f"bytes={pos}-{pos + size - 1}"})
             if body is None:
-                return {}
+                return None if pos == 0 else index_block(text)[0]
             text += z.decompress(body)
             first, done = index_block(text)
             if done or z.eof or len(body) < size:
