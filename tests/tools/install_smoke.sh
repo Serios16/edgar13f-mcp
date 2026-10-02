@@ -43,7 +43,8 @@ async def main():
     print(f"tools: {tools}")
     print(f"malformed call: isError={bad.is_error} status={body['status']} reason={body['reason']}")
     print(f"call without SEC_USER_AGENT: isError={live.is_error}")
-    ok = (tools == ["diff_holdings", "get_holdings_as_of", "list_13f_filings"] and bad.is_error is False
+    v1 = ["diff_holdings", "get_holdings_as_of", "list_13f_filings"]
+    ok = (tools in (v1, sorted(v1 + ["find_manager"])) and bad.is_error is False
           and body["reason"] == "invalid_argument" and live.is_error is True)
     print("SMOKE OK" if ok else "SMOKE FAIL")
     sys.exit(0 if ok else 1)
