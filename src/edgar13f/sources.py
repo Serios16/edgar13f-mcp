@@ -11,10 +11,10 @@ from __future__ import annotations
 
 import datetime as dt
 import json
-import os
 from pathlib import Path
 
-from . import blocklist, parse, rules
+from . import blocklist, managers, parse, rules
+from .config import write_json as _write_json
 from .rules import Filing
 from .sec_client import SecClient
 
@@ -28,18 +28,12 @@ def _freshness(as_of: str) -> float:
     return dt.datetime.combine(day, dt.time(), tzinfo=dt.timezone.utc).timestamp()
 
 
-def _write_json(path: Path, obj: object) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(f".tmp{os.getpid()}")
-    tmp.write_text(json.dumps(obj))
-    tmp.replace(path)
-
-
 class EdgarSource:
     def __init__(self, client: SecClient, cache: Path) -> None:
         self.client = client
         self.redact = blocklist.redacting()
         self.rows_dir = cache / ("rows" if self.redact else "rows-unredacted")
+        self.directory = managers.EdgarDirectory(client, cache)
 
     def _folder(self, f: Filing) -> str:
         return f"{ARCHIVES}/{f.cik}/{f.accession_number.replace('-', '')}"
@@ -135,6 +129,7 @@ class FixtureSource:
 
     def __init__(self, root: Path) -> None:
         self.root = root
+        self.directory = FixtureDirectory(root)
 
     def filings(self, cik: str, as_of: str, periods: tuple[str, ...] | None = None) -> list[Filing] | None:
         path = self.root / cik / "filings.json"
@@ -147,3 +142,30 @@ class FixtureSource:
         if not path.exists():
             raise LookupError(f"fixture rows missing for {f.accession_number}")
         return json.loads(path.read_text())
+
+
+class FixtureDirectory:
+    """find_manager over fixtures: a manager's names are its cover-page names (upper case), its
+    current name the latest of them, and its 13F dates those in filings.json."""
+
+    def __init__(self, root: Path) -> None:
+        self.root = root
+
+    def _filings(self, cik: str = "*") -> dict[str, list[dict]]:
+        return {p.parent.name: [f for f in json.loads(p.read_text())["filings"] if f["form_type"] in rules.ALL_FORMS]
+                for p in sorted(self.root.glob(f"{cik}/filings.json"))}
+
+    def search(self, name: str) -> dict[str, tuple[str, ...]]:
+        out = {}
+        for cik, fs in self._filings().items():
+            names = tuple(sorted({f["filing_manager_name"].upper() for f in fs if f["filing_manager_name"]}))
+            if any(name.upper() in n for n in names):
+                out[cik] = names
+        return out
+
+    def first_13f(self, as_of: str | None) -> dict[str, str]:
+        return {cik: min(f["filing_date"] for f in fs) for cik, fs in self._filings().items() if fs}
+
+    def current_name(self, cik: str) -> str | None:
+        named = [f for f in self._filings(cik).get(cik, []) if f["filing_manager_name"]]
+        return max(named, key=lambda f: (f["filing_date"], f["accession_number"]))["filing_manager_name"] if named else None

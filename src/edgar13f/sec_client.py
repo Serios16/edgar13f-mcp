@@ -5,8 +5,9 @@
   starts are spaced >= MIN_INTERVAL apart; the fcntl lock on a shared file is held
   from the wait until the request has been sent, so scheduling jitter cannot
   bunch sends together.
-* Exponential backoff on 403, 429, 5xx, network errors, and HTML error pages
-  served in place of the JSON/XML that was asked for.
+* Exponential backoff on 403, 429, 5xx, network errors, truncated bodies
+  (http.client.IncompleteRead and other HTTPException), and HTML error pages served
+  in place of the JSON/XML that was asked for.
 * On-disk cache keyed by URL; every network request is appended to requests.log.
 """
 
@@ -14,6 +15,7 @@ from __future__ import annotations
 
 import fcntl
 import hashlib
+import http.client
 import json
 import os
 import time
@@ -59,26 +61,29 @@ class SecClient:
     def _cache_path(self, url: str) -> Path:
         return self.cache / "http" / hashlib.sha256(url.encode()).hexdigest()
 
-    def get(self, url: str, *, store: bool = True, fetched_after: float | None = None) -> bytes | None:
+    def get(self, url: str, *, store: bool = True, fetched_after: float | None = None,
+            headers: dict | None = None) -> bytes | None:
         """Return the body of `url` (JSON/XML expected) or None on 404.
 
         store=False keeps the body out of the on-disk cache (used for information
-        tables, which are cached only after blocklist redaction).
+        tables, which are cached only after blocklist redaction, and for byte ranges).
         fetched_after: a cached copy is used only if it was fetched at or after this
         epoch time (point-in-time freshness for mutable documents).
+        headers: extra request headers (e.g. Range; a 206 answer counts as success).
         """
         path = self._cache_path(url)
+        store = store and not headers
         if store and path.exists():
             if fetched_after is None or path.stat().st_mtime >= fetched_after:
                 return path.read_bytes()
-        body = self._fetch(url)
+        body = self._fetch(url, headers or {})
         if body is not None and store:
             tmp = path.with_suffix(f".tmp{os.getpid()}")
             tmp.write_bytes(body)
             tmp.replace(path)
         return body
 
-    def _fetch(self, url: str) -> bytes | None:
+    def _fetch(self, url: str, headers: dict) -> bytes | None:
         if not self.user_agent:
             raise SecUnavailable("SEC_USER_AGENT is not set; refusing to contact sec.gov")
         last = "no attempt"
@@ -88,10 +93,11 @@ class SecClient:
             req = urllib.request.Request(url, headers={
                 "User-Agent": self.user_agent,
                 "Accept-Encoding": "identity",
+                **headers,
             })
             try:
                 status, body, _ = self._throttled(req)
-            except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as exc:
+            except (urllib.error.URLError, TimeoutError, ConnectionError, OSError, http.client.HTTPException) as exc:
                 self._log(url, f"neterr:{type(exc).__name__}")
                 last = repr(exc)
                 continue
@@ -101,7 +107,7 @@ class SecClient:
             if status in RETRYABLE_STATUS:
                 last = f"HTTP {status}"
                 continue
-            if status != 200:
+            if status not in (200, 206):
                 raise SecUnavailable(f"unexpected HTTP {status} for {url}")
             if looks_like_html(body):
                 last = "HTML error page in place of data"

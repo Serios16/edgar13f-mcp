@@ -1,8 +1,8 @@
-"""The three contract tools (CONTRACTS §1, §5, §6), independent of transport."""
+"""The contract tools (CONTRACTS §1, §5, §6; Addendum A), independent of transport."""
 
 from __future__ import annotations
 
-from . import DISCLAIMER, rules
+from . import DISCLAIMER, managers, narrow, rules
 from .validate import Decline, validate
 
 
@@ -27,13 +27,16 @@ def list_13f_filings(source, args: dict) -> dict:
     a, err = validate("list_13f_filings", args)
     if err:
         return _decline(err)
-    vis = _visible_13f(source, a["cik"], a["as_of"])
+    period = a.get("period")
+    vis = _visible_13f(source, a["cik"], a["as_of"], (period,) if period else None)
     if isinstance(vis, Decline):
         return _decline(vis)
+    if period:  # A3: the same visible list, filtered by period of report
+        vis = [f for f in vis if f.period_of_report == period]
     return _ok(cik=a["cik"], as_of=a["as_of"], filings=[f.record() for f in vis])
 
 
-def _holdings(source, filings: list[rules.Filing], period: str, as_of: str, cusips: set | None):
+def _holdings(source, filings: list[rules.Filing], period: str, as_of: str, a: dict):
     res = rules.resolve(filings, period, as_of)
     if isinstance(res, str):
         msg = {
@@ -44,8 +47,9 @@ def _holdings(source, filings: list[rules.Filing], period: str, as_of: str, cusi
     base, supplements = res
     sources = [base, *supplements]
     rows = [r for f in sources for r in source.rows(f)]
-    if cusips is not None:
-        rows = [r for r in rows if r["cusip"].upper() in cusips]
+    cusips, issuer = a.get("cusip"), a.get("issuer")
+    if cusips is not None or issuer is not None:
+        rows = [r for r in rows if narrow.keep(r, cusips, issuer)]
     return base, [f.accession_number for f in sources], rows
 
 
@@ -56,14 +60,15 @@ def get_holdings_as_of(source, args: dict) -> dict:
     vis = _visible_13f(source, a["cik"], a["as_of"], (a["period"],))
     if isinstance(vis, Decline):
         return _decline(vis)
-    res = _holdings(source, vis, a["period"], a["as_of"], a.get("cusip"))
+    res = _holdings(source, vis, a["period"], a["as_of"], a)
     if isinstance(res, Decline):
         return _decline(res)
     base, accessions, rows = res
+    rows, extra = narrow.holdings(a, rows)
     return _ok(
         cik=a["cik"], period=a["period"], as_of=a["as_of"],
         accession_number=base.accession_number, source_accessions=accessions,
-        filing_date=base.filing_date, holdings=rows,
+        filing_date=base.filing_date, **extra, holdings=rows,
     )
 
 
@@ -94,7 +99,7 @@ def diff_holdings(source, args: dict) -> dict:
         return _decline(vis)
     side = []
     for period in (a["period_a"], a["period_b"]):
-        res = _holdings(source, vis, period, a["as_of"], a.get("cusip"))
+        res = _holdings(source, vis, period, a["as_of"], a)
         if isinstance(res, Decline):
             return _decline(res)
         side.append(res)
@@ -111,17 +116,26 @@ def diff_holdings(source, args: dict) -> dict:
             "value_a": va, "value_b": vb, "value_delta": vb - va,
             "change_type": _change_type(ra is not None, rb is not None, sb - sa),
         })
+    changes, extra = narrow.changes(a, rows_a + rows_b, changes)
     return _ok(
         cik=a["cik"], period_a=a["period_a"], period_b=a["period_b"], as_of=a["as_of"],
         accession_a=base_a.accession_number, accession_b=base_b.accession_number,
-        source_accessions_a=acc_a, source_accessions_b=acc_b, changes=changes,
+        source_accessions_a=acc_a, source_accessions_b=acc_b, **extra, changes=changes,
     )
+
+
+def find_manager(source, args: dict) -> dict:
+    a, err = validate("find_manager", args)
+    if err:
+        return _decline(err)
+    return _ok(**managers.find(source.directory, a))
 
 
 TOOLS = {
     "list_13f_filings": list_13f_filings,
     "get_holdings_as_of": get_holdings_as_of,
     "diff_holdings": diff_holdings,
+    "find_manager": find_manager,
 }
 
 

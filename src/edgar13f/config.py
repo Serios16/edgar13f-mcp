@@ -7,6 +7,7 @@ $EDGAR13F_CACHE_DIR if set and writable, else $XDG_CACHE_HOME/edgar13f (or
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 import tempfile
@@ -46,3 +47,11 @@ def cache_dir() -> Path:
 def user_agent() -> str | None:
     ua = os.environ.get("SEC_USER_AGENT", "").strip()
     return ua or None
+
+
+def write_json(path: Path, obj: object) -> None:
+    """Atomic JSON write inside the cache dir."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(f".tmp{os.getpid()}")
+    tmp.write_text(json.dumps(obj))
+    tmp.replace(path)
