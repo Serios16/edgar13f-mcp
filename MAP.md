@@ -51,7 +51,7 @@ find_manager:        EdgarDirectory.search (cik-lookup-data.txt, daily) → firs
 | §2 quarter-end period, `period_b <= period_a` → `invalid_period` | `validate.validate` | `tests/unit/test_validate.py` |
 | §2 `position_type` ≠ `"long"` → `unsupported_request` | `validate.validate` | `tests/unit/test_validate.py` |
 | §2 cusip filter case-insensitive, citations unchanged | `tools._holdings`, `validate.validate` | `tests/unit/test_tools.py` |
-| §3 visibility `filing_date <= as_of` | `rules.visible` (sole point), used by `rules.visible_filings`, `rules.resolve`, `EdgarSource.filings` | `tests/unit/test_rules.py`, `tests/invariants/test_leakage.py` (603 cases + mutant + no-op) |
+| §3 visibility `filing_date <= as_of` | `rules.visible` (sole point), used by `rules.visible_filings`, `rules.resolve`, `EdgarSource.filings` | `tests/unit/test_rules.py`, `tests/invariants/test_leakage.py` (981 cases, v1 tools + Addendum A parameters + `find_manager(as_of)`, mutant + no-op; the mutant must trip every category) |
 | §4 ordering, base, supplements, UNSPECIFIED as RESTATEMENT | `rules.resolve`, `rules.kind` | `tests/unit/test_restatement.py` (exhaustive oracle + 5 planted mutants; synthetic §4 manager; 82 recorded cases vs data-set expectations; blocklist-in-restatement), `tests/unit/test_rules.py`, `tests/unit/test_tools.py`, leakage oracle in `tests/invariants/leakage.py` |
 | §4 `notice_only` / `not_yet_filed` | `rules.resolve` | `tests/unit/test_rules.py`, `tests/unit/test_tools.py` |
 | §5.1 JSON first text block, `structuredContent` identical, `isError=false` on declines | `server.result_for` | `tests/unit/test_server_stdio.py` |

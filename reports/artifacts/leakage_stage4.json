@@ -1,0 +1,36 @@
+{
+ "real": {
+  "cases": 981,
+  "tool_calls": {
+   "list": 981,
+   "find_manager": 981,
+   "list_period": 981,
+   "holdings": 747,
+   "holdings_issuer": 747,
+   "holdings_max": 747,
+   "holdings_agent": 747,
+   "diff": 675,
+   "diff_narrowed": 675
+  },
+  "violations": 0
+ },
+ "mutant_as_of_filter_disabled": {
+  "cases": 981,
+  "violations": 12314,
+  "by_category": {
+   "list": 7460,
+   "list_period": 1009,
+   "holdings": 714,
+   "holdings_issuer": 714,
+   "holdings_max": 714,
+   "holdings_agent": 714,
+   "diff": 489,
+   "diff_narrowed": 489,
+   "find_manager": 11
+  }
+ },
+ "noop_wrapper": {
+  "cases": 981,
+  "violations": 0
+ }
+}
