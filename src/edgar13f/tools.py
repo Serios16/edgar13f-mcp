@@ -14,8 +14,8 @@ def _decline(d: Decline) -> dict:
     return {"status": "declined", "disclaimer": DISCLAIMER, "reason": d.reason, "message": d.message}
 
 
-def _visible_13f(source, cik: str, as_of: str) -> list[rules.Filing] | Decline:
-    filings = source.filings(cik, as_of)
+def _visible_13f(source, cik: str, as_of: str, periods: tuple | None = None) -> list[rules.Filing] | Decline:
+    filings = source.filings(cik, as_of, periods)
     vis = rules.visible_filings(filings or [], as_of)
     vis = [f for f in vis if f.form_type in rules.ALL_FORMS]
     if not vis:
@@ -53,7 +53,7 @@ def get_holdings_as_of(source, args: dict) -> dict:
     a, err = validate("get_holdings_as_of", args)
     if err:
         return _decline(err)
-    vis = _visible_13f(source, a["cik"], a["as_of"])
+    vis = _visible_13f(source, a["cik"], a["as_of"], (a["period"],))
     if isinstance(vis, Decline):
         return _decline(vis)
     res = _holdings(source, vis, a["period"], a["as_of"], a.get("cusip"))
@@ -89,7 +89,7 @@ def diff_holdings(source, args: dict) -> dict:
     a, err = validate("diff_holdings", args)
     if err:
         return _decline(err)
-    vis = _visible_13f(source, a["cik"], a["as_of"])
+    vis = _visible_13f(source, a["cik"], a["as_of"], (a["period_a"], a["period_b"]))
     if isinstance(vis, Decline):
         return _decline(vis)
     side = []

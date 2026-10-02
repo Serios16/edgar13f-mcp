@@ -57,3 +57,85 @@ def test_dates():
     assert parse.mdy_to_iso("3-31-2025") == "2025-03-31"
     assert parse.mdy_to_iso("2025-03-31") == "2025-03-31"
     assert parse.mdy_to_iso("garbage") is None and parse.mdy_to_iso(None) is None
+
+
+# ---- stage 3: the faster row parser returns exactly what the v1.0.0 parser returned.
+# The oracle below is the v1.0.0 row parser (src/edgar13f/parse.py at tag v1.0.0), kept verbatim.
+
+def _v10_find(elem, *path):
+    cur = elem
+    for name in path:
+        if cur is None:
+            return None
+        cur = next((c for c in cur if parse._local(c.tag) == name), None)
+    return cur
+
+
+def _v10_text(elem, *path):
+    node = _v10_find(elem, *path)
+    if node is None or node.text is None:
+        return None
+    txt = node.text.strip()
+    return txt or None
+
+
+def _v10_row(node, accession, redact=True):
+    name = _v10_text(node, "nameOfIssuer")
+    title = _v10_text(node, "titleOfClass")
+    cusip = _v10_text(node, "cusip")
+    if redact and parse.blocklist.is_blocked(name, title, cusip):
+        return None
+    return {
+        "accession_number": accession, "name_of_issuer": name or "", "title_of_class": title or "",
+        "cusip": cusip or "", "figi": _v10_text(node, "figi"), "value": parse._int(_v10_text(node, "value")),
+        "shares_or_principal_amount": parse._int(_v10_text(node, "shrsOrPrnAmt", "sshPrnamt")),
+        "sh_prn": parse._upper(_v10_text(node, "shrsOrPrnAmt", "sshPrnamtType")),
+        "put_call": parse._upper(_v10_text(node, "putCall")),
+        "investment_discretion": _v10_text(node, "investmentDiscretion"),
+        "other_manager": _v10_text(node, "otherManager"),
+        "voting_authority_sole": parse._int(_v10_text(node, "votingAuthority", "Sole")),
+        "voting_authority_shared": parse._int(_v10_text(node, "votingAuthority", "Shared")),
+        "voting_authority_none": parse._int(_v10_text(node, "votingAuthority", "None")),
+    }
+
+
+def _v10_parse(xml, accession, redact=True):
+    import io
+    import xml.etree.ElementTree as ET
+
+    rows = []
+    for _event, elem in ET.iterparse(io.BytesIO(xml), events=("end",)):
+        if parse._local(elem.tag) != "infoTable":
+            continue
+        row = _v10_row(elem, accession, redact)
+        elem.clear()
+        if row is not None:
+            rows.append(row)
+    return rows
+
+
+EDGE = b"""<?xml version="1.0"?>
+<informationTable xmlns="http://www.sec.gov/edgar/document/thirteenf/informationtable" xmlns:x="urn:x">
+ <infoTable><nameOfIssuer>  DUP CORP </nameOfIssuer><nameOfIssuer>SECOND NAME</nameOfIssuer>
+  <titleOfClass>COM</titleOfClass><cusip>111111111</cusip><value>1,234.0</value><value>9</value>
+  <shrsOrPrnAmt><sshPrnamt>12.7</sshPrnamt><sshPrnamt>99</sshPrnamt><sshPrnamtType>sh</sshPrnamtType></shrsOrPrnAmt>
+  <shrsOrPrnAmt><sshPrnamt>5</sshPrnamt></shrsOrPrnAmt>
+  <putCall>put</putCall><investmentDiscretion>   </investmentDiscretion><otherManager>1<x>2</x></otherManager>
+  <votingAuthority><Sole>n/a</Sole><None>3</None></votingAuthority><votingAuthority><Shared>4</Shared></votingAuthority>
+ </infoTable>
+ <infoTable><titleOfClass></titleOfClass><cusip>222222222</cusip></infoTable>
+ <infoTable><x:nameOfIssuer>OTHER NS INC</x:nameOfIssuer><cusip><![CDATA[333333333]]></cusip>
+  <figi>  </figi><value/><shrsOrPrnAmt/><votingAuthority/></infoTable>
+ <infoTable/>
+ <wrapper><infoTable><nameOfIssuer>NESTED</nameOfIssuer><cusip>444444444</cusip></infoTable></wrapper>
+</informationTable>"""
+
+
+def test_row_parser_matches_v1_0_on_edge_cases():
+    from tests.invariants.test_blocklist import BLOCKED, KEPT, infotable_xml
+
+    for xml in (TABLE, EDGE, infotable_xml(BLOCKED + KEPT), infotable_xml(KEPT + BLOCKED + KEPT)):
+        for redact in (True, False):
+            want = _v10_parse(xml, "0000000001-25-000001", redact)
+            assert parse.parse_infotable(xml, "0000000001-25-000001", redact) == want
+            assert want  # each table yields rows, so the comparison is not vacuous

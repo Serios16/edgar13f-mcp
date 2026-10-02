@@ -25,6 +25,8 @@ ROW_PERIODS = ("2023-09-30", "2025-09-30")
 
 
 def main(record_as_of: str, ciks: list[str]) -> None:
+    if not blocklist.redacting():
+        sys.exit("refusing to run with redaction switched off (CLAUDE.md rule 2)")
     cache = config.cache_dir()
     src = EdgarSource(SecClient(cache, config.user_agent()), cache)
     for raw in ciks:

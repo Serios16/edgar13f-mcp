@@ -1,0 +1,23 @@
+{
+ "data_sets": [
+  "01mar2024-31may2024_form13f.zip",
+  "01jun2024-31aug2024_form13f.zip",
+  "01sep2024-30nov2024_form13f.zip",
+  "01dec2024-28feb2025_form13f.zip",
+  "01mar2025-31may2025_form13f.zip",
+  "01jun2025-31aug2025_form13f.zip",
+  "2023q4_form13f.zip",
+  "01jan2024-29feb2024_form13f.zip"
+ ],
+ "forms": [
+  "13F-HR",
+  "13F-HR/A",
+  "13F-NT",
+  "13F-NT/A"
+ ],
+ "submissions": 80690,
+ "cover_differs_from_period": 0,
+ "period_after_filing_date": 0,
+ "period_after_filing_in_evaluated_periods": 0,
+ "period_after_filing": []
+}
