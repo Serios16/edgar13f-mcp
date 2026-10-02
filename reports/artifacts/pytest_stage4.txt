@@ -1,0 +1,24 @@
+$ python -m pytest -q tests   (offline; mcp 2.2.0, Python 3.11.15, on the stage-4 tree staged after commit 4845ea9, ruling N1 applied)
+........................................                                 [100%]
+399 passed, 1 skipped in 53.76s
+
+$ python tests/checks/size_budget.py . && python tests/checks/map_check.py . && python tests/checks/claims_check.py .
+size budget: ok
+map check: ok
+claims check: ok
+
+$ wc -l src/edgar13f/*.py
+    5 src/edgar13f/__init__.py
+   97 src/edgar13f/blocklist.py
+   58 src/edgar13f/config.py
+  195 src/edgar13f/managers.py
+   76 src/edgar13f/narrow.py
+  153 src/edgar13f/parse.py
+   98 src/edgar13f/rules.py
+   94 src/edgar13f/schemas.py
+  146 src/edgar13f/sec_client.py
+   81 src/edgar13f/server.py
+  171 src/edgar13f/sources.py
+  143 src/edgar13f/tools.py
+  107 src/edgar13f/validate.py
+ 1424 total

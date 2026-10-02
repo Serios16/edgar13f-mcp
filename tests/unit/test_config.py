@@ -36,3 +36,25 @@ def test_user_agent(monkeypatch):
     assert config.user_agent() == "a b@c.d"
     monkeypatch.setenv("SEC_USER_AGENT", "")
     assert config.user_agent() is None
+
+
+def test_write_json_from_many_threads_to_one_path(tmp_path):
+    import threading
+
+    from edgar13f.config import write_json
+
+    errors = []
+
+    def work(i):
+        try:
+            for _ in range(50):
+                write_json(tmp_path / "x" / "same.json", {"i": i})
+        except OSError as exc:  # a shared temporary name makes one thread's rename fail
+            errors.append(exc)
+
+    threads = [threading.Thread(target=work, args=(i,)) for i in range(8)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert errors == [] and sorted(p.name for p in (tmp_path / "x").iterdir()) == ["same.json"]

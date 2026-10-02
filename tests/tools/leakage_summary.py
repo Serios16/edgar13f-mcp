@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 
 from edgar13f import rules
+from collections import Counter
+
 from tests.invariants.leakage import run_suite
 
 
@@ -16,7 +18,8 @@ def main() -> None:
     original = rules.visible
     rules.visible = lambda f, a: True
     n, v = run_suite()
-    out["mutant_as_of_filter_disabled"] = {"cases": n, "violations": len(v)}
+    out["mutant_as_of_filter_disabled"] = {"cases": n, "violations": len(v),
+                                           "by_category": dict(Counter(x.split()[1].rstrip(":") for x in v))}
     rules.visible = lambda f, a: original(f, a)
     n, v = run_suite()
     out["noop_wrapper"] = {"cases": n, "violations": len(v)}

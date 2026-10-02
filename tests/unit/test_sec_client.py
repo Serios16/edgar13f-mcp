@@ -1,6 +1,7 @@
 """Fair-access behaviour of SecClient with a fake opener (no network)."""
 
 import bisect
+import http.client
 import json
 import os
 import time
@@ -132,3 +133,86 @@ def test_rate_limit_holds_under_concurrent_threads(tmp_path):
     ts = sorted(t for t, _, _ in op.calls)
     assert len(ts) == 16
     assert max(bisect.bisect_left(ts, t + 1.0) - i for i, t in enumerate(ts)) <= 5
+
+
+class Truncating(FakeOpener):
+    """The first `cuts` responses lose their body mid-transfer, as a cut connection does."""
+
+    def __init__(self, responses, cuts, exc=None):
+        super().__init__(responses)
+        self.cuts = cuts
+        self.exc = exc or (lambda: http.client.IncompleteRead(b"partial", 1000))
+
+    def __call__(self, req, timeout):
+        if self.cuts:
+            self.cuts -= 1
+            self.calls.append((time.time(), req.full_url, req.get_header("User-agent")))
+            raise self.exc()
+        return super().__call__(req, timeout)
+
+
+def test_truncated_body_is_retried_with_backoff_and_logged(tmp_path):
+    op = Truncating([(200, b"<ok/>")], cuts=2)
+    sleeps = []
+    c = SecClient(tmp_path, UA, opener=op, sleep=sleeps.append)
+    assert c.get("https://www.sec.gov/big.xml", store=False) == b"<ok/>"
+    assert len(op.calls) == 3 and sleeps == [1.0, 2.0]
+    log = [json.loads(line)["status"] for line in (tmp_path / "requests.log").read_text().splitlines()]
+    assert log == ["neterr:IncompleteRead", "neterr:IncompleteRead", 200]
+
+
+def test_truncated_body_every_time_gives_up(tmp_path):
+    op = Truncating([(200, b"<ok/>")], cuts=99)
+    c = SecClient(tmp_path, UA, opener=op, sleep=lambda s: None, max_retries=2)
+    with pytest.raises(SecUnavailable, match="IncompleteRead"):
+        c.get("https://www.sec.gov/big.xml")
+    assert len(op.calls) == 3 and not list((tmp_path / "http").iterdir())
+
+
+@pytest.mark.parametrize("exc", [lambda: http.client.RemoteDisconnected("closed"),
+                                 lambda: http.client.BadStatusLine("x")])
+def test_other_broken_responses_are_retried(tmp_path, exc):
+    op = Truncating([(200, b"{}")], cuts=1, exc=exc)
+    c = SecClient(tmp_path, UA, opener=op, sleep=lambda s: None)
+    assert c.get("https://data.sec.gov/x.json") == b"{}"
+
+
+def test_urlopen_surfaces_incomplete_read_from_a_short_body(tmp_path, monkeypatch):
+    class Resp:
+        status, headers = 200, {}
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def read(self):
+            raise http.client.IncompleteRead(b"abc", 10)
+
+    monkeypatch.setattr(sec_client.urllib.request, "urlopen", lambda req, timeout: Resp())
+    c = SecClient(tmp_path, UA, sleep=lambda s: None, max_retries=1)
+    with pytest.raises(SecUnavailable):
+        c.get("https://www.sec.gov/big.xml")
+    assert [json.loads(x)["status"] for x in (tmp_path / "requests.log").read_text().splitlines()] == \
+        ["neterr:IncompleteRead"] * 2
+
+
+def test_range_header_is_sent_206_accepted_and_never_cached(tmp_path):
+    seen = []
+
+    def opener(req, timeout):
+        seen.append(req.get_header("Range"))
+        return 206, b"\x1f\x8bpartial", {}
+
+    c = SecClient(tmp_path, UA, opener=opener, sleep=lambda s: None)
+    url = "https://www.sec.gov/Archives/edgar/full-index/2025/QTR1/form.gz"
+    assert c.get(url, headers={"Range": "bytes=0-9"}) == b"\x1f\x8bpartial"
+    assert c.get(url, headers={"Range": "bytes=0-9"}) == b"\x1f\x8bpartial"
+    assert seen == ["bytes=0-9", "bytes=0-9"] and not list((tmp_path / "http").iterdir())
+
+
+def test_other_unexpected_status_still_fails(tmp_path):
+    c, op, _ = client(tmp_path, [(416, b"")])
+    with pytest.raises(SecUnavailable, match="416"):
+        c.get("https://www.sec.gov/a.gz", headers={"Range": "bytes=99-100"})

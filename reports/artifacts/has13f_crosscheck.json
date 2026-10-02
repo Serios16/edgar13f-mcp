@@ -1,0 +1,30 @@
+{
+ "seed": 4,
+ "n_per_group": 150,
+ "cutoff": "2026-09-30",
+ "index_ciks": 20289,
+ "cases": 600,
+ "agree": 600,
+ "by_kind": {
+  "first-1": {
+   "cases": 150,
+   "agree": 150
+  },
+  "first": {
+   "cases": 150,
+   "agree": 150
+  },
+  "random": {
+   "cases": 150,
+   "agree": 150
+  },
+  "not_in_index": {
+   "cases": 150,
+   "agree": 150
+  }
+ },
+ "disagreements": [],
+ "seconds": 143.9,
+ "requests_in_cache_log": 438,
+ "non_200_206": 0
+}

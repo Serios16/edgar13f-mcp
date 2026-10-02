@@ -36,6 +36,14 @@ def test_size_budget_planted_total_too_long(tmp_path):
     assert any("total 1680" in e for e in size_budget.check(tmp_path))
 
 
+def test_size_budget_ignores_egg_info_but_not_source(tmp_path):
+    _write(tmp_path, "src/pkg.egg-info/PKG-INFO", "x\n" * 2000)
+    _write(tmp_path, "src/pkg/a.py", "x = 1\n" * 10)
+    assert size_budget.check(tmp_path) == []
+    _write(tmp_path, "src/pkg/egg_info.py", "x = 1\n" * 251)
+    assert any("251 lines" in e for e in size_budget.check(tmp_path))
+
+
 def test_map_check_planted_missing_module(tmp_path):
     _write(tmp_path, "src/pkg/a.py", "")
     _write(tmp_path, "src/pkg/b.py", "")

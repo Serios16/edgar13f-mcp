@@ -1,18 +1,24 @@
-"""Leakage invariant engine (CONTRACTS §3, §4, §7) over recorded fixtures.
+"""Leakage invariant engine (CONTRACTS §3, §4, §7; Addendum A) over recorded fixtures.
 
 A case is (cik, pivot filing F, as_of) with as_of in {F.filing_date - 1, F.filing_date,
-F.filing_date + 1}. For each case the three tools are called and every returned
-or cited accession is checked against the fixture's filing dates, plus an
-independent oracle for §4 (base + supplements) and the pivot's visibility.
+F.filing_date + 1}. For each case the tools are called and every returned or cited
+accession is checked against the fixture's filing dates, plus an independent oracle for
+§4 (base + supplements) and the pivot's visibility. Stage 4 adds, per case, the Addendum A
+parameters (issuer, max_positions, list period, agent mode) and find_manager(as_of), whose
+has_13f_filings must equal "earliest 13F filing in the fixture <= as_of" for every candidate.
+Each violation names its category (second word) so the controls can be checked per category.
 """
 
 from __future__ import annotations
 
 import datetime as dt
 import json
+import os
+from functools import lru_cache
 from pathlib import Path
 
 from edgar13f import tools
+from edgar13f.rules import ALL_FORMS
 from edgar13f.sources import FixtureSource
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
@@ -31,8 +37,29 @@ def prev_quarter(period: str) -> str:
     return d.isoformat()
 
 
+@lru_cache(maxsize=None)
+def _load(cik: str) -> str:
+    return (FIXTURES / cik / "filings.json").read_text()
+
+
 def load(cik: str) -> list[dict]:
-    return json.loads((FIXTURES / cik / "filings.json").read_text())["filings"]
+    return json.loads(_load(cik))["filings"]
+
+
+@lru_cache(maxsize=None)
+def first_13f() -> dict[str, str]:
+    """Oracle for find_manager: earliest 13F filing date of every fixture manager."""
+    out = {}
+    for d in FIXTURES.iterdir():
+        if (d / "filings.json").exists():
+            dates = [f["filing_date"] for f in load(d.name) if f["form_type"] in ALL_FORMS]
+            if dates:
+                out[d.name] = min(dates)
+    return out
+
+
+def categories(violations: list[str]) -> set[str]:
+    return {v.split()[1].rstrip(":") for v in violations}
 
 
 def oracle(filings: list[dict], period: str, as_of: str) -> list[str] | str:
@@ -91,32 +118,67 @@ def check_case(source, cik: str, pivot: dict, as_of: str, stats: dict | None = N
             if fdate.get(acc, "9999-12-31") > as_of:
                 v.append(f"{tag} {name}: cites {acc} filed {fdate.get(acc)}")
 
-    listed = tools.call(source, "list_13f_filings", {"cik": cik, "as_of": as_of})
-    leaks("list", listed)
-    stats["list"] = stats.get("list", 0) + 1
+    def run(name: str, tool: str, args: dict) -> dict:
+        resp = tools.call(source, tool, args)
+        leaks(name, resp)
+        stats[name] = stats.get(name, 0) + 1
+        return resp
+
+    listed = run("list", "list_13f_filings", {"cik": cik, "as_of": as_of})
     present = pivot["accession_number"] in {r["accession_number"] for r in listed.get("filings", [])}
     if present != (pivot["filing_date"] <= as_of):
         v.append(f"{tag} list: pivot presence {present}")
     period = pivot["period_of_report"]
+    _find_manager(source, cik, as_of, tag, v, stats)
+    if period:  # A3: the visible filings of one period, nothing else
+        got = run("list_period", "list_13f_filings", {"cik": cik, "as_of": as_of, "period": period})
+        want = sorted(f["accession_number"] for f in filings if f["filing_date"] <= as_of
+                      and f["period_of_report"] == period and f["form_type"] in ALL_FORMS)
+        have = sorted(r["accession_number"] for r in got["filings"]) if got["status"] == "ok" else got["reason"]
+        if have != (want if listed["status"] == "ok" else listed["reason"]):
+            v.append(f"{tag} list_period: expected {want}, got {have}")
     if not (period and ROW_PERIODS[0] <= period <= ROW_PERIODS[1]):
         return v
-    held = tools.call(source, "get_holdings_as_of", {"cik": cik, "period": period, "as_of": as_of})
-    leaks("holdings", held)
-    stats["holdings"] = stats.get("holdings", 0) + 1
     expect = oracle(filings, period, as_of)
-    got = held.get("source_accessions") if held["status"] == "ok" else held.get("reason")
     if listed["status"] == "declined":
         expect = listed["reason"]
-    if got != expect:
-        v.append(f"{tag} holdings: expected {expect}, got {got}")
-    if held["status"] != "ok" and held.get("holdings"):
-        v.append(f"{tag} holdings returned while declined")
+    base = {"cik": cik, "period": period, "as_of": as_of}
+    for name, extra in (("holdings", {}), ("holdings_issuer", {"issuer": "inc", "max_positions": 5}),
+                        ("holdings_max", {"max_positions": 1}), ("holdings_agent", None)):
+        if extra is None:
+            os.environ["EDGAR13F_AGENT_MODE"] = "on"
+        try:
+            held = run(name, "get_holdings_as_of", {**base, **(extra or {})})
+        finally:
+            os.environ.pop("EDGAR13F_AGENT_MODE", None)
+        got = held.get("source_accessions") if held["status"] == "ok" else held.get("reason")
+        if got != expect:
+            v.append(f"{tag} {name}: expected {expect}, got {got}")
+        if held["status"] != "ok" and held.get("holdings"):
+            v.append(f"{tag} {name}: holdings returned while declined")
+        if held["status"] == "ok" and not {r["accession_number"] for r in held["holdings"]} <= set(got):
+            v.append(f"{tag} {name}: a row cites a filing outside source_accessions")
     prev = prev_quarter(period)
     if prev >= ROW_PERIODS[0]:
-        diff = tools.call(source, "diff_holdings", {"cik": cik, "period_a": prev, "period_b": period, "as_of": as_of})
-        leaks("diff", diff)
-        stats["diff"] = stats.get("diff", 0) + 1
+        args = {"cik": cik, "period_a": prev, "period_b": period, "as_of": as_of}
+        run("diff", "diff_holdings", args)
+        run("diff_narrowed", "diff_holdings", {**args, "issuer": "co", "max_positions": 3})
     return v
+
+
+def _find_manager(source, cik: str, as_of: str, tag: str, v: list[str], stats: dict) -> None:
+    """A4: has_13f_filings as of as_of, for this manager and every other candidate found."""
+    names = [f["filing_manager_name"] for f in load(cik) if f["filing_manager_name"]]
+    if not names:
+        return
+    out = tools.call(source, "find_manager", {"name": names[0], "as_of": as_of, "limit": 20})
+    stats["find_manager"] = stats.get("find_manager", 0) + 1
+    found = {c["cik"]: c["has_13f_filings"] for c in out["candidates"]}
+    if cik not in found:
+        v.append(f"{tag} find_manager: manager not found by its own name")
+    for c, has in found.items():
+        if has != (first_13f().get(c, "9999-12-31") <= as_of):
+            v.append(f"{tag} find_manager: {c} has_13f_filings {has} (first 13F {first_13f().get(c)})")
 
 
 def run_suite(source=None, stats: dict | None = None) -> tuple[int, list[str]]:

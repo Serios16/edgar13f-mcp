@@ -1,5 +1,6 @@
 """Shared test setup. All tests run offline: outbound sockets are refused, and every test
-starts with EDGAR13F_REDACT unset (redaction ON); tests of "off" set it on synthetic rows only."""
+starts with EDGAR13F_REDACT unset (redaction ON) and EDGAR13F_AGENT_MODE unset. Tests of
+EDGAR13F_REDACT=off set it on synthetic rows only."""
 
 from __future__ import annotations
 
@@ -28,6 +29,7 @@ def _no_network(monkeypatch):
     monkeypatch.setattr(socket, "create_connection", refuse)
     monkeypatch.delenv("SEC_USER_AGENT", raising=False)
     monkeypatch.delenv("EDGAR13F_REDACT", raising=False)
+    monkeypatch.delenv("EDGAR13F_AGENT_MODE", raising=False)
 
 
 @pytest.fixture

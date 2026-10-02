@@ -21,6 +21,11 @@ CALLS = [
      "invalid_argument"),
     ("get_holdings_as_of", {"cik": "1450709", "period": "2024-09-30", "as_of": "2025-01-01"}, "notice_only"),
     ("list_13f_filings", {"cik": "999999999", "as_of": "2025-01-01"}, "unknown_cik"),
+    ("get_holdings_as_of", {"cik": "1067983", "period": "2025-03-31", "as_of": "2025-08-14", "issuer": "apple",
+                            "max_positions": 1}, "ok"),
+    ("list_13f_filings", {"cik": "1067983", "as_of": "2025-08-14", "period": "2025-03-31"}, "ok"),
+    ("find_manager", {"name": "berkshire", "as_of": "2025-08-14"}, "ok"),
+    ("find_manager", {"name": "be"}, "invalid_argument"),
 ]
 
 
@@ -42,8 +47,8 @@ async def _session_run(tmp_path):
 
 def test_stdio_end_to_end(tmp_path):
     out = anyio.run(_session_run, tmp_path)
-    assert set(out["tools"]) == {"list_13f_filings", "get_holdings_as_of", "diff_holdings"}
-    assert out["tools"]["get_holdings_as_of"]["additionalProperties"] is False
+    assert set(out["tools"]) == {"list_13f_filings", "get_holdings_as_of", "diff_holdings", "find_manager"}
+    assert all(schema["additionalProperties"] is False for schema in out["tools"].values())
     for (name, args, expected), res in zip(CALLS, out["results"]):
         assert res.is_error is False
         first = res.content[0]

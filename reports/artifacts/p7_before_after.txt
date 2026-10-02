@@ -1,0 +1,10 @@
+== v1.1.0 sec_client.py (git show ca60c5c:src/edgar13f/sec_client.py, tag V1.1.0), stage-4 P7 tests
+$ python -m pytest -q tests/unit/test_sec_client.py -k 'truncated or broken or incomplete'
+FAILED tests/unit/test_sec_client.py::test_truncated_body_is_retried_with_backoff_and_logged
+FAILED tests/unit/test_sec_client.py::test_truncated_body_every_time_gives_up
+FAILED tests/unit/test_sec_client.py::test_other_broken_responses_are_retried[<lambda>1]
+FAILED tests/unit/test_sec_client.py::test_urlopen_surfaces_incomplete_read_from_a_short_body
+4 failed, 1 passed, 17 deselected in 0.34s
+
+== stage-4 sec_client.py, same tests
+5 passed, 17 deselected in 1.81s

@@ -1,4 +1,7 @@
-"""Size budget: <= 1,500 lines under src/, <= 250 lines per file."""
+"""Size budget: <= 1,500 lines under src/, <= 250 lines per file.
+
+Build metadata that `pip install -e` writes into src/ (`*.egg-info/`, untracked; its PKG-INFO
+embeds README.md) is not source and is not counted (stage 4, REGISTER A30)."""
 
 from __future__ import annotations
 
@@ -10,7 +13,8 @@ TOTAL_MAX, FILE_MAX = 1500, 250
 
 def check(root: Path) -> list[str]:
     errors, total = [], 0
-    files = sorted(p for p in (root / "src").rglob("*") if p.is_file() and "__pycache__" not in p.parts)
+    files = sorted(p for p in (root / "src").rglob("*") if p.is_file() and "__pycache__" not in p.parts
+                   and not any(part.endswith(".egg-info") for part in p.parts))
     for path in files:
         n = len(path.read_text(errors="replace").splitlines())
         total += n
