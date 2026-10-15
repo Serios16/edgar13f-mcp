@@ -71,6 +71,9 @@ find_manager:        EdgarDirectory.search (cik-lookup-data.txt, daily) → firs
 | A5 agent mode | `narrow.agent_mode`, `narrow._limit` | `tests/unit/test_addendum.py` |
 | §3 for the new parameters and `find_manager(as_of)` | `rules.visible` (unchanged single point) | `tests/invariants/test_leakage.py` (mutant + no-op controls) |
 | Hard rule 3 fair access | `sec_client.SecClient` | `tests/unit/test_sec_client.py` (incl. P7 truncated bodies, Range) |
+| MCP protocol over stdio, both eras (connect, exactly four tools, disclaimer, `invalid_argument`) | `server.build_server` (SDK 2.x `Server`) | `tests/inspector/inspector_check.sh` (`inspector` CI job; planted three-tool stub `tests/inspector/three_tools_server.py`), wire envelopes `tests/inspector/protocol_tap.sh` |
+| Lifecycle: stdin close, malformed lines, SIGTERM/SIGKILL mid-call (atomic cache writes) | SDK stdio loop, `config.write_json`, `SecClient.get` | `tests/invariants/test_lifecycle.py` (planted: ignores stdin EOF, exits on garbage, ignores SIGTERM, non-atomic write), `tests/tools/kill_fuzz.py` |
+| Registry metadata (`server.json`, README `mcp-name:` marker) | `server.json`, `README.md` | `tests/unit/test_server_json.py` (planted inconsistencies); schema + `mcp-publisher validate` once by hand |
 | Cache dir / unprivileged user | `config.cache_dir` | `tests/unit/test_config.py`, `tests/tools/unprivileged_probe.sh --offline` (CI step, with planted stray write) |
 
 ## Tests and checks
@@ -85,9 +88,16 @@ find_manager:        EdgarDirectory.search (cik-lookup-data.txt, daily) → firs
 * `tests/invariants/test_blocklist.py` also holds the `EDGAR13F_REDACT` switch tests (synthetic rows only).
 * `tests/golden/v1_0_fixture_responses.json` – hashes of every tool response over the fixtures, written by the
   v1.0.0 source (`tests/tools/fixture_golden.py`).
+* `tests/invariants/test_lifecycle.py`, `lifecycle_server.py` – stage 5 lifecycle checks; the server is the real stdio
+  loop, `EdgarSource` and `SecClient` with an offline opener over the synthetic manager (can hold a table in flight).
+* `tests/inspector/` – pinned MCP Inspector CLI (`package.json`, `package-lock.json`), `inspector_check.sh`,
+  `protocol_tap.sh`, the planted `three_tools_server.py`; run by the `inspector` CI job (needs Node >= 22.19).
+* `tests/unit/test_server_json.py` – `server.json` consistency with the package (stage 5 (c)).
 * `tests/checks/` – size budget, MAP check, claims check; `tests/invariants/test_checks.py` plants a failure for each.
-* `.github/workflows/invariants.yml` – the `invariants` job: the suites above, the checks, and the
-  offline unprivileged-user probe with its planted-failure control.
+* `.github/workflows/invariants.yml` – the `invariants` job: the suites above, the lifecycle tests, the checks,
+  and the offline unprivileged-user probe with its planted-failure control; the `inspector` job (stage 5,
+  ruling R1): Inspector CLI check in both protocol eras, result vs `reports/artifacts/inspector_stage5.json`,
+  wire envelopes, planted three-tool stub.
 * `tests/tools/` – not run in CI: fixture recorder, synthetic fixture writer, license audit, request
   stats, period consistency, unprivileged-user probe (live mode), SEC Form 13F Data Sets cross-check
   (`datasets_crosscheck.py`; data sets stay outside the repo), cold-cache latency (`cold_latency.py`, also over
@@ -95,7 +105,8 @@ find_manager:        EdgarDirectory.search (cik-lookup-data.txt, daily) → firs
   scan (`equivalence.py`), one-command install from GitHub (`install_smoke.sh`); stage 4: `find_manager` and
   `list_13f_filings(period)` latency and response sizes (`agent_latency.py`), `has_13f_filings` vs
   `list_13f_filings` (`has13f_crosscheck.py`), the quarterly form-index premises (`fullindex_scan.py`), and the
-  MCP SDK stdio reproduction (`sdk_stdio_repro.py`, synthetic data only).
+  MCP SDK stdio reproduction (`sdk_stdio_repro.py`, synthetic data only); stage 5: random-moment
+  SIGKILL/SIGTERM probe (`kill_fuzz.py`), stdio envelope tap (`stdio_tap.py`).
 * `tests/fixtures/<cik>/` – recorded, redacted EDGAR data (24 managers).
 * `tests/fixtures/synthetic/9900000001/` – invented manager, one §4 case per period (benign rows only).
 * `tests/fixtures/section4_expected.json` – expected §4 citations for recorded edge cases, derived from

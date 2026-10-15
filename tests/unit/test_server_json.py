@@ -18,7 +18,8 @@ from tests.conftest import REPO
 
 SCHEMA = "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json"
 NAME = re.compile(r"^[a-zA-Z0-9.-]+/[a-zA-Z0-9._-]+$")  # ServerDetail.name pattern in that schema
-NEVER_ADVERTISED = {"EDGAR13F_REDACT", "EDGAR13F_FIXTURE_DIR"}  # rule 2 switch; test hook
+# Only these may be advertised: never the redaction switch (rule 2: an end-user setting) or the fixture hook.
+ADVERTISED = {"SEC_USER_AGENT", "EDGAR13F_AGENT_MODE", "EDGAR13F_CACHE_DIR"}
 
 
 def problems(server: dict, readme: str, version: str) -> list[str]:
@@ -40,7 +41,7 @@ def problems(server: dict, readme: str, version: str) -> list[str]:
             "pypi", "https://pypi.org", {"type": "stdio"}):
         out.append("package must be PyPI (https://pypi.org) over stdio")
     names = {v["name"] for v in pkg.get("environmentVariables", [])}
-    if "SEC_USER_AGENT" not in names or names & NEVER_ADVERTISED:
+    if "SEC_USER_AGENT" not in names or not names <= ADVERTISED:
         out.append(f"advertised variables {sorted(names)}")
     out += [f"{n} not documented in README" for n in sorted(names) if n not in readme]
     return out
@@ -63,8 +64,8 @@ def test_planted_inconsistencies_are_caught():
         "long description": lambda s: s.update(description="x" * 101),
         "version drift": lambda s: s.update(version="9.9.9"),
         "other namespace": lambda s: s.update(name="com.example/edgar13f-mcp"),
-        "redaction switch advertised": lambda s: s["packages"][0]["environmentVariables"].append(
-            {"name": "EDGAR13F_REDACT", "description": "x"}),
+        "variable outside the allowlist": lambda s: s["packages"][0]["environmentVariables"].append(
+            {"name": "EDGAR13F_FIXTURE_DIR", "description": "x"}),
         "http transport": lambda s: s["packages"][0].update(transport={"type": "streamable-http"}),
     }
     for label, plant in plants.items():

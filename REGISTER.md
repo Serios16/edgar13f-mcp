@@ -17,7 +17,9 @@ None open.
 | Gate 3 | Gate 3 PASS -> v1.1.0. Run on ca60c5c: generated 698/700, 0 leaks; aggregates identical to gates 1-2. Both misses are ruling D2 over-matches (accepted cost). The tag was first pushed as `V1.1.0`; the owner is adding the lower-case `v1.1.0` (P10). |
 | Out-of-sample | Filings 2025-09 to 2026-08: generated 699/700, 0 leaks over 3,102 cases, citations 639/640, declines 6/6, all primary gates PASS. The one miss is a D2 over-match, predicted before grading. |
 | Known over-matches | Every "SPDR S&P ..." fund (any SPDR fund naming S&P); bonds of trust/fund-named issuers whose class title carries a ".500" coupon. D2 stands: the list is never narrowed. |
-| v1.2 gate | Pre-registered in the stage-4 brief (2026-10-02), before any stage-4 work: tag v1.2.0 only if gate 4, run on the merged commit, passes every primary gate with generated >= 698/700 and 0 leaks. Open. |
+| v1.2 gate | Pre-registered in the stage-4 brief (2026-10-02), before any stage-4 work: tag v1.2.0 only if gate 4, run on the merged commit, passes every primary gate with generated >= 698/700 and 0 leaks. |
+| Gate 4 | Gate 4 PASS on f7ee806 -> v1.2.0; aggregates identical to gates 1-3. LLM-in-the-loop eval: edgar13f 160/160, EdgarTools 105/160. |
+| v1.2.1 gate (R2) | Stated in the stage-5 brief (2026-10-15): if src/ changes at all, tag v1.2.1 only if gate 5 on the merged commit passes every primary gate with generated >= 698/700 and 0 leaks. Stage 5 made no change to src/, so no v1.2.1 is due. |
 
 ## RULINGS (orchestrator; D1-D3 2026-09-29, recorded before any grader result existed; N1, N2 2026-10-02)
 
@@ -28,6 +30,14 @@ None open.
 | N1 | `find_manager` and the blocklist (2026-10-02, orchestrator) | Drop the blocklist filter from `find_manager`. | Rule 2 covers holdings rows, their values and prices; an entity's name, CIK and `has_13f_filings` flag contain none of these. This does not narrow the holdings blocklist: D2 is unchanged and every holdings row is redacted exactly as in v1.1. Tests: `tests/unit/test_find_manager.py::test_entity_named_like_a_blocked_instrument_is_returned`, `tests/invariants/test_blocklist.py::test_find_manager_returns_entities_named_like_blocked_instruments`. |
 | N2 | Addendum file name (2026-10-02, orchestrator) | One-time exception to the contracts/ read-only rule, for a rename only. | `git mv` of the addendum to `contracts/CONTRACTS_ADDENDUM_A.md`, content byte-identical (SHA-256 95bf9772170b8d0eed5405a2468f915320b3fb58b4f47718427ee13c6f8ca462 before and after); every reference updated; no other change under contracts/. |
 | D3 | `typing-extensions` (PSF-2.0), a transitive dependency of MCP SDK 2.x and pydantic | Keep it. | Rule 4 in CLAUDE.md is amended to "permissive OSI licences (MIT/Apache/BSD/PSF/ISC)". `tests/tools/license_audit.py` accepts that list and its output (`reports/artifacts/license_audit.txt`) shows every runtime dependency as `ok`. |
+
+## RULINGS, stage 5 (orchestrator, 2026-10-15)
+
+| ID | Ruling |
+|---|---|
+| R1 | One new CI job, `inspector`, may use actions/setup-node and the MCP Inspector npm package at an exact version: test tooling, not runtime dependencies (rule 4 does not apply). Inspector licence recorded: Apache-2.0, with MIT for contributions not yet relicensed (its LICENSE file, `@modelcontextprotocol/inspector@2.11.0`). The `invariants` job stays offline. |
+| R2 | src/ frozen except to fix a defect a new test exposes (test failing first, fix recorded here). No such defect was found; src/ is unchanged. |
+| R3 | Allowed paths this stage: tests/, .github/workflows/, reports/, MAP.md, REGISTER.md, README.md, CLAUDE.md, server.json, PUBLISHING.md (src/ only under R2). |
 
 ## ASSUMED
 
@@ -64,6 +74,13 @@ None open.
 | A29 | P7: `SecClient` retries any `http.client.HTTPException` (`IncompleteRead`, `BadStatusLine`, ...) like a network error, with the same backoff, and logs it as `neterr:<name>` in `requests.log`. | P7; the other HTTPException cases are the same kind of broken transfer. | stage gate |
 | A30 | The size-budget check no longer counts `src/*.egg-info/` (written by `pip install -e`, untracked, its `PKG-INFO` embeds README.md). Tracked source is what the budget measures; a planted test shows a real `.py` file is still counted. | Without it, stage 4's README alone would have pushed CI over 1,500 lines. | stage gate |
 | A31 | Version 1.2.0 in `pyproject.toml` and `__version__` (as A19). | Stage 4 (f). | stage gate |
+| A32 | The lifecycle tests run as one new step of the `invariants` job ("in the invariants suite"); R1's "unchanged" is read as "no Node/Inspector there and still offline". | Without a step the tests would not run in CI; one step is easy to move to another job. | stage gate |
+| A33 | The inspector job's "artifact" is `reports/artifacts/inspector_stage5.json`: the job prints its own summary and fails unless it equals that committed file (no `actions/upload-artifact`, which R1 does not list). The summary holds no holdings row. A new SDK release that changes a negotiated version turns the job red by design. | R1 lists only setup-node as new. | stage gate |
+| A34 | The Inspector is installed with `npm ci --ignore-scripts` from `tests/inspector/package-lock.json` (exact 2.11.0, released 2026-10-14; transitive packages locked too), not `npx`. Its token/secret store is isolated per run (`MCP_STORAGE_DIR`, `MCP_INSPECTOR_OAUTH_STATE_PATH`, `MCP_INSPECTOR_SECRET_STORE=memory`), as its smoke-testing guide advises. | Stricter than an exact `npx` pin. | stage gate |
+| A35 | Each Inspector assertion runs in both eras the Inspector offers: `legacy` (its default; `initialize` handshake) and `modern` (2026-07-28, `server/discover`, no `initialize`). The malformed call is `get_holdings_as_of` with a numeric `cik` (A6). | The brief anticipated a 2026-07-28 mismatch; checking both shows which one clients get. | stage gate |
+| A36 | Lifecycle: "clean error" = the MCP Python SDK client raises `MCPError` (`Connection closed`) within 10 s of the signal; the server's exit status after a signal is not asserted. "Malformed" = 6 lines (truncated JSON, non-JSON bytes, `[]`, no method, wrong `jsonrpc`); each must be ignored or answered with a JSON-RPC error. Mid-call = an information-table request held in flight after the first table's rows were cached. | Brief (b). | stage gate |
+| A37 | `server.json`: name `io.github.Serios16/edgar13f-mcp` (repository URL spelling), PyPI identifier `edgar13f-mcp` (`edgar13f` is taken, P13), `runtimeHint: uvx`, variables `SEC_USER_AGENT` (required), `EDGAR13F_AGENT_MODE`, `EDGAR13F_CACHE_DIR`; `EDGAR13F_REDACT` and `EDGAR13F_FIXTURE_DIR` are not advertised. README carries the `mcp-name:` marker as an HTML comment. | Most reversible: no package is renamed here; all of it is metadata. | stage gate |
+| A38 | CI installs `mcp>=2.0,<3`, which now resolves to SDK 2.3.0 (stage 4 measured 2.2.0). The SDK is not pinned or changed; the Inspector check and the wire tap were run on both 2.2.0 and 2.3.0. | "Do not change the SDK." | stage gate |
 
 ## PROPOSALS (out of scope; not done)
 
@@ -80,4 +97,7 @@ None open.
 | P9 | Run `tests/tools/install_smoke.sh` in CI. It needs `uv` on the runner (a new CI tool) and network to GitHub; not done because CI checks are unchanged in stage 3. |
 | P10 | CLOSED by the owner (2026-10-02): the lower-case tag `v1.1.0` is being added next to `V1.1.0`; README pins use `v1.1.0`. |
 | P11 | `find_manager` first call on an empty cache reads 136 quarterly index prefixes (about a minute, see `reports/STAGE_4.md`); later calls are fast. A warm-up command, building the index in the background at server start, or releasing the rate-limit lock after the response headers (P4) would shorten the first call. Not done. |
+| P13 | PyPI name: `edgar13f` belongs to an unrelated project (Edgar13F 0.2.0, 2023). Rename the distribution to `edgar13f-mcp` (free on 2026-10-15) and add a console script `edgar13f-mcp` so `uvx edgar13f-mcp` starts the server; import package unchanged. Needs `pyproject.toml` (outside R3) and the owner's choice; `server.json` already assumes it. See `PUBLISHING.md`. |
+| P14 | Release workflow for PyPI trusted publishing and `mcp-publisher login github-oidc` (job-level `id-token: write`, protected environment). A CI-permission change: DECISION NEEDED by the owner; sketched in `PUBLISHING.md`, not added. |
+| P15 | MCP Python SDK stdio server ignores malformed JSON-RPC lines silently (no -32700 Parse error). Allowed by the brief ("error or ignored"); a client that sends one gets no answer and must time out. Upstream note only; not changed (SDK). |
 | P12 | CLOSED by ruling N2 (2026-10-02): renamed to `contracts/CONTRACTS_ADDENDUM_A.md` (trailing dot removed) with `git mv`; content byte-identical (SHA-256 95bf9772170b8d0eed5405a2468f915320b3fb58b4f47718427ee13c6f8ca462 before and after). |
