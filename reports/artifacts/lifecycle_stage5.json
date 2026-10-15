@@ -3,11 +3,11 @@
  "stdin_close": {
   "fixture_server": {
    "exit_code": 0,
-   "seconds": 0.215
+   "seconds": 0.265
   },
   "offline_edgar_server": {
    "exit_code": 0,
-   "seconds": 0.215
+   "seconds": 0.265
   }
  },
  "malformed_lines": [
@@ -45,12 +45,12 @@
  "mid_call": {
   "SIGTERM": {
    "client_error": "MCPError",
-   "seconds_from_signal": 0.007,
+   "seconds_from_signal": 0.006,
    "problems": []
   },
   "SIGKILL": {
    "client_error": "MCPError",
-   "seconds_from_signal": 0.006,
+   "seconds_from_signal": 0.011,
    "problems": []
   }
  },
@@ -64,7 +64,7 @@
    "server exited (code 3) after b'{\"jsonrpc\":\"2.0\",\"id\":7,\"metho'"
   ],
   "ignore-sigterm": [
-   "client did not see a clean error within 3 s: {'error': None, 'seconds': None, 'pid': 4369, 'sent': 1663.193110259}"
+   "client did not see a clean error within 3 s: {'error': None, 'seconds': None, 'pid': 7756, 'sent': 4223.064598902}"
   ],
   "partial-write/SIGTERM": [
    "rows file is not whole JSON: rows/9900000001-24-000004.json",

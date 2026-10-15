@@ -1,0 +1,10 @@
+$ python -m pytest -q tests   (mcp 2.3.0, Python 3.11, offline)
+.......................................................                  [100%]
+414 passed, 1 skipped in 118.92s (0:01:58)
+
+$ python tests/checks/size_budget.py .
+size budget: ok
+$ python tests/checks/map_check.py .
+map check: ok
+$ python tests/checks/claims_check.py .
+claims check: ok
