@@ -8,8 +8,9 @@ The acceptance criteria were fixed by the brief before any work.
 REPORTED (evaluator, aggregates only): gate 4 PASS on f7ee806, tagged v1.2.0, identical to gates 1-3.
 LLM-in-the-loop eval: edgar13f 160/160, EdgarTools 105/160.
 
-`src/` changed once, under ruling R2: fix F18 (section b), test first, +26 lines in `config.py` and
-`sources.py` (1,450 lines in total, none over 250). The v1.2.1 gate therefore applies: tag v1.2.1 only if
+`src/` changed under ruling R2: fix F18 (section b), test first, +26 lines in `config.py` and
+`sources.py` (1,450 lines in total, none over 250); `__version__` and `pyproject.toml` were then set to 1.2.1 by
+ruling (distribution renamed to `edgar13f-mcp`, section c). The v1.2.1 gate therefore applies: tag v1.2.1 only if
 gate 5 on the merged commit passes every primary gate with generated >= 698/700 and 0 leaks.
 MEASURED: the full suite passes offline (414 passed, 1 skipped: the root-only test); see `reports/artifacts/pytest_stage5.txt`.
 
@@ -29,7 +30,7 @@ initialize | tools/list | tools/call`, `--tool-args-json`, `--format json`, a bo
   the four tools; one call per tool with the disclaimer (in `structuredContent` and the first text block,
   which must be the same object), `isError: false`, status ok; a malformed call (numeric `cik`) returns
   the `invalid_argument` decline with `isError: false`; and no `requests.log` in the cache dir.
-- MEASURED: all assertions pass in both eras, on MCP SDK 2.2.0 and 2.3.0 (same summary); see `reports/artifacts/inspector_stage5.json`.
+- MEASURED: all assertions pass in both eras, on MCP SDK 2.2.0 and 2.3.0 (same summary); the artifact was regenerated after the bump to 1.2.1 (only `serverInfo.version` changed); see `reports/artifacts/inspector_stage5.json`.
 - MEASURED: CI run 60 (https://github.com/Serios16/edgar13f-mcp/actions/runs/38770341562, job `inspector`) passed every step on SDK 2.3.0, and its summary equals `reports/artifacts/inspector_stage5.json` (the job diffs them).
 - MEASURED: planted failure: the same check against `tests/inspector/three_tools_server.py` (the real server without `find_manager` in tools/list) exits 1 at "tools/list returned [3 names], expected exactly [4]"; CI run 60 confirms; see `reports/artifacts/inspector_planted_stage5.txt`.
 
@@ -82,12 +83,14 @@ cache writes are large; after each kill the cache check and a fresh start.
 Sources and steps: `PUBLISHING.md` (REPORTED, read 2026-10-15 from the registry's and PyPI's docs).
 
 - REPORTED: current released schema `https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json`; package types npm, pypi, nuget, oci, mcpb (cargo in the draft); PyPI ownership = `mcp-name: <server name>` in the package README; the official registry accepts PyPI only from `https://pypi.org`; GitHub namespace `io.github.<login>/*`; the registry is in preview.
-- `server.json`: `io.github.Serios16/edgar13f-mcp`, version 1.2.0, PyPI package `edgar13f-mcp`,
+- `server.json`: `io.github.Serios16/edgar13f-mcp`, version 1.2.1, PyPI package `edgar13f-mcp`,
   `runtimeHint: uvx`, stdio, variables `SEC_USER_AGENT` (required), `EDGAR13F_AGENT_MODE`,
   `EDGAR13F_CACHE_DIR` (A37). README carries `<!-- mcp-name: io.github.Serios16/edgar13f-mcp -->`.
 - MEASURED: valid against the 2025-12-11 schema (jsonschema 4.26.0, Draft 7) and with `mcp-publisher validate` 1.8.1; the planted 101-character description is rejected by both; see `reports/artifacts/server_json_validation_stage5.txt`.
 - MEASURED (F15): `mcp-publisher validate` also accepted `registryBaseUrl: https://pypi.example.org`: it checks the schema, not ownership or the official-registry rules, which only `publish` applies; see `reports/artifacts/server_json_validation_stage5.txt`.
-- MEASURED (F16): the PyPI name `edgar13f` is taken by an unrelated project (Edgar13F 0.2.0, 2023); `edgar13f-mcp` was free; see `reports/artifacts/server_json_validation_stage5.txt`. The rename is outside R3 (`pyproject.toml`): proposal P13, owner decision.
+- MEASURED (F16): the PyPI name `edgar13f` is taken by an unrelated project (Edgar13F 0.2.0, 2023); `edgar13f-mcp` was free; see `reports/artifacts/server_json_validation_stage5.txt`. Renamed by ruling (P13): the distribution is now `edgar13f-mcp` 1.2.1; import package, `python -m edgar13f.server` and `edgar13f-server` unchanged.
+- MEASURED: `tests/tools/install_smoke.sh eceb463` from GitHub with an empty uv cache: SMOKE OK, server 1.2.1, four tools, malformed call `invalid_argument`, 9 s; see `reports/artifacts/install_smoke_stage5.txt`.
+- MEASURED (F19): `uvx edgar13f-mcp`, the command registry clients build from `runtimeHint: uvx`, fails: the package provides only `edgar13f-server`; see `reports/artifacts/uvx_entrypoint_stage5.txt`. Owner decision before publishing (P16).
 - `tests/unit/test_server_json.py` keeps `server.json` in step with the package (name pattern, README
   marker, description <= 100, one version in `server.json`, `pyproject.toml` and `__version__`, PyPI over
   stdio, an allowlist of advertised variables) with planted inconsistencies.
@@ -97,7 +100,7 @@ Sources and steps: `PUBLISHING.md` (REPORTED, read 2026-10-15 from the registry'
 README: registry marker (HTML comment) and a short "Protocol checks" note in the Tests section pointing to
 the `inspector` job, its script and `reports/artifacts/inspector_stage5.json`. MAP: three rows in the
 rule table (protocol, lifecycle, registry metadata) and the new test files. REGISTER: gate 4 and the
-v1.2.1 condition, rulings R1-R3, ASSUMED A32-A38, proposals P13-P15.
+v1.2.1 condition, rulings R1-R3 and the follow-up rulings (P13 done, version 1.2.1, P14 deferred), ASSUMED A32-A40, proposals P13-P16.
 MEASURED: size budget, MAP and claims checks pass (`src/` 1,450 lines); part of `reports/artifacts/pytest_stage5.txt`.
 
 ## Findings
@@ -107,14 +110,15 @@ MEASURED: size budget, MAP and claims checks pass (`src/` 1,450 lines); part of 
 | F13 | No protocol mismatch: SDK 2.2.0/2.3.0 serve both 2025-11-25 (`initialize`) and 2026-07-28 (`server/discover`, no handshake) over stdio. | Both eras checked in CI on every push. |
 | F14 | Malformed JSON-RPC lines get no reply (ignored, not a `-32700` error). | Within the brief; P15. |
 | F15 | `mcp-publisher validate` does not check ownership or registry base URLs. | Documented in `PUBLISHING.md`. |
-| F16 | PyPI name `edgar13f` is taken by another project. | P13: owner to rename the distribution (proposed `edgar13f-mcp`). |
+| F16 | PyPI name `edgar13f` is taken by another project. | Renamed to `edgar13f-mcp` by ruling (P13). |
+| F19 | With the command kept as `edgar13f-server`, `uvx edgar13f-mcp` (registry clients) fails. | P16: owner to add an `edgar13f-mcp` alias or adjust `server.json` before publishing. |
 | F18 | A kill between a cache write and its rename left a temporary file in the cache for good (2 of 200 random kills). | Fixed under R2, test first: stale temporary files of dead processes are removed at start. v1.2.1 gate applies. |
 | F17 | CI resolves MCP SDK 2.3.0 (stage 4: 2.2.0); the inspector job pins the negotiated versions, so an SDK release that changes them turns CI red. | A33, A38. |
 
 ## Not done
 
-- No publishing, no PyPI or registry login, no release workflow with `id-token: write` (P14: CI
-  permission, owner's decision). No change to `pyproject.toml` or the SDK; `src/` only for F18.
-- Version strings stay 1.2.0 (`pyproject.toml` is outside R3). If gate 5 passes and v1.2.1 is tagged,
-  `pyproject.toml`, `__version__` and both versions in `server.json` move together
-  (`tests/unit/test_server_json.py` fails otherwise).
+- No publishing, no PyPI or registry login. Release workflow and `id-token` permission deferred by
+  ruling until the owner decides to publish (P14). No change to the SDK; `src/` only for F18 and the
+  version string.
+- Version: `pyproject.toml` and `__version__` are 1.2.1 (ruling), as are both versions in `server.json`,
+  so the commit gate 5 grades is the release. Tag v1.2.1 only if gate 5 passes (R2).

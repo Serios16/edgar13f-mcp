@@ -4,18 +4,20 @@ Nothing has been published. Every step below needs the owner's PyPI and GitHub a
 `reports/`: REPORTED = from the sources at the end (read 2026-10-15), MEASURED = run here with the
 artifact named, REASONED = inferred.
 
-## 0. Decide the PyPI name (blocks everything else)
+## 0. PyPI name (done) and the command clients run (open)
 
 - MEASURED: the name `edgar13f` is taken on PyPI by an unrelated project (Edgar13F 0.2.0, a 13F scraper
   uploaded 2023-08-26); `edgar13f-mcp` was free on 2026-10-15
   (`reports/artifacts/server_json_validation_stage5.txt`).
+- Done (ruling, 2026-10-15): the distribution is `edgar13f-mcp` 1.2.1; the import package (`edgar13f`),
+  `python -m edgar13f.server` and the command `edgar13f-server` are unchanged. `install_smoke.sh`:
+  SMOKE OK (`reports/artifacts/install_smoke_stage5.txt`).
 - REPORTED: a pending trusted publisher does not reserve a name; another upload can take it first [4].
-- Proposal (REGISTER P13): distribution name `edgar13f-mcp`, import package unchanged (`edgar13f`).
-  In `pyproject.toml`: `name = "edgar13f-mcp"` and a second console script
-  `edgar13f-mcp = "edgar13f.server:main"` (keep `edgar13f-server`). REASONED: `uvx edgar13f-mcp`,
-  which registry clients run for `runtimeHint: "uvx"`, starts the command named like the package, so
-  without that script clients would need `uvx --from edgar13f-mcp edgar13f-server`.
-- `server.json` already uses `edgar13f-mcp`. Choosing another name means changing `identifier` there.
+- Open (REGISTER P16), MEASURED: `uvx edgar13f-mcp`, which registry clients run for
+  `runtimeHint: "uvx"`, fails because the package provides only `edgar13f-server`
+  (`reports/artifacts/uvx_entrypoint_stage5.txt`). Before publishing, either add a console script
+  `edgar13f-mcp = "edgar13f.server:main"` next to `edgar13f-server`, or change `server.json` so that
+  clients start `edgar13f-server`.
 
 ## 1. PyPI with trusted publishing (no API token)
 
@@ -31,8 +33,8 @@ REPORTED [4][5]:
    `uses: pypa/gh-action-pypi-publish@release/v1` with no username or password. The first run creates
    the project; the pending publisher becomes a normal one.
 
-A workflow with `id-token: write` is a CI-permission change: the builder did not add it (CLAUDE.md:
-DECISION NEEDED for CI permissions).
+Deferred by ruling (REGISTER P14): no release workflow and no `id-token` permission until the owner
+decides to publish.
 
 ## 2. Ownership marker for the MCP Registry
 
