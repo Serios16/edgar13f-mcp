@@ -35,7 +35,7 @@ export SEC_USER_AGENT="Your Name your.email@example.com"   # required by SEC fai
 uvx --python 3.11 --from git+https://github.com/Serios16/edgar13f-mcp edgar13f-server
 ```
 
-Append a tag to pin a release, e.g. `git+https://github.com/Serios16/edgar13f-mcp@v1.1.0`. For an MCP
+Append a tag to pin a release, e.g. `git+https://github.com/Serios16/edgar13f-mcp@v1.2.0`. For an MCP
 client such as Claude Desktop:
 
 ```json
@@ -168,6 +168,9 @@ adds `auto_limited: true`. Every other call is unaffected. MCP client config:
   be published after the final stage so the hash can be checked.
 * **Gold sets:** 40 curated items and 700 generated items, stratified by case type (for
   example the day before and the day of a restatement), plus 3,114 leakage cases.
+* **Beyond the gates,** the private repository also holds, each pre-registered before it ran:
+  an out-of-sample set, an evaluation with an LLM agent in the loop, a diagnostic re-run of that
+  evaluation, and a live capture around the Q3 2026 filing deadline (results below).
 * **Controls in this repository.** They run in CI on every push, offline; the tests refuse
   sockets:
   * a leakage suite with a *mutant* control (visibility check disabled; it must find
@@ -188,18 +191,18 @@ adds `auto_limited: true`. Every other call is unaffected. MCP client config:
 ### Gate results (REPORTED by the evaluator; aggregates only)
 
 Item-level results are withheld by design. Gate 2, the pre-registered decision gate, passed on
-commit b208c47, which is tagged **v1.0.0**. Gate 3 passed on commit ca60c5c, which is tagged
-**v1.1.0**. Both have the same aggregates as gate 1.
+commit b208c47, which is tagged **v1.0.0**. Gates 3 and 4 passed on commits ca60c5c and
+f7ee806, tagged **v1.1.0** and **v1.2.0**. All four gates have the same aggregates.
 
-| Measure | Gate 1 | Gate 2 (v1.0.0) | Gate 3 (v1.1.0) |
-|---|---|---|---|
-| Primary gates | all PASS | all PASS | all PASS |
-| Generated items | 698 / 700 | 698 / 700 | 698 / 700 |
-| Generated misses | 1 `restatement_before`, 1 `restatement_after` | same | same; both are D2 over-matches |
-| Citation validity | 669 / 671 | 669 / 671 | 669 / 671 |
-| Leakage | 0 violations over 3,114 cases | 0 over 3,114 | 0 over 3,114 |
-| Curated items | 34 / 34 | 34 / 34 | 34 / 34 |
-| Declines | 6 / 6 | 6 / 6 | 6 / 6 |
+| Measure | Gate 1 | Gate 2 (v1.0.0) | Gate 3 (v1.1.0) | Gate 4 (v1.2.0) |
+|---|---|---|---|---|
+| Primary gates | all PASS | all PASS | all PASS | all PASS |
+| Generated items | 698 / 700 | 698 / 700 | 698 / 700 | 698 / 700 |
+| Generated misses | 1 `restatement_before`, 1 `restatement_after` | same | same; both are D2 over-matches | same |
+| Citation validity | 669 / 671 | 669 / 671 | 669 / 671 | 669 / 671 |
+| Leakage | 0 violations over 3,114 cases | 0 over 3,114 | 0 over 3,114 | 0 over 3,114 |
+| Curated items | 34 / 34 | 34 / 34 | 34 / 34 | 34 / 34 |
+| Declines | 6 / 6 | 6 / 6 | 6 / 6 | 6 / 6 |
 
 Both generated misses come from ruling D2: the blocklist removes rows the grader expected (see
 Limits for the two known over-match patterns). D2 forbids narrowing the list to win them back.
@@ -209,8 +212,54 @@ covers (as_of up to 2025-08-27), all primary gates PASS: generated 699 / 700, 0 
 violations over 3,102 cases, citations 639 / 640, declines 6 / 6. The one miss is a D2
 over-match, predicted before grading.
 
-v1.2.0 is tagged only if gate 4, run on the merged stage-4 commit, passes every primary gate
-with generated >= 698/700 and 0 leaks (pre-registered in `REGISTER.md`).
+### Does it help an AI agent? (REPORTED by the evaluator; aggregates only)
+
+Pre-registered before the run (2026-10-14): the same model (Claude Sonnet 5.5, effort medium),
+the same 80 plain-English questions, the same instructions, a 12-turn budget and a
+50,000-character cap per tool result, 2 runs per question. Every tool result passed through the
+same redaction before the model saw it. Each question names the manager and the issuer (not the
+CIK or CUSIP), the quarter, and "as filed with the SEC on or before" a date.
+
+| Toolbox | Correct | Leaks | Tool calls per run | Cost per correct answer |
+|---|---|---|---|---|
+| No tools | 5 / 150 (declines only; stopped at its budget cap) | 0 | 0 | $0.17 |
+| **edgar13f v1.2.0, agent mode** | **160 / 160** | 0 | 2.2 | **$0.017** |
+| EdgarTools MCP 5.60.0 | 105 / 160 | 0 | 9.0 | $0.145 |
+
+Paired difference against EdgarTools: **+34 points** (95% CI +24 to +44), so by the
+pre-registered rule edgar13f is better. EdgarTools was weakest on diffs (7 / 20), amendments
+(7 / 20) and point-in-time questions (23 / 40); edgar13f answered every type correctly.
+
+**Why EdgarTools missed.** A pre-registered diagnostic re-run of its 31 missed questions
+(2026-10-15) reproduced the misses (49 of 62 runs), again with no wrong numbers and no leaks:
+
+* 33 ran out of the 12 turns, 31 of them after the model had already located the right filing;
+* 16 were declines: 13 on questions that had an answer, 3 with the wrong decline reason; 4 of
+  them followed the wrong filing or period;
+* none came from the character cap, and none was a wrong number.
+
+A larger turn budget would probably close part of the gap, at a higher cost; that has not been
+measured. The pre-stated reading also expected fewer leaks with edgar13f, but there were none on
+either side. Leak prevention is therefore shown at the tool level (the gates above), but neither
+supported nor refuted for agents.
+
+Caveats:
+
+* One model and one prompt.
+* The questions are point-in-time 13F lookups, this server's purpose, not general SEC questions.
+  Questions whose issuer name matched more than one security were excluded.
+* The grader requires citing the base filing. Under a rule that also accepts the new-holdings
+  amendment where the asked row lives, edgar13f's citations are 126 / 126 valid (recorded
+  122 / 126).
+
+### Live test (pre-registered, pending)
+
+Around the Q3 2026 filing deadline (16 November 2026), the evaluator captures v1.1.0's answers
+for 300 randomly drawn managers on 13, 17, 19 and 26 November, each time asking about the
+previous day. The answers are graded once the SEC publishes the data set that covers those
+filings. v1.1.0 is the release that was current when the test was pre-registered. These calls use
+none of v1.2.0's new parameters, and v1.2.0's defaults are byte-identical to v1.1.0 (3,689 fixture
+calls and 1,328 live calls compared), so the result applies to v1.2.0 as well.
 
 ### Latency
 
@@ -264,5 +313,6 @@ python tests/checks/size_budget.py . && python tests/checks/map_check.py . && py
 ## Licence
 
 MIT; see [`LICENSE`](LICENSE). Runtime dependencies use permissive OSI licences only
-(MIT/Apache/BSD/PSF/ISC). This project does not use edgartools and contains no code from
-AGPL projects. It is not affiliated with the SEC, and nothing it returns is investment advice.
+(MIT/Apache/BSD/PSF/ISC). The server does not use edgartools (the evaluation uses it only as a
+comparison baseline) and contains no code from AGPL projects. It is not affiliated with the SEC,
+and nothing it returns is investment advice.
