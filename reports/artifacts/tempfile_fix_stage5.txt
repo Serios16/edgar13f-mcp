@@ -1,0 +1,11 @@
+# F18 fix (ruling R2): test first, on src = v1.2.0 (f7ee806), then with the fix
+$ python -m pytest -q tests/invariants/test_lifecycle.py -k removes_temp_files   # before (src unchanged)
+E       AssertionError: assert ['9900000001-...aa.tmp5552-2'] == []
+E         
+E         Left contains 2 more items, first extra item: '9900000001-24-000004.tmp5552-1'
+E         Use -v to get more diff
+FAILED tests/invariants/test_lifecycle.py::test_fresh_start_removes_temp_files_of_dead_processes_only
+1 failed, 11 deselected in 4.36s
+
+$ same, after adding config.sweep_stale_temp (called from EdgarSource.__init__)
+1 passed, 11 deselected in 4.31s

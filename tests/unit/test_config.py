@@ -58,3 +58,22 @@ def test_write_json_from_many_threads_to_one_path(tmp_path):
     for t in threads:
         t.join()
     assert errors == [] and sorted(p.name for p in (tmp_path / "x").iterdir()) == ["same.json"]
+
+
+def test_sweep_stale_temp_removes_only_dead_process_temp_files(tmp_path):
+    import subprocess
+    import sys
+
+    from edgar13f.config import sweep_stale_temp
+
+    dead = subprocess.Popen([sys.executable, "-c", "pass"])
+    dead.wait()
+    names = {f"a.tmp{dead.pid}-7": False, f"b.tmp{os.getpid()}-7": True, "c.tmp": True,
+             "d.tmpabc-1": True, "e.json": True, f"sub/f.tmp{dead.pid}-1": False}
+    for name in names:
+        (tmp_path / name).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / name).write_text("x")
+    (tmp_path / f"g.tmp{dead.pid}-1").mkdir()  # a directory is never removed
+    sweep_stale_temp(tmp_path)
+    assert {n: (tmp_path / n).exists() for n in names} == names
+    assert (tmp_path / f"g.tmp{dead.pid}-1").is_dir()

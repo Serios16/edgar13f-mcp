@@ -14,6 +14,7 @@ import json
 from pathlib import Path
 
 from . import blocklist, managers, parse, rules
+from .config import sweep_stale_temp
 from .config import write_json as _write_json
 from .rules import Filing
 from .sec_client import SecClient
@@ -31,6 +32,7 @@ def _freshness(as_of: str) -> float:
 class EdgarSource:
     def __init__(self, client: SecClient, cache: Path) -> None:
         self.client = client
+        sweep_stale_temp(cache)  # left by a process killed mid-write
         self.redact = blocklist.redacting()
         self.rows_dir = cache / ("rows" if self.redact else "rows-unredacted")
         self.directory = managers.EdgarDirectory(client, cache)

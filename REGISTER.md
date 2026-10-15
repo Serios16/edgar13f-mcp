@@ -19,7 +19,7 @@ None open.
 | Known over-matches | Every "SPDR S&P ..." fund (any SPDR fund naming S&P); bonds of trust/fund-named issuers whose class title carries a ".500" coupon. D2 stands: the list is never narrowed. |
 | v1.2 gate | Pre-registered in the stage-4 brief (2026-10-02), before any stage-4 work: tag v1.2.0 only if gate 4, run on the merged commit, passes every primary gate with generated >= 698/700 and 0 leaks. |
 | Gate 4 | Gate 4 PASS on f7ee806 -> v1.2.0; aggregates identical to gates 1-3. LLM-in-the-loop eval: edgar13f 160/160, EdgarTools 105/160. |
-| v1.2.1 gate (R2) | Stated in the stage-5 brief (2026-10-15): if src/ changes at all, tag v1.2.1 only if gate 5 on the merged commit passes every primary gate with generated >= 698/700 and 0 leaks. Stage 5 made no change to src/, so no v1.2.1 is due. |
+| v1.2.1 gate (R2) | Stated in the stage-5 brief (2026-10-15), before any stage-5 work: if src/ changes at all, tag v1.2.1 only if gate 5 on the merged commit passes every primary gate with generated >= 698/700 and 0 leaks. src/ changed (fix F18), so the gate applies. Open. |
 
 ## RULINGS (orchestrator; D1-D3 2026-09-29, recorded before any grader result existed; N1, N2 2026-10-02)
 
@@ -36,7 +36,7 @@ None open.
 | ID | Ruling |
 |---|---|
 | R1 | One new CI job, `inspector`, may use actions/setup-node and the MCP Inspector npm package at an exact version: test tooling, not runtime dependencies (rule 4 does not apply). Inspector licence recorded: Apache-2.0, with MIT for contributions not yet relicensed (its LICENSE file, `@modelcontextprotocol/inspector@2.11.0`). The `invariants` job stays offline. |
-| R2 | src/ frozen except to fix a defect a new test exposes (test failing first, fix recorded here). No such defect was found; src/ is unchanged. |
+| R2 | src/ frozen except to fix a defect a new test exposes (test failing first, fix recorded here). One fix, F18: a kill between a cache file's write and its rename left `<name>.tmp<pid>-<thread>` in the cache for good (found by `tests/tools/kill_fuzz.py`: 2 of 200 random kills). Test first: `tests/invariants/test_lifecycle.py::test_fresh_start_removes_temp_files_of_dead_processes_only` failed on v1.2.0 and passes with `config.sweep_stale_temp`, called from `EdgarSource.__init__` (+26 lines in `config.py`, `sources.py`); `reports/artifacts/tempfile_fix_stage5.txt`. Version strings stay 1.2.0 (`pyproject.toml` is outside R3). |
 | R3 | Allowed paths this stage: tests/, .github/workflows/, reports/, MAP.md, REGISTER.md, README.md, CLAUDE.md, server.json, PUBLISHING.md (src/ only under R2). |
 
 ## ASSUMED
@@ -80,6 +80,7 @@ None open.
 | A35 | Each Inspector assertion runs in both eras the Inspector offers: `legacy` (its default; `initialize` handshake) and `modern` (2026-07-28, `server/discover`, no `initialize`). The malformed call is `get_holdings_as_of` with a numeric `cik` (A6). | The brief anticipated a 2026-07-28 mismatch; checking both shows which one clients get. | stage gate |
 | A36 | Lifecycle: "clean error" = the MCP Python SDK client raises `MCPError` (`Connection closed`) within 10 s of the signal; the server's exit status after a signal is not asserted. "Malformed" = 6 lines (truncated JSON, non-JSON bytes, `[]`, no method, wrong `jsonrpc`); each must be ignored or answered with a JSON-RPC error. Mid-call = an information-table request held in flight after the first table's rows were cached. | Brief (b). | stage gate |
 | A37 | `server.json`: name `io.github.Serios16/edgar13f-mcp` (repository URL spelling), PyPI identifier `edgar13f-mcp` (`edgar13f` is taken, P13), `runtimeHint: uvx`, variables `SEC_USER_AGENT` (required), `EDGAR13F_AGENT_MODE`, `EDGAR13F_CACHE_DIR`; `EDGAR13F_REDACT` and `EDGAR13F_FIXTURE_DIR` are not advertised. README carries the `mcp-name:` marker as an HTML comment. | Most reversible: no package is renamed here; all of it is metadata. | stage gate |
+| A39 | F18 reading of "the cache holds no partial or corrupt files": no file the server reads is partial or corrupt after a kill (atomic renames), and a temporary file a kill leaves behind is removed at the next start. A temporary file can exist between the kill and the next start; removing it earlier would need a different write scheme (e.g. Linux `O_TMPFILE`). Temporary files of live processes (same cache, other server) are kept; a dead process's PID reused by a live one keeps its file until a later start. | Smallest change; the sweep only deletes names of the writer's own pattern, inside the cache dir. | stage gate |
 | A38 | CI installs `mcp>=2.0,<3`, which now resolves to SDK 2.3.0 (stage 4 measured 2.2.0). The SDK is not pinned or changed; the Inspector check and the wire tap were run on both 2.2.0 and 2.3.0. | "Do not change the SDK." | stage gate |
 
 ## PROPOSALS (out of scope; not done)

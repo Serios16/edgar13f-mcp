@@ -327,3 +327,29 @@ def test_offline_edgar_round_trips_the_synthetic_rows():
         acc = path.stem
         url = f"{ls.ARCHIVES}/9900000001/{acc.replace('-', '')}/infotable.xml"
         assert parse.parse_infotable(files[url], acc) == json.loads(path.read_text())
+
+
+# --- stale temporary files (found by tests/tools/kill_fuzz.py: a kill between write and rename) ----
+
+def test_fresh_start_removes_temp_files_of_dead_processes_only(tmp_path):
+    """A kill inside a cache write leaves `<name>.tmp<pid>-<thread>` (never read, never renamed).
+    A fresh start must remove those of dead processes and keep those of live ones (their rename
+    may still come)."""
+    cache = tmp_path / "cache"
+    dead = subprocess.Popen([sys.executable, "-c", "pass"])
+    dead.wait()
+    stale = [cache / "rows" / f"9900000001-24-000004.tmp{dead.pid}-1", cache / "http" / f"{'a' * 64}.tmp{dead.pid}-2"]
+    live = cache / "rows" / f"9900000001-24-000003.tmp{os.getpid()}-3"
+    for path in stale + [live]:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text('{"half": ')
+    env = {k: v for k, v in _env(cache).items() if k != "EDGAR13F_FIXTURE_DIR"}
+    raw = Raw(OFFLINE, env)
+    try:
+        assert raw.handshake()
+        resp, _ = raw.request("tools/call", {"name": CALL[0], "arguments": CALL[1]}, timeout=30)
+        assert resp["result"]["structuredContent"] == _expected()
+    finally:
+        raw.close()
+    assert [p.name for p in stale if p.exists()] == []
+    assert live.exists()

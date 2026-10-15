@@ -5,7 +5,8 @@
 Each run: a fresh cache, `tests.invariants.lifecycle_server` (real EdgarSource/SecClient, offline opener,
 every information table repeated `--inflate` times so cache writes are large), one get_holdings_as_of
 call, the signal after a uniform random delay in [0, the measured call time], then
-`test_lifecycle.cache_problems` and a fresh start on the same cache that must answer correctly.
+`test_lifecycle.cache_problems`, a fresh start on the same cache that must answer correctly, and
+`cache_problems` again (a temporary file left by the kill must be gone after the fresh start).
 """
 
 from __future__ import annotations
@@ -38,7 +39,7 @@ def one(cache: Path, inflate: int, sig: int | None, delay: float) -> tuple[list[
         raw.proc.wait(30)
     finally:
         raw.close()
-    problems = tl.cache_problems(cache, inflate)
+    problems = tl.cache_problems(cache, inflate)  # "temporary file left" = killed between write and rename
     fresh = tl.Raw(tl.OFFLINE, env)
     try:
         fresh.handshake()
@@ -48,6 +49,7 @@ def one(cache: Path, inflate: int, sig: int | None, delay: float) -> tuple[list[
             problems.append(f"fresh start: no correct answer: {str(resp)[:200]}")
     finally:
         fresh.close()
+    problems += [f"after the fresh start, {p}" for p in tl.cache_problems(cache, inflate)]
     return problems, delay
 
 
