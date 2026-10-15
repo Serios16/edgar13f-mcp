@@ -24,7 +24,7 @@ def closure(name: str, seen: dict) -> None:
 
 def main() -> None:
     seen: dict = {}
-    closure("edgar13f", seen)
+    closure("edgar13f-mcp", seen)
     for key, dist in sorted(seen.items()):
         lic = dist.metadata.get("License-Expression") or dist.metadata.get("License") or ""
         lic = lic.splitlines()[0][:40] if lic else "?"

@@ -41,7 +41,7 @@
       "protocolVersion": "2025-11-25",
       "serverInfo": {
         "name": "edgar13f",
-        "version": "1.2.0"
+        "version": "1.2.1"
       },
       "tools": [
         "diff_holdings",
@@ -91,7 +91,7 @@
       "protocolVersion": "2026-07-28",
       "serverInfo": {
         "name": "edgar13f",
-        "version": "1.2.0"
+        "version": "1.2.1"
       },
       "tools": [
         "diff_holdings",

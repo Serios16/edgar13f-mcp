@@ -1,0 +1,8 @@
+$ uvx --python 3.11 --from <this checkout, distribution edgar13f-mcp 1.2.1> edgar13f-mcp --help   (what a registry client runs for runtimeHint "uvx")
+An executable named `edgar13f-mcp` is not provided by package `edgar13f-mcp`.
+The following executables are available:
+- edgar13f-server
+
+Use `uvx --from edgar13f-mcp edgar13f-server` instead.
+
+exit 1
