@@ -1,0 +1,43 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Serios16/edgar13f-mcp",
+  "title": "EDGAR 13F point-in-time",
+  "description": "SEC Form 13F holdings as they could have been known on a given date (stdio).",
+  "repository": {
+    "url": "https://github.com/Serios16/edgar13f-mcp",
+    "source": "github"
+  },
+  "version": "1.2.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "edgar13f-mcp",
+      "version": "1.2.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SEC_USER_AGENT",
+          "description": "User-Agent sent to sec.gov, e.g. 'Your Name your.email@example.com' (SEC fair access).",
+          "isRequired": true,
+          "isSecret": false
+        },
+        {
+          "name": "EDGAR13F_AGENT_MODE",
+          "description": "'on' caps unnarrowed holdings/diff answers at 50 positions (auto_limited: true).",
+          "isRequired": false,
+          "choices": ["on"]
+        },
+        {
+          "name": "EDGAR13F_CACHE_DIR",
+          "description": "On-disk cache directory (default: $XDG_CACHE_HOME/edgar13f or ~/.cache/edgar13f).",
+          "isRequired": false,
+          "format": "filepath"
+        }
+      ]
+    }
+  ]
+}
