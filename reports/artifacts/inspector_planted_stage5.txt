@@ -1,0 +1,4 @@
+$ bash tests/inspector/inspector_check.sh OUT.json PYTHON tests.inspector.three_tools_server   (mcp 2.3.0, inspector 2.11.0)
+ok: legacy: connected, protocolVersion 2025-11-25
+FAIL: legacy: tools/list returned ["diff_holdings","get_holdings_as_of","list_13f_filings"], expected exactly ["diff_holdings","find_manager","get_holdings_as_of","list_13f_filings"]
+exit 1

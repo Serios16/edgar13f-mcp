@@ -1,0 +1,9 @@
+{
+  "name": "edgar13f-inspector-check",
+  "private": true,
+  "description": "Test tooling only (stage 5 ruling R1): the MCP Inspector CLI at an exact version.",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/inspector": "2.11.0"
+  }
+}
