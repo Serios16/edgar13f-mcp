@@ -1,0 +1,106 @@
+{
+  "eras": {
+    "legacy": {
+      "calls": {
+        "diff_holdings": {
+          "disclaimer_ok": true,
+          "exit": 0,
+          "isError": false,
+          "reason": null,
+          "status": "ok"
+        },
+        "find_manager": {
+          "disclaimer_ok": true,
+          "exit": 0,
+          "isError": false,
+          "reason": null,
+          "status": "ok"
+        },
+        "get_holdings_as_of": {
+          "disclaimer_ok": true,
+          "exit": 0,
+          "isError": false,
+          "reason": null,
+          "status": "ok"
+        },
+        "list_13f_filings": {
+          "disclaimer_ok": true,
+          "exit": 0,
+          "isError": false,
+          "reason": null,
+          "status": "ok"
+        }
+      },
+      "malformed_call": {
+        "disclaimer_ok": true,
+        "exit": 0,
+        "isError": false,
+        "reason": "invalid_argument",
+        "status": "declined"
+      },
+      "protocolVersion": "2025-11-25",
+      "serverInfo": {
+        "name": "edgar13f",
+        "version": "1.2.1"
+      },
+      "tools": [
+        "diff_holdings",
+        "find_manager",
+        "get_holdings_as_of",
+        "list_13f_filings"
+      ]
+    },
+    "modern": {
+      "calls": {
+        "diff_holdings": {
+          "disclaimer_ok": true,
+          "exit": 0,
+          "isError": false,
+          "reason": null,
+          "status": "ok"
+        },
+        "find_manager": {
+          "disclaimer_ok": true,
+          "exit": 0,
+          "isError": false,
+          "reason": null,
+          "status": "ok"
+        },
+        "get_holdings_as_of": {
+          "disclaimer_ok": true,
+          "exit": 0,
+          "isError": false,
+          "reason": null,
+          "status": "ok"
+        },
+        "list_13f_filings": {
+          "disclaimer_ok": true,
+          "exit": 0,
+          "isError": false,
+          "reason": null,
+          "status": "ok"
+        }
+      },
+      "malformed_call": {
+        "disclaimer_ok": true,
+        "exit": 0,
+        "isError": false,
+        "reason": "invalid_argument",
+        "status": "declined"
+      },
+      "protocolVersion": "2026-07-28",
+      "serverInfo": {
+        "name": "edgar13f",
+        "version": "1.2.1"
+      },
+      "tools": [
+        "diff_holdings",
+        "find_manager",
+        "get_holdings_as_of",
+        "list_13f_filings"
+      ]
+    }
+  },
+  "inspector": "@modelcontextprotocol/inspector@2.11.0",
+  "sec_requests_logged": false
+}

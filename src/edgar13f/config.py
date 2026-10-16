@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 import tempfile
 import threading
@@ -56,3 +57,26 @@ def write_json(path: Path, obj: object) -> None:
     tmp = path.with_suffix(f".tmp{os.getpid()}-{threading.get_ident()}")
     tmp.write_text(json.dumps(obj))
     tmp.replace(path)
+
+
+_TEMP = re.compile(r"\.tmp(\d+)-\d+$")  # temporary names of write_json and SecClient.get
+
+
+def sweep_stale_temp(cache: Path) -> None:
+    """Remove temporary files that a process killed between write and rename left in the cache
+    (never read). Files of live processes are kept: their rename may still come."""
+    for path in cache.rglob("*.tmp*"):
+        match = _TEMP.search(path.name)
+        if not match or not path.is_file():
+            continue
+        try:
+            os.kill(int(match.group(1)), 0)
+            continue  # alive (or not ours to signal)
+        except ProcessLookupError:
+            pass
+        except (PermissionError, OverflowError, ValueError):
+            continue
+        try:
+            path.unlink()
+        except OSError:
+            pass

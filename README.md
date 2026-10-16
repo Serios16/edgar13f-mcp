@@ -1,5 +1,7 @@
 # edgar13f-mcp
 
+<!-- mcp-name: io.github.Serios16/edgar13f-mcp -->
+
 An [MCP](https://modelcontextprotocol.io) server that answers questions about SEC Form 13F
 holdings **as they could have been known on a given date**. It comes with an evaluation that
 was frozen before the server was written.
@@ -306,6 +308,13 @@ pip install -e ".[test]"
 python -m pytest -q tests          # offline; sockets are refused
 python tests/checks/size_budget.py . && python tests/checks/map_check.py . && python tests/checks/claims_check.py .
 ```
+
+Protocol checks: the `inspector` CI job runs the pinned MCP Inspector CLI
+(`tests/inspector/inspector_check.sh`) against the server on recorded fixtures, in both protocol
+eras (2025-11-25 with the `initialize` handshake, 2026-07-28 without), checks the result against
+`reports/artifacts/inspector_stage5.json`, and must fail on a stub that lists three tools.
+Lifecycle checks (stdin close, malformed lines, SIGTERM/SIGKILL mid-call) are in
+`tests/invariants/test_lifecycle.py`. Registry metadata: `server.json`; steps in `PUBLISHING.md`.
 
 `MAP.md` lists the modules and shows where each contract rule is enforced and tested.
 `REGISTER.md` records rulings, assumptions and proposals.

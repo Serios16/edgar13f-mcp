@@ -1,0 +1,78 @@
+{
+ "mcp_sdk": "2.3.0",
+ "stdin_close": {
+  "fixture_server": {
+   "exit_code": 0,
+   "seconds": 0.265
+  },
+  "offline_edgar_server": {
+   "exit_code": 0,
+   "seconds": 0.265
+  }
+ },
+ "malformed_lines": [
+  {
+   "line": "{not json",
+   "replies": [],
+   "then_answers_correctly": true
+  },
+  {
+   "line": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":",
+   "replies": [],
+   "then_answers_correctly": true
+  },
+  {
+   "line": "[]",
+   "replies": [],
+   "then_answers_correctly": true
+  },
+  {
+   "line": "{\"jsonrpc\":\"2.0\",\"id\":8}",
+   "replies": [],
+   "then_answers_correctly": true
+  },
+  {
+   "line": "\ufffd\ufffd garbage",
+   "replies": [],
+   "then_answers_correctly": true
+  },
+  {
+   "line": "{\"jsonrpc\":\"1.0\",\"id\":9,\"method\":\"tools/list\"}",
+   "replies": [],
+   "then_answers_correctly": true
+  }
+ ],
+ "mid_call": {
+  "SIGTERM": {
+   "client_error": "MCPError",
+   "seconds_from_signal": 0.006,
+   "problems": []
+  },
+  "SIGKILL": {
+   "client_error": "MCPError",
+   "seconds_from_signal": 0.011,
+   "problems": []
+  }
+ },
+ "planted": {
+  "ignore-stdin-eof": [
+   "still running 3 s after stdin was closed"
+  ],
+  "exit-on-garbage": [
+   "after b'{not json': tools/list not answered correctly: None",
+   "after b'{not json': tools/call not answered correctly: None",
+   "server exited (code 3) after b'{\"jsonrpc\":\"2.0\",\"id\":7,\"metho'"
+  ],
+  "ignore-sigterm": [
+   "client did not see a clean error within 3 s: {'error': None, 'seconds': None, 'pid': 7756, 'sent': 4223.064598902}"
+  ],
+  "partial-write/SIGTERM": [
+   "rows file is not whole JSON: rows/9900000001-24-000004.json",
+   "fresh start: wrong answer: {'jsonrpc': '2.0', 'id': 102, 'result': {'content': [{'text': 'internal error: JSONDecodeError: Unterminated string starting at: line 1 column 532 (char 531)', 'type': 'text'}], 'isError': True}}"
+  ],
+  "partial-write/SIGKILL": [
+   "rows file is not whole JSON: rows/9900000001-24-000004.json",
+   "fresh start: wrong answer: {'jsonrpc': '2.0', 'id': 102, 'result': {'content': [{'text': 'internal error: JSONDecodeError: Unterminated string starting at: line 1 column 532 (char 531)', 'type': 'text'}], 'isError': True}}"
+  ]
+ }
+}

@@ -33,6 +33,8 @@ jobs:
         run: python tests/checks/map_check.py .
       - name: Claims check (every MEASURED line names a committed path)
         run: python tests/checks/claims_check.py .
+      - name: Lifecycle tests (stdin close, malformed lines, SIGTERM/SIGKILL mid-call; offline, planted controls)
+        run: python -m pytest -q tests/invariants/test_lifecycle.py
       - name: Planted-failure tests (each check can fail)
         run: python -m pytest -q tests/invariants/test_checks.py
       - name: Unprivileged-user probe (offline; separate user, read-only checkout, writes only to its cache dir)
@@ -45,3 +47,44 @@ jobs:
           fi
           cat "$out"
           grep -q "write outside the cache dir: /tmp/edgar13f-planted" "$out"
+
+  inspector:
+    # Stage 5 ruling R1: test tooling only (actions/setup-node + the MCP Inspector CLI at an exact
+    # version, locked in tests/inspector/package-lock.json). Recorded fixtures, SEC_USER_AGENT unset.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SEC_USER_AGENT: ""
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+      - name: Install the server (package index only) and the pinned Inspector (npm ci, no install scripts)
+        run: |
+          python -m pip install -e .
+          npm ci --prefix tests/inspector --ignore-scripts --no-audit --no-fund
+          python -c "import importlib.metadata as m; print('mcp', m.version('mcp'))"
+      - name: Inspector CLI check (connect, exactly four tools, one call per tool, malformed call; legacy and modern eras)
+        run: |
+          bash tests/inspector/inspector_check.sh "$RUNNER_TEMP/inspector.json" "$(command -v python)"
+          cat "$RUNNER_TEMP/inspector.json"
+      - name: Result equals the committed artifact (reports/artifacts/inspector_stage5.json)
+        run: diff <(jq -S . reports/artifacts/inspector_stage5.json) <(jq -S . "$RUNNER_TEMP/inspector.json")
+      - name: Negotiated protocol per era, on the wire (envelopes only)
+        run: bash tests/inspector/protocol_tap.sh "$(command -v python)"
+      - name: Planted failure (a stub listing three tools must fail the same check)
+        run: |
+          out="$RUNNER_TEMP/inspector_planted.txt"
+          if bash tests/inspector/inspector_check.sh "$RUNNER_TEMP/planted.json" "$(command -v python)" \
+               tests.inspector.three_tools_server > "$out" 2>&1; then
+            cat "$out"; echo "the three-tool stub passed the inspector check"; exit 1
+          fi
+          cat "$out"
+          grep -q 'FAIL: legacy: tools/list returned \["diff_holdings","get_holdings_as_of","list_13f_filings"\]' "$out"

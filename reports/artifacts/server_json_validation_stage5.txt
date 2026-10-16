@@ -1,0 +1,26 @@
+# server.json validation, 2026-10-15 (stage 5 (c)). No publish, no login.
+# mcp-publisher 1.8.1 (commit f52dc8525a441a3abf5fedc9912152d95af5aab1), mcp-publisher_linux_amd64.tar.gz sha256 a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc
+
+$ mcp-publisher validate server.json
+Validating against https://registry.modelcontextprotocol.io...
+✅ server.json is valid
+exit 0
+
+$ mcp-publisher validate (planted: description of 101 characters)
+Validating against https://registry.modelcontextprotocol.io...
+Error: validation failed: server returned status 422: {"title":"Unprocessable Entity","status":422,"detail":"validation failed","errors":[{"message":"expected length <= 100","location":"body.description","value":"x...x"}]}
+
+exit 1
+
+$ mcp-publisher validate (registryBaseUrl https://pypi.example.org: accepted, so validate does not apply the official-registry base-URL or ownership rules)
+Validating against https://registry.modelcontextprotocol.io...
+✅ server.json is valid
+
+$ jsonschema 4.26.0 Draft7Validator, schema https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json (sha256 3fba09590c99f61735d234822279f4223fab9e300c0a81e81c91ab62a4114de0)
+server.json errors: []
+planted (101-char description) errors: 1
+
+# PyPI names (https://pypi.org/pypi/<name>/json, HTTP status)
+edgar13f 200
+edgar13f-mcp 404
+edgar13f is project 'Edgar13F' 0.2.0 (a 13F scraper, uploaded 2023-08-26), not this project.

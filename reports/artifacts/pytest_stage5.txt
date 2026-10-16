@@ -1,0 +1,10 @@
+$ python -m pytest -q tests   (distribution edgar13f-mcp 1.2.1, mcp 2.3.0, Python 3.11, offline)
+.......................................................                  [100%]
+414 passed, 1 skipped in 120.59s (0:02:00)
+
+$ python tests/checks/size_budget.py .
+size budget: ok
+$ python tests/checks/map_check.py .
+map check: ok
+$ python tests/checks/claims_check.py .
+claims check: ok

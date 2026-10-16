@@ -1,0 +1,1015 @@
+{
+ "command": "python -m tests.tools.kill_fuzz --runs 200 --inflate 4000 --seed 5",
+ "call_time_s": 3.962,
+ "runs": 200,
+ "runs_with_problems": 2,
+ "problem_kinds": {
+  "temporary file left": 2
+ },
+ "per_run": [
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.4681,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.9391,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.1507,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.7342,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.9316,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.6545,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.1149,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.8449,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.7378,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.5714,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.5696,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.4485,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.8586,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.977,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.1545,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.2741,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.052,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.8587,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.1074,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.6308,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.034,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.6324,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.1585,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.5498,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.4465,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.502,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.007,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.4527,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.8299,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.8538,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.8926,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.4567,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.1463,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.8096,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.1365,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.6857,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.8114,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.7284,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.7365,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.8297,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.5412,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.1839,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.4311,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.6576,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.5773,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.2581,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.1941,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.3897,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.0134,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.6861,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.3388,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.2281,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.2431,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.9048,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.2512,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.9067,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.7921,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.2259,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.8636,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.0906,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.9709,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.3476,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.0716,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.1212,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.4509,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.2922,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.036,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.1851,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.7168,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.7846,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.7787,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.9944,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.6835,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.7326,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.3645,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.4058,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.079,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.0731,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.4281,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.9653,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.1588,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.4063,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.1451,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.7475,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.3613,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.3501,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.4202,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.6377,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.347,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.6619,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.16,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.238,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.2552,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.7032,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.3098,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.5898,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.7307,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.9492,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.64,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.1924,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.9095,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.114,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.6082,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.9404,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.3534,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.274,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.8054,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.6711,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.2207,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.6297,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.1296,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.9556,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.322,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.5174,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.899,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.7633,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.4978,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.1223,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.4225,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.7218,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.5913,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.347,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.1681,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.7955,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.9594,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.3768,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.8672,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.797,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.9342,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.8905,
+   "problems": [
+    "temporary file left: rows/9900000001-24-000004.tmp4890-139623548319424"
+   ]
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.8981,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.1531,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.5999,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.5805,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.4938,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.9162,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.803,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.4842,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.9784,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.3411,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.3532,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.079,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.0985,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.4368,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.4317,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.1144,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.0703,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.7521,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.631,
+   "problems": [
+    "temporary file left: rows/9900000001-24-000004.tmp5054-140635404232384"
+   ]
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.0099,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.44,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.7913,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.1128,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.9244,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.0499,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.7374,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.1643,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.7465,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.5742,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.3007,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.0459,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.1673,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.9933,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.6612,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.8343,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.2359,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.5653,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.1604,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.3784,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.5519,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.9234,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.2815,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.387,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.3397,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.4468,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.7273,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.8676,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.7899,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.053,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.0974,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.6584,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.3149,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.7141,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.8909,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.7396,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.8516,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.8938,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.6808,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 3.092,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.3014,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.6371,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 1.6673,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.4714,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 3.0695,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 2.5234,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.8544,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 0.1094,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 0.634,
+   "problems": []
+  },
+  {
+   "signal": "SIGKILL",
+   "delay_s": 1.7476,
+   "problems": []
+  },
+  {
+   "signal": "SIGTERM",
+   "delay_s": 2.5759,
+   "problems": []
+  }
+ ]
+}
