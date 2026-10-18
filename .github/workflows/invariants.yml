@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   invariants:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
       SEC_USER_AGENT: ""          # no SEC access in CI: recorded fixtures only
@@ -51,7 +51,7 @@ jobs:
   inspector:
     # Stage 5 ruling R1: test tooling only (actions/setup-node + the MCP Inspector CLI at an exact
     # version, locked in tests/inspector/package-lock.json). Recorded fixtures, SEC_USER_AGENT unset.
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
       SEC_USER_AGENT: ""

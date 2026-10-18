@@ -37,7 +37,7 @@ export SEC_USER_AGENT="Your Name your.email@example.com"   # required by SEC fai
 uvx --python 3.11 --from git+https://github.com/Serios16/edgar13f-mcp edgar13f-server
 ```
 
-Append a tag to pin a release, e.g. `git+https://github.com/Serios16/edgar13f-mcp@v1.2.0`. For an MCP
+Append a tag to pin a release, e.g. `git+https://github.com/Serios16/edgar13f-mcp@v1.2.1`. For an MCP
 client such as Claude Desktop:
 
 ```json
@@ -193,18 +193,19 @@ adds `auto_limited: true`. Every other call is unaffected. MCP client config:
 ### Gate results (REPORTED by the evaluator; aggregates only)
 
 Item-level results are withheld by design. Gate 2, the pre-registered decision gate, passed on
-commit b208c47, which is tagged **v1.0.0**. Gates 3 and 4 passed on commits ca60c5c and
-f7ee806, tagged **v1.1.0** and **v1.2.0**. All four gates have the same aggregates.
+commit b208c47, which is tagged **v1.0.0**. Gates 3, 4 and 5 passed on commits ca60c5c, f7ee806
+and cc61944, tagged **v1.1.0**, **v1.2.0** and **v1.2.1**. All five gates have the same
+aggregates.
 
-| Measure | Gate 1 | Gate 2 (v1.0.0) | Gate 3 (v1.1.0) | Gate 4 (v1.2.0) |
-|---|---|---|---|---|
-| Primary gates | all PASS | all PASS | all PASS | all PASS |
-| Generated items | 698 / 700 | 698 / 700 | 698 / 700 | 698 / 700 |
-| Generated misses | 1 `restatement_before`, 1 `restatement_after` | same | same; both are D2 over-matches | same |
-| Citation validity | 669 / 671 | 669 / 671 | 669 / 671 | 669 / 671 |
-| Leakage | 0 violations over 3,114 cases | 0 over 3,114 | 0 over 3,114 | 0 over 3,114 |
-| Curated items | 34 / 34 | 34 / 34 | 34 / 34 | 34 / 34 |
-| Declines | 6 / 6 | 6 / 6 | 6 / 6 | 6 / 6 |
+| Measure | Gate 1 | Gate 2 (v1.0.0) | Gate 3 (v1.1.0) | Gate 4 (v1.2.0) | Gate 5 (v1.2.1) |
+|---|---|---|---|---|---|
+| Primary gates | all PASS | all PASS | all PASS | all PASS | all PASS |
+| Generated items | 698 / 700 | 698 / 700 | 698 / 700 | 698 / 700 | 698 / 700 |
+| Generated misses | 1 `restatement_before`, 1 `restatement_after` | same | same; both are D2 over-matches | same | same |
+| Citation validity | 669 / 671 | 669 / 671 | 669 / 671 | 669 / 671 | 669 / 671 |
+| Leakage | 0 violations over 3,114 cases | 0 over 3,114 | 0 over 3,114 | 0 over 3,114 | 0 over 3,114 |
+| Curated items | 34 / 34 | 34 / 34 | 34 / 34 | 34 / 34 | 34 / 34 |
+| Declines | 6 / 6 | 6 / 6 | 6 / 6 | 6 / 6 | 6 / 6 |
 
 Both generated misses come from ruling D2: the blocklist removes rows the grader expected (see
 Limits for the two known over-match patterns). D2 forbids narrowing the list to win them back.
@@ -261,7 +262,9 @@ for 300 randomly drawn managers on 13, 17, 19 and 26 November, each time asking 
 previous day. The answers are graded once the SEC publishes the data set that covers those
 filings. v1.1.0 is the release that was current when the test was pre-registered. These calls use
 none of v1.2.0's new parameters, and v1.2.0's defaults are byte-identical to v1.1.0 (3,689 fixture
-calls and 1,328 live calls compared), so the result applies to v1.2.0 as well.
+calls and 1,328 live calls compared), so the result applies to v1.2.0 as well. The capture and
+grading code were frozen before the first capture; their hashes are in
+`reports/LIVE_TEST_COMMITMENT.md`.
 
 ### Latency
 
