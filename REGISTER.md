@@ -20,6 +20,7 @@ None open.
 | v1.2 gate | Pre-registered in the stage-4 brief (2026-10-02), before any stage-4 work: tag v1.2.0 only if gate 4, run on the merged commit, passes every primary gate with generated >= 698/700 and 0 leaks. |
 | Gate 4 | Gate 4 PASS on f7ee806 -> v1.2.0; aggregates identical to gates 1-3. LLM-in-the-loop eval: edgar13f 160/160, EdgarTools 105/160. |
 | v1.2.1 gate (R2) | Stated in the stage-5 brief (2026-10-15), before any stage-5 work: if src/ changes at all, tag v1.2.1 only if gate 5 on the merged commit passes every primary gate with generated >= 698/700 and 0 leaks. src/ changed (fix F18), so the gate applies; by ruling the version strings are already 1.2.1, so the commit gate 5 grades is the release. Open. |
+| v1.2.2 | No gate (owner ruling S3, 2026-10-18): the only change under `src/` since v1.2.1 is the version string, so answers cannot change (`reports/artifacts/src_diff_stage6.txt`). |
 
 ## RULINGS (orchestrator; D1-D3 2026-09-29, recorded before any grader result existed; N1, N2 2026-10-02)
 
@@ -39,10 +40,19 @@ None open.
 | R2 | src/ frozen except to fix a defect a new test exposes (test failing first, fix recorded here). One fix, F18: a kill between a cache file's write and its rename left `<name>.tmp<pid>-<thread>` in the cache for good (found by `tests/tools/kill_fuzz.py`: 2 of 200 random kills). Test first: `tests/invariants/test_lifecycle.py::test_fresh_start_removes_temp_files_of_dead_processes_only` failed on v1.2.0 and passes with `config.sweep_stale_temp`, called from `EdgarSource.__init__` (+26 lines in `config.py`, `sources.py`); `reports/artifacts/tempfile_fix_stage5.txt`. Version strings were then set to 1.2.1 by ruling (A40). |
 | P13 ruling | Rename the distribution to `edgar13f-mcp` in `pyproject.toml`; import package `edgar13f`, `python -m edgar13f.server` and the command `edgar13f-server` unchanged; re-run `install_smoke.sh`. Done (A40). |
 | Version ruling | `pyproject.toml` and `__version__` at 1.2.1, so the commit gate 5 grades is the release. Done (A40). |
-| P14 ruling | Deferred: no release workflow and no `id-token` permission until the owner decides to publish. |
+| P14 ruling | Deferred: no release workflow and no `id-token` permission until the owner decides to publish. (Superseded by S2.) |
 | R3 | Allowed paths this stage: tests/, .github/workflows/, reports/, MAP.md, REGISTER.md, README.md, CLAUDE.md, server.json, PUBLISHING.md (src/ only under R2). |
 
+## RULINGS, stage 6 (owner, dated 2026-10-18; recorded 2026-10-22)
+
+| ID | Ruling |
+|---|---|
+| S1 | P16: add the console script `edgar13f-mcp = "edgar13f.server:main"` next to `edgar13f-server` (both kept). `server.json` keeps `runtimeHint: uvx`. Done: `pyproject.toml`; `tests/unit/test_console_scripts.py`; `reports/artifacts/uvx_entrypoint_stage6.txt`. |
+| S2 | P14 un-deferred: the release workflow `.github/workflows/publish.yml` is added now. It publishes only when the owner publishes a GitHub release and approves the `pypi` environment. This adds `id-token: write` to the `pypi` and `registry` jobs only (top-level `permissions: {}`); `invariants.yml` is unchanged. Done. |
+| S3 | Version 1.2.2. The only change under `src/` is the version string, so no gate. Done (A41). |
+
 ## ASSUMED
+
 
 | ID | Assumption | Why / alternative | Trigger |
 |---|---|---|---|
@@ -87,6 +97,12 @@ None open.
 | A40 | Rulings P13 and version: distribution `edgar13f-mcp` 1.2.1 (`pyproject.toml`, `__version__`, both versions in `server.json`, the inspector summary artifact, `tests/tools/license_audit.py`). The command stays `edgar13f-server`, so `uvx edgar13f-mcp` (what registry clients run for `runtimeHint: uvx`) fails with "An executable named `edgar13f-mcp` is not provided" (`reports/artifacts/uvx_entrypoint_stage5.txt`); `server.json` is left as is until the owner chooses (P16). | Rulings. | stage gate |
 | A38 | CI installs `mcp>=2.0,<3`, which now resolves to SDK 2.3.0 (stage 4 measured 2.2.0). The SDK is not pinned or changed; the Inspector check and the wire tap were run on both 2.2.0 and 2.3.0. | "Do not change the SDK." | stage gate |
 
+| A41 | Ruling S3, version 1.2.2 in `pyproject.toml`, `__version__`, both versions in `server.json` and `reports/artifacts/inspector_stage5.json` (the `inspector` job diffs against it, so it was edited in place, not renamed). `tests/tools/license_audit.py` carries no version. | A40's list. | stage gate |
+| A42 | The brief names `server.json` (version) and `PUBLISHING.md` (rewrite), which CLAUDE.md rule 9 does not list; they are edited as in stage 5 (R3). | Explicit owner instruction; most reversible. | stage gate |
+| A43 | `publish.yml` pins: `actions/checkout` v6.0.2, `setup-python` v6.2.0, `upload-artifact` v6.0.0 with `download-artifact` v7.0.0 (the matching pair), `pypa/gh-action-pypi-publish` v1.14.2 (v1.14.3 was 2 days old), each by full commit SHA; `build` 1.6.1 and `twine` 7.0.0 (MIT, Apache-2.0 by their package metadata; release tooling, not runtime dependencies); `mcp-publisher` 1.8.1 with the SHA-256 measured in stage 5 (`reports/artifacts/server_json_validation_stage5.txt`; the same hash was measured again on 2026-10-22). `invariants.yml` keeps its tag-pinned actions (out of this brief). | Newest releases at least a few days old; no secrets. | stage gate |
+| A44 | The `registry` job waits for PyPI at most 30 x 20 s = 10 minutes, then fails; the owner re-runs that job (PyPI never takes the same version twice). | Brief: "bounded wait". | stage gate |
+| A45 | `license_audit.py` evaluates environment markers for the machine it runs on (Linux, Python 3.11), so the Windows-only `pywin32` that `mcp` requires is not audited. Extras requested by a dependent are now followed (`pyjwt[crypto]` -> `cryptography`, `cffi`, `pycparser`): all 29 entries are `ok` (`reports/artifacts/license_audit.txt`), so no rule-4 stop. | Brief (4). | stage gate |
+
 ## PROPOSALS (out of scope; not done)
 
 | ID | Proposal |
@@ -103,7 +119,7 @@ None open.
 | P10 | CLOSED by the owner (2026-10-02): the lower-case tag `v1.1.0` is being added next to `V1.1.0`; README pins use `v1.1.0`. |
 | P11 | `find_manager` first call on an empty cache reads 136 quarterly index prefixes (about a minute, see `reports/STAGE_4.md`); later calls are fast. A warm-up command, building the index in the background at server start, or releasing the rate-limit lock after the response headers (P4) would shorten the first call. Not done. |
 | P13 | DONE by ruling (2026-10-15): distribution renamed to `edgar13f-mcp` (the PyPI name `edgar13f` belongs to an unrelated project); import package and command unchanged; `install_smoke.sh` SMOKE OK on this branch (`reports/artifacts/install_smoke_stage5.txt`). |
-| P14 | DEFERRED by ruling (2026-10-15). Trigger: the owner decides to publish. Until then no release workflow and no `id-token` permission. Sketch in `PUBLISHING.md`. |
-| P16 | Registry clients run `uvx edgar13f-mcp`, which needs a console script named `edgar13f-mcp`. Either add it as an alias of `edgar13f.server:main` (keeping `edgar13f-server`), or publish `server.json` with arguments that select `edgar13f-server`. Owner decision; due before publishing. |
+| P14 | DONE in stage 6 by ruling S2 (un-deferred 2026-10-18): `.github/workflows/publish.yml`; owner checklist in `PUBLISHING.md`. |
+| P16 | DONE in stage 6 by ruling S1: console script `edgar13f-mcp` added (`reports/artifacts/uvx_entrypoint_stage6.txt`). |
 | P15 | MCP Python SDK stdio server ignores malformed JSON-RPC lines silently (no -32700 Parse error). Allowed by the brief ("error or ignored"); a client that sends one gets no answer and must time out. Upstream note only; not changed (SDK). |
 | P12 | CLOSED by ruling N2 (2026-10-02): renamed to `contracts/CONTRACTS_ADDENDUM_A.md` (trailing dot removed) with `git mv`; content byte-identical (SHA-256 95bf9772170b8d0eed5405a2468f915320b3fb58b4f47718427ee13c6f8ca462 before and after). |

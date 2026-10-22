@@ -1,0 +1,50 @@
+$ python -m build --outdir dist .  &&  twine check dist/*   (stage 6, 2026-10-22, build 1.6.1, twine 7.0.0, Python 3.11, from this checkout)
+
+edgar13f_mcp-1.2.2-py3-none-any.whl  35095 bytes  sha256 c1921017fced429ac9c940c029c5effdd90667fdd1be5258d5361042b5d0fd5b
+      204  edgar13f/__init__.py
+     3635  edgar13f/blocklist.py
+     2616  edgar13f/config.py
+     9464  edgar13f/managers.py
+     3063  edgar13f/narrow.py
+     5340  edgar13f/parse.py
+     3541  edgar13f/rules.py
+     4483  edgar13f/schemas.py
+     5803  edgar13f/sec_client.py
+     2907  edgar13f/server.py
+     8039  edgar13f/sources.py
+     5594  edgar13f/tools.py
+     4471  edgar13f/validate.py
+     1065  edgar13f_mcp-1.2.2.dist-info/licenses/LICENSE
+    20146  edgar13f_mcp-1.2.2.dist-info/METADATA
+       91  edgar13f_mcp-1.2.2.dist-info/WHEEL
+       93  edgar13f_mcp-1.2.2.dist-info/entry_points.txt
+        9  edgar13f_mcp-1.2.2.dist-info/top_level.txt
+     1506  edgar13f_mcp-1.2.2.dist-info/RECORD
+  19 files; members under tests/, fixtures/ or named *.json/*.xml/*.csv: none
+
+edgar13f_mcp-1.2.2.tar.gz  38452 bytes  sha256 75c24f8fe1f36aebef3fe217309ad5660d9424262b61bcecc51574a7f1d2829d
+     1065  edgar13f_mcp-1.2.2/LICENSE
+    20146  edgar13f_mcp-1.2.2/PKG-INFO
+    19790  edgar13f_mcp-1.2.2/README.md
+      587  edgar13f_mcp-1.2.2/pyproject.toml
+       38  edgar13f_mcp-1.2.2/setup.cfg
+      204  edgar13f_mcp-1.2.2/src/edgar13f/__init__.py
+     3635  edgar13f_mcp-1.2.2/src/edgar13f/blocklist.py
+     2616  edgar13f_mcp-1.2.2/src/edgar13f/config.py
+     9464  edgar13f_mcp-1.2.2/src/edgar13f/managers.py
+     3063  edgar13f_mcp-1.2.2/src/edgar13f/narrow.py
+     5340  edgar13f_mcp-1.2.2/src/edgar13f/parse.py
+     3541  edgar13f_mcp-1.2.2/src/edgar13f/rules.py
+     4483  edgar13f_mcp-1.2.2/src/edgar13f/schemas.py
+     5803  edgar13f_mcp-1.2.2/src/edgar13f/sec_client.py
+     2907  edgar13f_mcp-1.2.2/src/edgar13f/server.py
+     8039  edgar13f_mcp-1.2.2/src/edgar13f/sources.py
+     5594  edgar13f_mcp-1.2.2/src/edgar13f/tools.py
+     4471  edgar13f_mcp-1.2.2/src/edgar13f/validate.py
+    20146  edgar13f_mcp-1.2.2/src/edgar13f_mcp.egg-info/PKG-INFO
+      585  edgar13f_mcp-1.2.2/src/edgar13f_mcp.egg-info/SOURCES.txt
+        1  edgar13f_mcp-1.2.2/src/edgar13f_mcp.egg-info/dependency_links.txt
+       93  edgar13f_mcp-1.2.2/src/edgar13f_mcp.egg-info/entry_points.txt
+       30  edgar13f_mcp-1.2.2/src/edgar13f_mcp.egg-info/requires.txt
+        9  edgar13f_mcp-1.2.2/src/edgar13f_mcp.egg-info/top_level.txt
+  24 files; members under tests/, fixtures/ or named *.json/*.xml/*.csv: none

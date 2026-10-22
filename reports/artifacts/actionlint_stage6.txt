@@ -1,0 +1,2 @@
+$ actionlint .github/workflows/*.yml   (actionlint 1.7.12; shellcheck not installed, so embedded shell is not linted)
+exit 0

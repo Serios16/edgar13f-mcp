@@ -3,23 +3,29 @@
 # needs uv and network access to github.com and the package index).
 #
 #   PYTHON=.venv/bin/python bash tests/tools/install_smoke.sh [git ref]
+#   PYTHON=.venv/bin/python WHEEL=dist/edgar13f_mcp-X.Y.Z-py3-none-any.whl bash tests/tools/install_smoke.sh
 #
 # Runs the README command `uvx --python 3.11 --from git+https://github.com/Serios16/edgar13f-mcp[@REF] edgar13f-server`
 # with an empty uv cache, so the package and its dependencies are fetched from scratch.
+# With WHEEL set (stage 6), the same handshake runs on `uvx --from $WHEEL` for BOTH commands,
+# `edgar13f-mcp` (what registry clients run for runtimeHint "uvx") and `edgar13f-server`.
 # SEC_USER_AGENT is unset, so the server never contacts sec.gov: a malformed call must be an
 # invalid_argument decline and a well-formed call must be isError (REGISTER A8).
 # $PYTHON must have the MCP SDK (the test client) installed.
 set -euo pipefail
 REF="${1:-}"
 SOURCE="git+https://github.com/Serios16/edgar13f-mcp${REF:+@$REF}"
+EXES="edgar13f-server"
+if [ -n "${WHEEL:-}" ]; then SOURCE="$(realpath "$WHEEL")"; EXES="edgar13f-mcp edgar13f-server"; fi
 PY="${PYTHON:-python3}"
 UV_CACHE_DIR="$(mktemp -d)"
 CACHE="$(mktemp -d)"
 trap 'rm -rf "$UV_CACHE_DIR" "$CACHE"' EXIT
-echo "command: uvx --python 3.11 --from $SOURCE edgar13f-server"
 echo "uv: $(uv --version)"
 start=$(date +%s)
-SOURCE="$SOURCE" UV_CACHE_DIR="$UV_CACHE_DIR" CACHE="$CACHE" "$PY" - <<'PY'
+for EXE in $EXES; do
+echo "command: uvx --python 3.11 --from $SOURCE $EXE"
+EXE="$EXE" SOURCE="$SOURCE" UV_CACHE_DIR="$UV_CACHE_DIR" CACHE="$CACHE" "$PY" - <<'PY'
 import json, os, sys
 import anyio
 from mcp.client.session import ClientSession
@@ -27,7 +33,7 @@ from mcp.client.stdio import StdioServerParameters, stdio_client
 
 env = {k: v for k, v in os.environ.items() if not k.startswith(("SEC_USER_AGENT", "EDGAR13F_"))}
 env["EDGAR13F_CACHE_DIR"] = os.environ["CACHE"]
-params = StdioServerParameters(command="uvx", args=["--python", "3.11", "--from", os.environ["SOURCE"], "edgar13f-server"],
+params = StdioServerParameters(command="uvx", args=["--python", "3.11", "--from", os.environ["SOURCE"], os.environ["EXE"]],
                                 env=env)
 
 
@@ -51,4 +57,5 @@ async def main():
 
 anyio.run(main)
 PY
+done
 echo "elapsed (install + run, empty uv cache): $(( $(date +%s) - start )) s"
