@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "edgar13f-mcp"
-version = "1.2.1"
+version = "1.2.2"
 description = "MCP server (stdio) over SEC Form 13F-HR filings with point-in-time correctness"
 readme = "README.md"
 license = { text = "MIT" }
@@ -15,6 +15,7 @@ dependencies = ["mcp>=2.0,<3"]
 test = ["pytest>=8"]
 
 [project.scripts]
+edgar13f-mcp = "edgar13f.server:main"
 edgar13f-server = "edgar13f.server:main"
 
 [tool.setuptools.packages.find]

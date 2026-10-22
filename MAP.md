@@ -93,11 +93,15 @@ find_manager:        EdgarDirectory.search (cik-lookup-data.txt, daily) → firs
 * `tests/inspector/` – pinned MCP Inspector CLI (`package.json`, `package-lock.json`), `inspector_check.sh`,
   `protocol_tap.sh`, the planted `three_tools_server.py`; run by the `inspector` CI job (needs Node >= 22.19).
 * `tests/unit/test_server_json.py` – `server.json` consistency with the package (stage 5 (c)).
+* `tests/unit/test_console_scripts.py` – `edgar13f-mcp` and `edgar13f-server` both declared and the same function (stage 6, P16).
 * `tests/checks/` – size budget, MAP check, claims check; `tests/invariants/test_checks.py` plants a failure for each.
 * `.github/workflows/invariants.yml` – the `invariants` job: the suites above, the lifecycle tests, the checks,
   and the offline unprivileged-user probe with its planted-failure control; the `inspector` job (stage 5,
   ruling R1): Inspector CLI check in both protocol eras, result vs `reports/artifacts/inspector_stage5.json`,
   wire envelopes, planted three-tool stub.
+* `.github/workflows/publish.yml` – stage 6 release workflow (`release: published`): `build` (tag = version check, build,
+  `twine check`), `pypi` (environment `pypi`, trusted publishing), `registry` (`mcp-publisher`, GitHub OIDC). Not run by
+  CI on pushes; owner checklist in `PUBLISHING.md`.
 * `tests/tools/` – not run in CI: fixture recorder, synthetic fixture writer, license audit, request
   stats, period consistency, unprivileged-user probe (live mode), SEC Form 13F Data Sets cross-check
   (`datasets_crosscheck.py`; data sets stay outside the repo), cold-cache latency (`cold_latency.py`, also over
@@ -106,7 +110,8 @@ find_manager:        EdgarDirectory.search (cik-lookup-data.txt, daily) → firs
   `list_13f_filings(period)` latency and response sizes (`agent_latency.py`), `has_13f_filings` vs
   `list_13f_filings` (`has13f_crosscheck.py`), the quarterly form-index premises (`fullindex_scan.py`), and the
   MCP SDK stdio reproduction (`sdk_stdio_repro.py`, synthetic data only); stage 5: random-moment
-  SIGKILL/SIGTERM probe (`kill_fuzz.py`), stdio envelope tap (`stdio_tap.py`).
+  SIGKILL/SIGTERM probe (`kill_fuzz.py`), stdio envelope tap (`stdio_tap.py`); stage 6: `install_smoke.sh` with `WHEEL=` runs `uvx --from <wheel>` for both console
+  scripts, and `license_audit.py` follows requested extras.
 * `tests/fixtures/<cik>/` – recorded, redacted EDGAR data (24 managers).
 * `tests/fixtures/synthetic/9900000001/` – invented manager, one §4 case per period (benign rows only).
 * `tests/fixtures/section4_expected.json` – expected §4 citations for recorded edge cases, derived from

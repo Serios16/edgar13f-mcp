@@ -1,0 +1,23 @@
+$ PYTHON=.venv/bin/python WHEEL=<dist>/edgar13f_mcp-1.2.2-py3-none-any.whl bash tests/tools/install_smoke.sh   (stage 6, 2026-10-22, empty uv cache, SEC_USER_AGENT unset)
+uv: uv 0.11.32 (x86_64-unknown-linux-gnu)
+command: uvx --python 3.11 --from <dist>/edgar13f_mcp-1.2.2-py3-none-any.whl edgar13f-mcp
+Downloading cryptography (4.5MiB)
+Downloading pydantic-core (2.1MiB)
+ Downloaded pydantic-core
+ Downloaded cryptography
+Installed 29 packages in 45ms
+edgar13f: list_13f_filings failed: SecUnavailable('SEC_USER_AGENT is not set; refusing to contact sec.gov')
+server: edgar13f 1.2.2
+tools: ['diff_holdings', 'find_manager', 'get_holdings_as_of', 'list_13f_filings']
+malformed call: isError=False status=declined reason=invalid_argument
+call without SEC_USER_AGENT: isError=True
+SMOKE OK
+command: uvx --python 3.11 --from <dist>/edgar13f_mcp-1.2.2-py3-none-any.whl edgar13f-server
+edgar13f: list_13f_filings failed: SecUnavailable('SEC_USER_AGENT is not set; refusing to contact sec.gov')
+server: edgar13f 1.2.2
+tools: ['diff_holdings', 'find_manager', 'get_holdings_as_of', 'list_13f_filings']
+malformed call: isError=False status=declined reason=invalid_argument
+call without SEC_USER_AGENT: isError=True
+SMOKE OK
+elapsed (install + run, empty uv cache): 13 s
+exit 0

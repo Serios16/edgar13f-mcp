@@ -1,40 +1,59 @@
-# Publishing (owner only; not done)
+# Publishing (owner checklist; nothing has been published)
 
-Nothing has been published. Every step below needs the owner's PyPI and GitHub accounts. Labels as in
+Nothing is published yet. Every step below needs the owner's PyPI and GitHub accounts. Labels as in
 `reports/`: REPORTED = from the sources at the end (read 2026-10-15), MEASURED = run here with the
 artifact named, REASONED = inferred.
 
-## 0. PyPI name (done) and the command clients run (open)
+## 0. State
 
+- Done (rulings, 2026-10-15 and 2026-10-18): the distribution is `edgar13f-mcp` 1.2.2; the import package
+  (`edgar13f`) and the command `edgar13f-server` are unchanged; the console script `edgar13f-mcp` (P16) is
+  added next to it, both pointing to `edgar13f.server:main`.
+- MEASURED: `uvx --from <wheel> edgar13f-mcp` starts and answers `initialize`; stage 5 recorded the failure
+  (`reports/artifacts/uvx_entrypoint_stage6.txt`, `reports/artifacts/install_smoke_stage6.txt`).
 - MEASURED: the name `edgar13f` is taken on PyPI by an unrelated project (Edgar13F 0.2.0, a 13F scraper
   uploaded 2023-08-26); `edgar13f-mcp` was free on 2026-10-15
   (`reports/artifacts/server_json_validation_stage5.txt`).
-- Done (ruling, 2026-10-15): the distribution is `edgar13f-mcp` 1.2.1; the import package (`edgar13f`),
-  `python -m edgar13f.server` and the command `edgar13f-server` are unchanged. `install_smoke.sh`:
-  SMOKE OK (`reports/artifacts/install_smoke_stage5.txt`).
-- REPORTED: a pending trusted publisher does not reserve a name; another upload can take it first [4].
-- Open (REGISTER P16), MEASURED: `uvx edgar13f-mcp`, which registry clients run for
-  `runtimeHint: "uvx"`, fails because the package provides only `edgar13f-server`
-  (`reports/artifacts/uvx_entrypoint_stage5.txt`). Before publishing, either add a console script
-  `edgar13f-mcp = "edgar13f.server:main"` next to `edgar13f-server`, or change `server.json` so that
-  clients start `edgar13f-server`.
+- REPORTED: a pending trusted publisher does not reserve a name; another upload can take it first [4]. Do
+  steps 2 to 4 below without long gaps.
+- MEASURED: the wheel (35 KB) and the sdist (38 KB) hold only `src/edgar13f/`, the README, the licence and
+  metadata: no tests, fixtures or data (`reports/artifacts/dist_contents_stage6.txt`).
+- Release workflow `.github/workflows/publish.yml` (P14 un-deferred): see section 1.
 
-## 1. PyPI with trusted publishing (no API token)
+## 1. Owner checklist (in this order)
 
-REPORTED [4][5]:
+1. **PyPI account with 2FA.** Create or use an account on pypi.org and enable 2FA.
+2. **Pending publisher** (REPORTED [4]): pypi.org → Account → Publishing → add a pending GitHub publisher:
+   PyPI project name `edgar13f-mcp`, owner `Serios16`, repository `edgar13f-mcp`, workflow file name
+   `publish.yml`, environment `pypi`.
+3. **GitHub environment `pypi`** (REPORTED [3]): repository Settings → Environments → New environment `pypi`;
+   required reviewers: `Serios16` (leave "Prevent self-review" off, since the owner is the only reviewer);
+   under deployment branches and tags add a tag rule `v*`.
+4. **Merge the stage-6 pull request**, then publish the release `v1.2.2` from `main`: Releases → Draft a new
+   release → create the tag `v1.2.2` on `main` → Publish release. The `build` job fails unless the tag equals
+   `v` + the `pyproject.toml` version + both `server.json` versions.
+5. **Approve** the `pypi` environment deployment when the workflow run asks for it (Actions → publish). Only
+   after that does the `pypi` job upload; the `registry` job then waits (at most 10 minutes) until PyPI serves
+   the version and publishes `server.json` to the MCP Registry.
+6. **Verify**:
+   - `SEC_USER_AGENT="Your Name your.email@example.com" uvx edgar13f-mcp` starts a stdio server (stop it with Ctrl-D);
+   - `curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.Serios16/edgar13f-mcp"`
+     lists version 1.2.2.
 
-1. On pypi.org (account with 2FA): Account → Publishing → add a *pending* GitHub publisher with
-   PyPI project name `edgar13f-mcp`, owner `Serios16`, repository `edgar13f-mcp`, workflow file
-   name (e.g. `publish.yml`) and environment `pypi` (optional, strongly recommended).
-2. In GitHub: create the environment `pypi` (Settings → Environments), restricted to release tags,
-   ideally with a required reviewer [3].
-3. A workflow triggered by a `v*` tag, job-level `permissions: id-token: write`, `environment: pypi`:
-   build the sdist and wheel (e.g. `python -m pip install build && python -m build`), then
-   `uses: pypa/gh-action-pypi-publish@release/v1` with no username or password. The first run creates
-   the project; the pending publisher becomes a normal one.
+If only the `registry` job fails after PyPI succeeded (the registry is in preview [1]), re-run the failed job
+from the Actions page; PyPI does not accept the same version twice, so never re-run `pypi` for a version that is
+already up. A fix needs a new version and a new release.
 
-Deferred by ruling (REGISTER P14): no release workflow and no `id-token` permission until the owner
-decides to publish.
+### What `publish.yml` does
+
+REASONED from the file; `reports/artifacts/actionlint_stage6.txt` shows it lints clean.
+
+- Trigger `release: published`; top-level `permissions: {}`; no secrets; every action pinned by commit SHA.
+- `build` (`contents: read`): tag check, `python -m build`, `twine check`, uploads `dist/` as an artifact.
+- `pypi` (`environment: pypi`, `id-token: write`): downloads `dist/` and publishes with
+  `pypa/gh-action-pypi-publish` (trusted publishing, no token) [5].
+- `registry` (`id-token: write`, `contents: read`, no environment): installs `mcp-publisher` 1.8.1 and checks its
+  SHA-256, waits for PyPI, then `mcp-publisher login github-oidc` and `mcp-publisher publish` [3].
 
 ## 2. Ownership marker for the MCP Registry
 
@@ -59,21 +78,21 @@ marker, `server.json` name, versions and description length in step.
   (`reports/artifacts/server_json_validation_stage5.txt`).
 - Not advertised: `EDGAR13F_REDACT` (the redaction switch stays an end-user setting, default ON) and
   `EDGAR13F_FIXTURE_DIR` (test hook).
-- Bump `version` and `packages[0].version` with every release (the test fails otherwise).
+- Bump `version` and `packages[0].version` with every release: `tests/unit/test_server_json.py` fails otherwise, and the
+  `build` job of `publish.yml` refuses a release whose tag differs from either.
 
-## 4. Publish to the MCP Registry (after the PyPI release exists)
+## 4. The MCP Registry
 
-REPORTED [1][3]:
+REPORTED [1][3]: the workflow's `registry` job runs `mcp-publisher login github-oidc` and
+`mcp-publisher publish`, which needs `permissions: id-token: write` [3]. By hand (not needed when the
+workflow is used):
 
 ```sh
-# install mcp-publisher (binary from the registry's GitHub releases, or `brew install mcp-publisher`)
 mcp-publisher login github        # device flow; grants io.github.<your-login>/*
 mcp-publisher publish             # reads ./server.json
-curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.Serios16/edgar13f-mcp"
 ```
 
-Or in the release workflow: `permissions: id-token: write`, then `mcp-publisher login github-oidc` and
-`mcp-publisher publish` [3]. The registry is in preview: breaking changes or data resets may occur [1].
+The registry is in preview: breaking changes or data resets may occur [1].
 
 ASSUMED: the namespace is written `io.github.Serios16` as in the repository URL. If `publish` answers
 "You do not have permission to publish this server", use the exact login spelling that

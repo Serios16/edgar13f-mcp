@@ -1,0 +1,12 @@
+$ python -m pytest -q tests   (stage 6, 2026-10-22, distribution edgar13f-mcp 1.2.2, mcp 2.3.0, Python 3.11, offline)
+.........................................................                [100%]
+416 passed, 1 skipped in 106.72s (0:01:46)
+
+$ python tests/checks/size_budget.py .
+size budget: ok
+$ python tests/checks/map_check.py .
+map check: ok
+$ python tests/checks/claims_check.py .
+claims check: ok
+$ bash tests/inspector/inspector_check.sh <out> python  &&  diff <(jq -S . reports/artifacts/inspector_stage5.json) <(jq -S . <out>)
+inspector check OK; artifact equal (exit 0)

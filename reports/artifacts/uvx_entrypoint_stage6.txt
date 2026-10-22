@@ -1,0 +1,3 @@
+$ printf <initialize request> | uvx --python 3.11 --from <wheel built from this checkout, edgar13f-mcp 1.2.2> edgar13f-mcp   (what a registry client runs for runtimeHint "uvx"; stage 5 recorded: "An executable named `edgar13f-mcp` is not provided")
+initialize response: serverInfo= {"name": "edgar13f", "version": "1.2.2"}  protocolVersion= 2025-06-18  tools capability= True
+(the request was followed by 5 s of open stdin, then stdin closed; only the first response line is kept)
