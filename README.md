@@ -29,26 +29,30 @@ and agent answers. This server takes an `as_of` date with every call and follows
 
 Python 3.11, with the official MCP Python SDK 2.x. The server speaks MCP over stdio only.
 
-One command, straight from GitHub (needs [uv](https://docs.astral.sh/uv/); nothing is published to a
-package registry):
+One command (needs [uv](https://docs.astral.sh/uv/)). The package is
+[`edgar13f-mcp` on PyPI](https://pypi.org/project/edgar13f-mcp/), uploaded by this repository's
+release workflow with trusted publishing, and listed in the official
+[MCP Registry](https://registry.modelcontextprotocol.io) as `io.github.Serios16/edgar13f-mcp`:
 
 ```sh
 export SEC_USER_AGENT="Your Name your.email@example.com"   # required by SEC fair access
-uvx --python 3.11 --from git+https://github.com/Serios16/edgar13f-mcp edgar13f-server
+uvx --python 3.11 edgar13f-mcp                              # pin a release: edgar13f-mcp@1.2.2
 ```
 
-Append a tag to pin a release, e.g. `git+https://github.com/Serios16/edgar13f-mcp@v1.2.1`. For an MCP
-client such as Claude Desktop:
+For an MCP client such as Claude Desktop:
 
 ```json
 {"mcpServers": {"edgar13f": {
   "command": "uvx",
-  "args": ["--python", "3.11", "--from", "git+https://github.com/Serios16/edgar13f-mcp", "edgar13f-server"],
+  "args": ["--python", "3.11", "edgar13f-mcp"],
   "env": {"SEC_USER_AGENT": "Your Name your.email@example.com"}}}}
 ```
 
-This command is tested by `tests/tools/install_smoke.sh` (empty uv cache, MCP handshake; output in
-`reports/artifacts/install_smoke.txt`). From a clone instead:
+Any commit or tag also runs straight from GitHub:
+`uvx --python 3.11 --from git+https://github.com/Serios16/edgar13f-mcp@v1.2.2 edgar13f-mcp`.
+The older command name `edgar13f-server` still works. Both names are tested on the built wheel by
+`tests/tools/install_smoke.sh` (empty uv cache, MCP handshake; output in
+`reports/artifacts/install_smoke_stage6.txt`). From a clone instead:
 
 ```sh
 python3.11 -m venv .venv && . .venv/bin/activate
@@ -135,7 +139,7 @@ adds `auto_limited: true`. Every other call is unaffected. MCP client config:
 ```json
 {"mcpServers": {"edgar13f": {
   "command": "uvx",
-  "args": ["--python", "3.11", "--from", "git+https://github.com/Serios16/edgar13f-mcp", "edgar13f-server"],
+  "args": ["--python", "3.11", "edgar13f-mcp"],
   "env": {"SEC_USER_AGENT": "Your Name your.email@example.com", "EDGAR13F_AGENT_MODE": "on"}}}}
 ```
 
@@ -195,7 +199,8 @@ adds `auto_limited: true`. Every other call is unaffected. MCP client config:
 Item-level results are withheld by design. Gate 2, the pre-registered decision gate, passed on
 commit b208c47, which is tagged **v1.0.0**. Gates 3, 4 and 5 passed on commits ca60c5c, f7ee806
 and cc61944, tagged **v1.1.0**, **v1.2.0** and **v1.2.1**. All five gates have the same
-aggregates.
+aggregates. **v1.2.2**, the first release on PyPI, changes only the packaging: it adds the
+`edgar13f-mcp` command, and under `src/` only the version string differs from v1.2.1.
 
 | Measure | Gate 1 | Gate 2 (v1.0.0) | Gate 3 (v1.1.0) | Gate 4 (v1.2.0) | Gate 5 (v1.2.1) |
 |---|---|---|---|---|---|
