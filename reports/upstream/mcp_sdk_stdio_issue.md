@@ -1,8 +1,45 @@
-# Draft upstream issue (not posted): stdio client reads one large message in quadratic time
+# Upstream issue (not posted): stdio client reads one large message in quadratic time
 
-Status: DRAFT for the owner; **not posted**. Target: `modelcontextprotocol/python-sdk`.
-Origin: edgar13f-mcp finding F6 (`reports/STAGE_3.md`), REGISTER P8. Claims are labelled as in
-CLAUDE.md; the measured ones name their command and artifact.
+Status: **still reproduces on mcp 2.3.0, the newest 2.x** (stage 7a, 2026-11-10). An open upstream
+issue already covers it, so the owner should **comment on it rather than file a new issue**.
+Nothing has been posted. Target: `modelcontextprotocol/python-sdk`. Origin: edgar13f-mcp finding
+F6 (`reports/STAGE_3.md`), REGISTER P8. Labels as in CLAUDE.md.
+
+## Stage 7a check
+
+* Versions tested: 2.2.0 and 2.3.0. `pip index versions mcp` lists 2.3.0 first (REPORTED by the package
+  index on 2026-11-10; the 2.x line is 2.0.0, 2.0.1, 2.1.0, 2.1.1, 2.2.0, 2.3.0).
+* Reproduces: **yes, on both.** MEASURED (`reports/artifacts/sdk_stdio_repro_stage7a.txt`, one venv per version,
+  `python -m tests.tools.sdk_stdio_repro`). A 40 MB line takes 12.1 s
+  through `stdio_client` on 2.2.0 and on 2.3.0, against 0.31-0.34 s for `readline()` and for the
+  fixed loop. 20 MB takes 2.6 s. Doubling 20 to 40 MB multiplies the time by about 4.6-4.7.
+* Source: REASONED from reading the installed 2.3.0 wheel, module mcp.client.stdio, line 152: `stdout_reader()`
+  still runs `lines = (buffer + chunk).split("\n")`.
+* Related upstream items (REPORTED, from GitHub issue search and the public pages on 2026-11-10;
+  not posted to):
+  * [#3699](https://github.com/modelcontextprotocol/python-sdk/issues/3699), **open**, labels
+    `bug`, `v1`, `v2`. "stdio_client: receiving a large response takes quadratic time (buffer +
+    chunk is re-copied for every chunk)", opened 2026-10-13 against 2.3.0 with the same diagnosis
+    and the same list-join fix (16 MB: 5.39 s, then 0.27 s). Comments on it confirm the cost on main
+    (32 MB: 45.72 s, then 0.79 s) and note that v1.x has the same loop. No linked PR, no assignee,
+    no fix released.
+  * PRs [#3700](https://github.com/modelcontextprotocol/python-sdk/pull/3700),
+    [#3705](https://github.com/modelcontextprotocol/python-sdk/pull/3705) and
+    [#3706](https://github.com/modelcontextprotocol/python-sdk/pull/3706): all **closed, not
+    merged**. #3700 was closed the same day by the repository bot because its author was not
+    assigned to #3699 (label `missing-issue-link`); I read only that one page. #3705 and #3706 are
+    listed as closed by the issue search and were not opened.
+  * [#3330](https://github.com/modelcontextprotocol/python-sdk/issues/3330) (open) is about an
+    unbounded message size on streamable HTTP, a different problem.
+* Not fixed in any version, so there is no "fixed in" to report.
+
+## What to post
+
+Comment on #3699 with the edgar13f data below (a server that returns real 40 MB results, and a
+reproduction with no MCP server), rather than a duplicate issue. The comment adds: both versions
+measured, the 40 MB point, the end-to-end effect, and the loop-level proof that the fix is
+linear. The original body follows as the ready-to-paste text; trim the title and Summary to one
+line if posting as a comment.
 
 ---
 
@@ -15,7 +52,7 @@ CLAUDE.md; the measured ones name their command and artifact.
 chunk it reads from the server's stdout:
 
 ```python
-# mcp 2.2.0, src/mcp/client/stdio.py, stdout_reader()
+# mcp 2.2.0 and 2.3.0, src/mcp/client/stdio.py, stdout_reader()
 buffer = ""
 async for chunk in stdout:
     lines = (buffer + chunk).split("\n")
@@ -33,8 +70,10 @@ times: O(N^2). A 40 MB tool result (a large but ordinary `CallToolResult` whose 
 ### Environment
 
 MEASURED (`python -m tests.tools.sdk_stdio_repro`, artifact `reports/artifacts/sdk_stdio_repro.json`):
-mcp 2.2.0 (the latest 2.x on PyPI on 2026-10-02: `pip index versions mcp` lists 2.2.0 first),
-anyio 4.15.1, CPython 3.11.15, linux (a cloud container), median of 3 runs per cell.
+mcp 2.2.0 and 2.3.0 (2.3.0 is the latest 2.x on PyPI on 2026-11-10; both behave the same,
+`reports/artifacts/sdk_stdio_repro_stage7a.txt`), anyio 4.16.0, CPython 3.11.18, linux (a cloud
+container), median of 3 runs per cell. The table below is the stage 4 run on 2.2.0
+(`reports/artifacts/sdk_stdio_repro.json`); the stage 7a run on 2.3.0 gives 12.1 s at 40 MB.
 
 ### Minimal reproduction
 
