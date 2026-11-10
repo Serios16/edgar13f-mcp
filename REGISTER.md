@@ -123,3 +123,4 @@ None open.
 | P16 | DONE in stage 6 by ruling S1: console script `edgar13f-mcp` added (`reports/artifacts/uvx_entrypoint_stage6.txt`). |
 | P15 | MCP Python SDK stdio server ignores malformed JSON-RPC lines silently (no -32700 Parse error). Allowed by the brief ("error or ignored"); a client that sends one gets no answer and must time out. Upstream note only; not changed (SDK). |
 | P12 | CLOSED by ruling N2 (2026-10-02): renamed to `contracts/CONTRACTS_ADDENDUM_A.md` (trailing dot removed) with `git mv`; content byte-identical (SHA-256 95bf9772170b8d0eed5405a2468f915320b3fb58b4f47718427ee13c6f8ca462 before and after). |
+| P17 | DONE in stage 7a (owner brief): agent skill `skills/edgar13f/SKILL.md` and `tests/unit/test_skill.py`. A new top-level folder, allowed for this task only; no change under `src/`. |

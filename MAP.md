@@ -116,3 +116,4 @@ find_manager:        EdgarDirectory.search (cik-lookup-data.txt, daily) → firs
 * `tests/fixtures/synthetic/9900000001/` – invented manager, one §4 case per period (benign rows only).
 * `tests/fixtures/section4_expected.json` – expected §4 citations for recorded edge cases, derived from
   the SEC Form 13F Data Sets metadata.
+* `skills/edgar13f/SKILL.md` – agent skill (stage 7a); `tests/unit/test_skill.py` checks every tool, parameter and decline reason in it against `contracts/tools.schema.json` and Addendum A, with planted-name controls.

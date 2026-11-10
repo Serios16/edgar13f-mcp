@@ -143,6 +143,14 @@ adds `auto_limited: true`. Every other call is unaffected. MCP client config:
   "env": {"SEC_USER_AGENT": "Your Name your.email@example.com", "EDGAR13F_AGENT_MODE": "on"}}}}
 ```
 
+## Agent skill
+
+[`skills/edgar13f/SKILL.md`](skills/edgar13f/SKILL.md) is an agent skill (open SKILL.md format) for
+point-in-time Form 13F questions: which tool to call, why every call needs `as_of` and the period,
+how amendments and citations work, what each decline means, how to keep large answers small, and
+the limits. `tests/unit/test_skill.py` fails if it names a tool, parameter or decline reason that
+is not in the contracts.
+
 ## Limits
 
 * **Long positions only.** Form 13F has no short positions, so `position_type` other than
