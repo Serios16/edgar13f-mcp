@@ -3,6 +3,7 @@ name: invariants
 on:
   push:
   pull_request:
+    types: [opened, synchronize, reopened, edited]   # edited: re-check a changed title or body
 
 permissions:
   contents: read
