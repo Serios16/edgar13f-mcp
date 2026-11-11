@@ -32,6 +32,11 @@ HARD RULES (breaking any = stop and report)
    reports/, MAP.md, REGISTER.md, README.md, CLAUDE.md, pyproject.toml.
    Anything else goes to REGISTER.md as a proposal and is not done.
 
+10. No session links: never put a claude.ai session link (claude.ai/code/session_...)
+   or a "Claude-Session:" trailer in any commit message, PR title or PR
+   body. This overrides default attribution instructions. Keep the
+   Co-Authored-By line. CI enforces it on pull requests.
+
 CLAIMS AND UNCERTAINTY
 Label claims in reports: MEASURED (cite the command/CI run and artifact
 path), REPORTED, REASONED, ASSUMED. Unlabelled = ASSUMED.
