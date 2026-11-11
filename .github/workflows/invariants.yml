@@ -16,9 +16,19 @@ jobs:
       PYTHONDONTWRITEBYTECODE: "1"
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0              # the session-link guard reads the PR's commit messages
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: No session links in commits, PR title or PR body (owner rule, CLAUDE.md rule 10)
+        if: github.event_name == 'pull_request'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python tests/tools/session_link_guard.py
       - name: Install (package index only; tests below are offline)
         run: python -m pip install -e ".[test]"
       - name: Unit tests
